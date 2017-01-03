@@ -23,7 +23,6 @@ TODO
     * Enum
         * Scoped
         * unscoped
-* Operatoren Priorität (gleich wie C)
 * Operator overloading
     * In Klasse und extern
 * inline
@@ -42,7 +41,6 @@ TODO
     * Destructor
 * Files lesen / schreiben
 
-[TOC]
 
 
 
@@ -65,12 +63,14 @@ void sayHello(std::ostream &out);
 # Klassen
 
 Es gibt zwei Keywords, ``struct``und ``class``. Die sind äquivalent, ausser
+
 * struct ist standardmässig public
 * class ist standardmässig private
 
 Beispiel mit 3 Files
 
 Hello.h
+
 ```C++
 #ifndef HELLO_H_
 #define HELLO_H_
@@ -84,6 +84,7 @@ struct Hello {
 Semikolon nicht vergessen!
 
 Hello.cpp
+
 ```C++
 #include "Hello.h"
 #include <ostream>
@@ -94,6 +95,7 @@ void Hello::sayHello(std::ostream &out) const {
 ```
 
 main.cpp
+
 ```C++
 #include "Hello.h"
 #include <iostream>
@@ -105,7 +107,9 @@ int main() {
 ```
 
 # Variablen
+
 ``<type> <name> {<value>};``
+
 ```C++
 int anAnswer{42};
 int const zero{};
@@ -113,17 +117,21 @@ int const zero{};
 
 Initialisierung kann weggelassen werden, wird aber nicht empfohlen. Leere Klammern bedeuten Default-Initialization
 Mit ``=``können wir den Compiler den Typ entscheiden lassen (nicht mit geschw. Klammern kombinieren)
+
 ```C++
 auto const i = 5
 ```
+
 Mit ``const`` **muss** initialisiert werden (mit geschweiften Klammern). Mit ``constexpr``wird der Wert zur Compile-Zeit festgelegt.
 Nicht vergessen: **As const as possible**
+
 ```C++
 int const theAnswer{6*7}
 double constexpr pi{3.14}
 ```
 
 C++ definiert den Begriff des lvalue und rvalue. Man darf beispielsweise nur lvalues inkrementieren
+
 ```C++
 x = 6 * 7
 x // lvalue
@@ -139,6 +147,7 @@ Liste des Bösen:
 # Typen
 
 Eingebaute Typen (ohne include)
+
 * bool
 * char, unsigned char, *wchar_t*, *char16_t*, *char32_t*
 * short, int, long, long long
@@ -156,17 +165,20 @@ Eingebaute Typen (ohne include)
 Streams haben einen Status, der anzeigt ob I/O erfolgreich war oder nicht
 
 * Nur .good() Streams können noch I/O
-* Nach einem Fehler (.fail) muss man den Zustand mit .clear() wieder löschen, die ungültigen Eingaben rausholen und weiterfahren
+* Nach einem Fehler (.fail()) muss man den Zustand mit .clear() wieder löschen, die ungültigen Eingaben rausholen (.ignore())und weiterfahren
 
 istream Zustände:
-| bit | query | entered |
-| failbit | ``is.fail()`` | formatted input failed |
-| eofbit | ``is.eof`` | end of input reached |
-| badbit | ``is.bad`` | unrecoverable I/O error |
+
+bit | query | entered
+----|-------|---------
+failbit | ``is.fail()`` | formatted input failed
+eofbit | ``is.eof`` | end of input reached
+badbit | ``is.bad`` | unrecoverable I/O error
 
 
 
 Beispiel: robustes Einlesen eines int, mit istringstream als Zwischenstream
+
 ```C++
 int inputAge(std::istream& in) {
   while(in) {
@@ -187,6 +199,7 @@ int inputAge(std::istream& in) {
 * Wie aus Java bekannt
 * ``and, or, not`` sind alternative Schreibweisen für ``&&, ||, !``
 * ``bitand, bitor, xor`` sind ``&, |, ^``
+
 
 
 
@@ -423,9 +436,91 @@ Achtung: in einer einzelnen Expression, wenn die Funktionsaufrufe nur durch Komm
 <td> Left-to-right
 </td></tr></tbody></table>
 
+# Lambdas
+
+Wenn es alle möglichen Klammern hat, ist es wahrscheinlich ein Lambda.
+
+```C++
+[lambda_capture]
+(parameters)->return_type {
+	statements
+}
+```
+
+* Capture benennt Variablen die vom umgebenden Scope genommen werden oder erstellt sogar neue
+	* ``=`` copy
+	* ``&`` reference
+	* Typ wird abgeleitet
+* Parameter sind wie Funktionsparameter, auto möglich
+* return_type kann weggelassen werden wenn void oder die return-Statements im Typ konsistent sind (Compiler erkennts) 
+
+# Using
+Von ``using`` gibt es zwei Varianten
+
+* "Alias" mit ``using input=std::istream_iterator<std::string>``
+* Member in Namespace übernehmen, z.B. Konstruktoren mit ``using std::set<T, COMPARE>::set;``
+
 # Iterators
 
-Include für alle Iterators: #include <iterator>
+Include für alle Iterators: ``#include <iterator>``
+
+* Jeder Container bietet Iteratoren
+* Es gibt immer ein Paar von Iteratoren, ``begin(v)`` und ``end(v)``
+* Es gibt die "allgemeine" Version wie oben, oder die spezialisierte Version ``v.begin()/v.end()``. Im Zweifelsfall die spezialisierte Version verwenden.
+* C++-Iteratoren kennen das Ende nicht. Man kann aber gegen das Ende vergleichen ``iterator != v.end()``
+* Auf Elemente mittels ``*`` zugreifen ``*iterator``
+* Nächster Schritt des Iterators: ``++iterator`` 
+
+Achtung, das Ende ist **vor** ``end``. 
+
+Um read-only zu garantieren sollte ``cbegin()/cend()`` verwendet werden.
+
+Liste des Bösen
+
+* Eigene Loops
+
+## Spezielle Iteratoren für I/O
+**``std::ostream_iterator<T>`` gibt Werte vom Typ ``T`` an den gegebenen ``std::ostream`` aus**
+Endet wenn Input-Range fertig ist
+``copy(begin(v), end(v), std::ostream_iterator<int>{std::cout, ", "});``
+
+**``std::istream_iterator<T>`` liest Werte vom Typ ``T``vom gegebenen ``std::istream``**
+Endet wenn der istream nicht länger ``good`` ist
+
+Diese nutzen aber beide intern den ``operator>>`` für Input. Der überspringt Leerzeichen und White Space
+Für eine perfekte Kopie brauchtn wir auch den Rest. Dies geht mit ``istreambuf_iterator<char>``.
+
+**Beispiele**
+Kopieren mit istream_iterator
+
+```C++
+#include <iterator>
+#include <iostream>
+#include <algorithm>
+#include <string>
+int main() {
+	using input=std::istream_iterator<std::string>;
+	input eof{};
+	input in{std::cin};
+	std::ostream_iterator<std::string> out{std::cout, " "};
+	copy(in, eof, out)
+}
+```
+
+Kopieren mit istreambuf_iterator
+
+```C++
+#include <iterator>
+#include <iostream>
+#include <algorithm>
+int main() {
+	using input=std::istreambuf_iterator<char>;
+	input eof{};
+	input in{std::cin};
+	std::ostream_iterator<char> out{std::cout};
+	copy(in, eof, out)
+}
+```
 
 ## Kategorien
 
@@ -501,6 +596,7 @@ TODO: Syntax-Highlighting stolpert über zweitletzte Zeile. Fix mit **
 ## std::ostream_iterator
 
 Iterator für ostream. Formatierte Ausgabe. Beispiel:
+
 ```C++
 int main () {
   std::vector<int> myvector{0,1,2,3,4,5,6,7,8,9};
@@ -514,6 +610,7 @@ Output: "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, “
 ## std::ostreambuf_iterator
 
 Iterator für ostream. Unformatierte Ausgabe, char für char. Beispiel:
+
 ```C++
 int main () {
   std::string mystring ("Some text here...\n");
@@ -525,6 +622,7 @@ int main () {
 ## std::reverse_iterator
 
 Iterator in umgekehrter Reihenfolge. Funktioniert nur bei Birirectional oder Random Access.  Benutzung entweder mit rbegin(), rend() auf einem Container oder wie folgt:
+
 ```C++
 int main () {
   std::vector<int> myvector{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
@@ -545,11 +643,30 @@ Output: " 9 8 7 6 5 4 3 2 1 0"
 
 begin(), end(), cbegin(), cend(), rbegin(), rend(), crbegin(), crend(), size(), empty()
 
+Statt ``operator[]`` wird ``.at`` empfohlen wenn verfügbar, da es dort Bound Checks gibt (HSR brennt nicht ab)
+
+**Iterieren "foreach"**
+
+```C++
+for(auto const i:v) {
+	std::cout << "element: " << i << "\n";
+}
+```
+Um auch ändern zu können, braucht man eine Referenz als Loop-Variable
+
+```C++
+for(auto const &j:v) {
+	j *= 2;
+}
+```
+
 ## std::vector
 
 Entspricht ArrayList in java
 
-**Include / Initialisieren**: ``#include <vector> / std::vector<int> v{};``
+**Include / Initialisieren**: ``#include <vector> / std::vector<int> v{};``, alternativ mit Angabe der Grösse ``std::vector<int> v(6)`` oder gleich mit 2 füllen ``(6,2)``
+
+Ebenso kann er aus zwei Iteratoren konstruiert werden.
 
 **Iterator**: random access
 
@@ -558,6 +675,17 @@ Entspricht ArrayList in java
 ``insert (const_iterator position, const value_type& val);``
 
 ``push_back (const value_type& val);``
+
+``back_inserter(v) // Ziel für Copy``
+
+Mit unterschiedlichen Werten füllen:
+
+```C++
+std::vector<double> w{};
+generate_n(std::back_inserter(w),5,
+	[x=2.0]() mutable {return x *= 2.0;}
+);
+```
 
 **Delete**:
 
@@ -778,3 +906,635 @@ HashSet in Java, nicht benutzen → C++ advanced
 ## std::unordered_map
 
 HashMap in Java, nicht benutzen → C++ advanced
+
+# Algorithms
+Ein paar Beispiele:
+Jeder Container hat ``size()``. Was wenn man nur zwei Iteratoren hat? ``std::distance(begin, end)``
+
+for_each (halbböse): 
+
+```C++
+for_each(begin(v), end(v),[](auto x) {
+	std::cout << x++ << "\n";
+});
+```
+
+Wenn man eine Funktion ``print(int x)`` hat, geht auch
+``for_each(begin(v), end(v), print);``
+
+<table class="t-dsc-begin">
+
+<tbody><tr>
+<td colspan="2"> <h5> <span class="mw-headline" id="Non-modifying_sequence_operations">  Non-modifying sequence operations </span></h5>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/all_any_none_of" title="cpp/algorithm/all any none of"> <span class="t-lines"><span>all_of</span><span>any_of</span><span>none_of</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   checks if a predicate is <span class="t-c"><span class="mw-geshi cpp source-cpp"><span class="kw2">true</span></span></span> for all, any or none of the elements in a range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_all_any_none_of&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/for_each" title="cpp/algorithm/for each"> <span class="t-lines"><span>for_each</span></span></a></div></div>
+</td>
+<td>   applies a function to a range of elements <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_for_each&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/for_each_n" title="cpp/algorithm/for each n"> <span class="t-lines"><span>for_each_n</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx17">(C++17)</span></span></span></div></div>
+</td>
+<td>   applies a function object to the first n elements of a sequence  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_for_each_n&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/count" title="cpp/algorithm/count"> <span class="t-lines"><span>count</span><span>count_if</span></span></a></div></div>
+</td>
+<td>   returns the number of elements satisfying specific criteria  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_count&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/mismatch" title="cpp/algorithm/mismatch"> <span class="t-lines"><span>mismatch</span></span></a></div></div>
+</td>
+<td>   finds the first position where two ranges differ  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_mismatch&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/equal" title="cpp/algorithm/equal"> <span class="t-lines"><span>equal</span></span></a></div></div>
+</td>
+<td>   determines if two sets of elements are the same  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_equal&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/find" title="cpp/algorithm/find"> <span class="t-lines"><span>find</span><span>find_if</span><span>find_if_not</span></span></a></div><div><span class="t-lines"><span></span><span></span><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   finds the first element satisfying specific criteria  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_find&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/find_end" title="cpp/algorithm/find end"> <span class="t-lines"><span>find_end</span></span></a></div></div>
+</td>
+<td>   finds the last sequence of elements in a certain range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_find_end&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/find_first_of" title="cpp/algorithm/find first of"> <span class="t-lines"><span>find_first_of</span></span></a></div></div>
+</td>
+<td>   searches for any one of a set of elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_find_first_of&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/adjacent_find" title="cpp/algorithm/adjacent find"> <span class="t-lines"><span>adjacent_find</span></span></a></div></div>
+</td>
+<td>   finds the first two adjacent items that are equal (or satisfy a given predicate)  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_adjacent_find&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/search" title="cpp/algorithm/search"> <span class="t-lines"><span>search</span></span></a></div></div>
+</td>
+<td>   searches for a range of elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_search&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/search_n" title="cpp/algorithm/search n"> <span class="t-lines"><span>search_n</span></span></a></div></div>
+</td>
+<td>   searches for a number consecutive copies of an element in a range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_search_n&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> <span class="mw-headline" id="Modifying_sequence_operations">  Modifying sequence operations </span></h5>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/copy" title="cpp/algorithm/copy"> <span class="t-lines"><span>copy</span><span>copy_if</span></span></a></div><div><span class="t-lines"><span></span><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   copies a range of elements to a new location  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_copy&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/copy_n" title="cpp/algorithm/copy n"> <span class="t-lines"><span>copy_n</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   copies a number of elements to a new location  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_copy_n&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/copy_backward" title="cpp/algorithm/copy backward"> <span class="t-lines"><span>copy_backward</span></span></a></div></div>
+</td>
+<td>   copies a range of elements in backwards order  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_copy_backward&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/move" title="cpp/algorithm/move"> <span class="t-lines"><span>move</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   moves a range of elements to a new location  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_move&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/move_backward" title="cpp/algorithm/move backward"> <span class="t-lines"><span>move_backward</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   moves a range of elements to a new location in backwards order  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_move_backward&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/fill" title="cpp/algorithm/fill"> <span class="t-lines"><span>fill</span></span></a></div></div>
+</td>
+<td>   copy-assigns the given value to every element in a range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_fill&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/fill_n" title="cpp/algorithm/fill n"> <span class="t-lines"><span>fill_n</span></span></a></div></div>
+</td>
+<td>   copy-assigns the given value to N elements in a range <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_fill_n&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/transform" title="cpp/algorithm/transform"> <span class="t-lines"><span>transform</span></span></a></div></div>
+</td>
+<td>   applies a function to a range of elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_transform&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/generate" title="cpp/algorithm/generate"> <span class="t-lines"><span>generate</span></span></a></div></div>
+</td>
+<td>   assigns the results of successive function calls to every element in a range <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_generate&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/generate_n" title="cpp/algorithm/generate n"> <span class="t-lines"><span>generate_n</span></span></a></div></div>
+</td>
+<td>   assigns the results of successive function calls to N elements in a range <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_generate_n&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/remove" title="cpp/algorithm/remove"> <span class="t-lines"><span>remove</span><span>remove_if</span></span></a></div></div>
+</td>
+<td>   removes elements satisfying specific criteria  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_remove&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/remove_copy" title="cpp/algorithm/remove copy"> <span class="t-lines"><span>remove_copy</span><span>remove_copy_if</span></span></a></div></div>
+</td>
+<td>   copies a range of elements omitting those that satisfy specific criteria  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_remove_copy&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/replace" title="cpp/algorithm/replace"> <span class="t-lines"><span>replace</span><span>replace_if</span></span></a></div></div>
+</td>
+<td>   replaces all values satisfying specific criteria with another value  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_replace&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/replace_copy" title="cpp/algorithm/replace copy"> <span class="t-lines"><span>replace_copy</span><span>replace_copy_if</span></span></a></div></div>
+</td>
+<td>   copies a range, replacing elements satisfying specific criteria with another value  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_replace_copy&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/swap" title="cpp/algorithm/swap"> <span class="t-lines"><span>swap</span></span></a></div></div>
+</td>
+<td>   swaps the values of two objects  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_swap&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/swap_ranges" title="cpp/algorithm/swap ranges"> <span class="t-lines"><span>swap_ranges</span></span></a></div></div>
+</td>
+<td>   swaps two ranges of elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_swap_ranges&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/iter_swap" title="cpp/algorithm/iter swap"> <span class="t-lines"><span>iter_swap</span></span></a></div></div>
+</td>
+<td>   swaps the elements pointed to by two iterators  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_iter_swap&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/reverse" title="cpp/algorithm/reverse"> <span class="t-lines"><span>reverse</span></span></a></div></div>
+</td>
+<td>   reverses the order of elements in a range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_reverse&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/reverse_copy" title="cpp/algorithm/reverse copy"> <span class="t-lines"><span>reverse_copy</span></span></a></div></div>
+</td>
+<td>   creates a copy of a range that is reversed  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_reverse_copy&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/rotate" title="cpp/algorithm/rotate"> <span class="t-lines"><span>rotate</span></span></a></div></div>
+</td>
+<td>   rotates the order of elements in a range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_rotate&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/rotate_copy" title="cpp/algorithm/rotate copy"> <span class="t-lines"><span>rotate_copy</span></span></a></div></div>
+</td>
+<td>   copies and rotate a range of elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_rotate_copy&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/random_shuffle" title="cpp/algorithm/random shuffle"> <span class="t-lines"><span>random_shuffle</span><span>shuffle</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-until-cxx17">(until C++17)</span></span><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   randomly re-orders elements in a range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_random_shuffle&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/sample" title="cpp/algorithm/sample"> <span class="t-lines"><span>sample</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx17">(C++17)</span></span></span></div></div>
+</td>
+<td>   selects n random elements from a sequence <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_sample&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/unique" title="cpp/algorithm/unique"> <span class="t-lines"><span>unique</span></span></a></div></div>
+</td>
+<td>   removes consecutive duplicate elements in a range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_unique&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/unique_copy" title="cpp/algorithm/unique copy"> <span class="t-lines"><span>unique_copy</span></span></a></div></div>
+</td>
+<td>   creates a copy of some range of elements that contains no consecutive duplicates  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_unique_copy&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> <span class="mw-headline" id="Partitioning_operations">  Partitioning operations </span></h5>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/is_partitioned" title="cpp/algorithm/is partitioned"> <span class="t-lines"><span>is_partitioned</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   determines if the range is partitioned by the given predicate  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_is_partitioned&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/partition" title="cpp/algorithm/partition"> <span class="t-lines"><span>partition</span></span></a></div></div>
+</td>
+<td>   divides a range of elements into two groups  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_partition&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/partition_copy" title="cpp/algorithm/partition copy"> <span class="t-lines"><span>partition_copy</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   copies a range dividing the elements into two groups  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_partition_copy&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/stable_partition" title="cpp/algorithm/stable partition"> <span class="t-lines"><span>stable_partition</span></span></a></div></div>
+</td>
+<td>   divides elements into two groups while preserving their relative order  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_stable_partition&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/partition_point" title="cpp/algorithm/partition point"> <span class="t-lines"><span>partition_point</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   locates the partition point of a partitioned range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_partition_point&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> <span class="mw-headline" id="Sorting_operations">  Sorting operations </span></h5>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/is_sorted" title="cpp/algorithm/is sorted"> <span class="t-lines"><span>is_sorted</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   checks whether a range is sorted into ascending order  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_is_sorted&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/is_sorted_until" title="cpp/algorithm/is sorted until"> <span class="t-lines"><span>is_sorted_until</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   finds the largest sorted subrange  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_is_sorted_until&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/sort" title="cpp/algorithm/sort"> <span class="t-lines"><span>sort</span></span></a></div></div>
+</td>
+<td>   sorts a range into ascending order  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_sort&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/partial_sort" title="cpp/algorithm/partial sort"> <span class="t-lines"><span>partial_sort</span></span></a></div></div>
+</td>
+<td>   sorts the first N elements of a range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_partial_sort&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/partial_sort_copy" title="cpp/algorithm/partial sort copy"> <span class="t-lines"><span>partial_sort_copy</span></span></a></div></div>
+</td>
+<td>   copies and partially sorts a range of elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_partial_sort_copy&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/stable_sort" title="cpp/algorithm/stable sort"> <span class="t-lines"><span>stable_sort</span></span></a></div></div>
+</td>
+<td>   sorts a range of elements while preserving order between equal elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_stable_sort&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/nth_element" title="cpp/algorithm/nth element"> <span class="t-lines"><span>nth_element</span></span></a></div></div>
+</td>
+<td>   partially sorts the given range making sure that it is partitioned by the given element  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_nth_element&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> <span class="mw-headline" id="Binary_search_operations_.28on_sorted_ranges.29">  Binary search operations (on sorted ranges) </span></h5>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/lower_bound" title="cpp/algorithm/lower bound"> <span class="t-lines"><span>lower_bound</span></span></a></div></div>
+</td>
+<td>   returns an iterator to the first element <i>not less</i> than the given value <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_lower_bound&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/upper_bound" title="cpp/algorithm/upper bound"> <span class="t-lines"><span>upper_bound</span></span></a></div></div>
+</td>
+<td>   returns an iterator to the first element <i>greater</i> than a certain value <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_upper_bound&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/binary_search" title="cpp/algorithm/binary search"> <span class="t-lines"><span>binary_search</span></span></a></div></div>
+</td>
+<td>   determines if an element exists in a certain range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_binary_search&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/equal_range" title="cpp/algorithm/equal range"> <span class="t-lines"><span>equal_range</span></span></a></div></div>
+</td>
+<td>   returns range of elements matching a specific key <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_equal_range&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> <span class="mw-headline" id="Set_operations_.28on_sorted_ranges.29">  Set operations (on sorted ranges) </span></h5>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/merge" title="cpp/algorithm/merge"> <span class="t-lines"><span>merge</span></span></a></div></div>
+</td>
+<td>   merges two sorted ranges  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_merge&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/inplace_merge" title="cpp/algorithm/inplace merge"> <span class="t-lines"><span>inplace_merge</span></span></a></div></div>
+</td>
+<td>   merges two ordered ranges in-place  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_inplace_merge&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/includes" title="cpp/algorithm/includes"> <span class="t-lines"><span>includes</span></span></a></div></div>
+</td>
+<td>   returns true if one set is a subset of another  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_includes&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/set_difference" title="cpp/algorithm/set difference"> <span class="t-lines"><span>set_difference</span></span></a></div></div>
+</td>
+<td>   computes the difference between two sets  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_set_difference&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/set_intersection" title="cpp/algorithm/set intersection"> <span class="t-lines"><span>set_intersection</span></span></a></div></div>
+</td>
+<td>   computes the intersection of two sets  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_set_intersection&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/set_symmetric_difference" title="cpp/algorithm/set symmetric difference"> <span class="t-lines"><span>set_symmetric_difference</span></span></a></div></div>
+</td>
+<td>   computes the symmetric difference between two sets  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_set_symmetric_difference&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/set_union" title="cpp/algorithm/set union"> <span class="t-lines"><span>set_union</span></span></a></div></div>
+</td>
+<td>   computes the union of two sets  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_set_union&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> <span class="mw-headline" id="Heap_operations">  Heap operations </span></h5>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/is_heap" title="cpp/algorithm/is heap"> <span class="t-lines"><span>is_heap</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   checks if the given range is a max heap <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_is_heap&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/is_heap_until" title="cpp/algorithm/is heap until"> <span class="t-lines"><span>is_heap_until</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   finds the largest subrange that is a max heap  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_is_heap_until&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/make_heap" title="cpp/algorithm/make heap"> <span class="t-lines"><span>make_heap</span></span></a></div></div>
+</td>
+<td>   creates a max heap out of a range of elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_make_heap&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/push_heap" title="cpp/algorithm/push heap"> <span class="t-lines"><span>push_heap</span></span></a></div></div>
+</td>
+<td>   adds an element to a max heap  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_push_heap&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/pop_heap" title="cpp/algorithm/pop heap"> <span class="t-lines"><span>pop_heap</span></span></a></div></div>
+</td>
+<td>   removes the largest element from a max heap  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_pop_heap&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/sort_heap" title="cpp/algorithm/sort heap"> <span class="t-lines"><span>sort_heap</span></span></a></div></div>
+</td>
+<td>   turns a max heap into a range of elements sorted in ascending order  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_sort_heap&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> <span class="mw-headline" id="Minimum.2Fmaximum_operations">  Minimum/maximum operations </span></h5>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/max" title="cpp/algorithm/max"> <span class="t-lines"><span>max</span></span></a></div></div>
+</td>
+<td>   returns the greater of the given values  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_max&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/max_element" title="cpp/algorithm/max element"> <span class="t-lines"><span>max_element</span></span></a></div></div>
+</td>
+<td>   returns the largest element in a range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_max_element&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/min" title="cpp/algorithm/min"> <span class="t-lines"><span>min</span></span></a></div></div>
+</td>
+<td>   returns the smaller of the given values  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_min&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/min_element" title="cpp/algorithm/min element"> <span class="t-lines"><span>min_element</span></span></a></div></div>
+</td>
+<td>   returns the smallest element in a range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_min_element&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/minmax" title="cpp/algorithm/minmax"> <span class="t-lines"><span>minmax</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   returns the smaller and larger of two elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_minmax&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/minmax_element" title="cpp/algorithm/minmax element"> <span class="t-lines"><span>minmax_element</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   returns the smallest and the largest elements in a range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_minmax_element&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/clamp" title="cpp/algorithm/clamp"> <span class="t-lines"><span>clamp</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx17">(C++17)</span></span></span></div></div>
+</td>
+<td>   clamps a value between a pair of boundary values  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_clamp&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/lexicographical_compare" title="cpp/algorithm/lexicographical compare"> <span class="t-lines"><span>lexicographical_compare</span></span></a></div></div>
+</td>
+<td>   returns true if one range is lexicographically less than another  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_lexicographical_compare&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/is_permutation" title="cpp/algorithm/is permutation"> <span class="t-lines"><span>is_permutation</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   determines if a sequence is a permutation of another sequence  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_is_permutation&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/next_permutation" title="cpp/algorithm/next permutation"> <span class="t-lines"><span>next_permutation</span></span></a></div></div>
+</td>
+<td>   generates the next greater lexicographic permutation of a range of elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_next_permutation&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/prev_permutation" title="cpp/algorithm/prev permutation"> <span class="t-lines"><span>prev_permutation</span></span></a></div></div>
+</td>
+<td>   generates the next smaller lexicographic permutation of a range of elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_prev_permutation&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> <span class="mw-headline" id="Numeric_operations">  Numeric operations </span></h5>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>Defined in header <code>&lt;numeric&gt;</code> </div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/iota" title="cpp/algorithm/iota"> <span class="t-lines"><span>iota</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>   fills a range with successive increments of the starting value  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_iota&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/accumulate" title="cpp/algorithm/accumulate"> <span class="t-lines"><span>accumulate</span></span></a></div></div>
+</td>
+<td>   sums up a range of elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_accumulate&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/inner_product" title="cpp/algorithm/inner product"> <span class="t-lines"><span>inner_product</span></span></a></div></div>
+</td>
+<td>   computes the inner product of two ranges of elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_inner_product&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/adjacent_difference" title="cpp/algorithm/adjacent difference"> <span class="t-lines"><span>adjacent_difference</span></span></a></div></div>
+</td>
+<td>   computes the differences between adjacent elements in a range  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_adjacent_difference&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/partial_sum" title="cpp/algorithm/partial sum"> <span class="t-lines"><span>partial_sum</span></span></a></div></div>
+</td>
+<td>   computes the partial sum of a range of elements  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_partial_sum&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/reduce" title="cpp/algorithm/reduce"> <span class="t-lines"><span>reduce</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx17">(C++17)</span></span></span></div></div>
+</td>
+<td>   similar to <span class="t-lc"><a href="/w/cpp/algorithm/accumulate" title="cpp/algorithm/accumulate">std::accumulate</a></span>, except out of order  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_reduce&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/exclusive_scan" title="cpp/algorithm/exclusive scan"> <span class="t-lines"><span>exclusive_scan</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx17">(C++17)</span></span></span></div></div>
+</td>
+<td>   similar to <span class="t-lc"><a href="/w/cpp/algorithm/partial_sum" title="cpp/algorithm/partial sum">std::partial_sum</a></span>, excludes the ith input element from the ith sum <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_exclusive_scan&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/inclusive_scan" title="cpp/algorithm/inclusive scan"> <span class="t-lines"><span>inclusive_scan</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx17">(C++17)</span></span></span></div></div>
+</td>
+<td>   similar to <span class="t-lc"><a href="/w/cpp/algorithm/partial_sum" title="cpp/algorithm/partial sum">std::partial_sum</a></span>, includes the ith input element in the ith sum <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_inclusive_scan&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/transform_reduce" title="cpp/algorithm/transform reduce"> <span class="t-lines"><span>transform_reduce</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx17">(C++17)</span></span></span></div></div>
+</td>
+<td>   applies a functor, then reduces out of order  <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_transform_reduce&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/transform_exclusive_scan" title="cpp/algorithm/transform exclusive scan"> <span class="t-lines"><span>transform_exclusive_scan</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx17">(C++17)</span></span></span></div></div>
+</td>
+<td>   applies a functor, then calculates exclusive scan <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_transform_exclusive_scan&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="/w/cpp/algorithm/transform_inclusive_scan" title="cpp/algorithm/transform inclusive scan"> <span class="t-lines"><span>transform_inclusive_scan</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx17">(C++17)</span></span></span></div></div>
+</td>
+<td>   applies a functor, then calculates inclusive scan <br> <span class="t-mark">(function template)</span> <span class="editsection noprint plainlinks" title="Edit this template"><a rel="nofollow" class="external text" href="http://en.cppreference.com/mwiki/index.php?title=Template:cpp/algorithm/dsc_transform_inclusive_scan&amp;action=edit">[edit]</a></span>
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> <span class="mw-headline" id="Operations_on_uninitialized_memory">  Operations on uninitialized memory </span></h5>
+</td></tr>
+
+</tbody></table>

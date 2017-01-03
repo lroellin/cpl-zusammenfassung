@@ -123,13 +123,77 @@ int const theAnswer{6*7}
 double constexpr pi{3.14}
 ```
 
+C++ definiert den Begriff des lvalue und rvalue. Man darf beispielsweise nur lvalues inkrementieren
+```C++
+x = 6 * 7
+x // lvalue
+6 * 7 // rvalue
+x++ // ok
+5++ // nicht ok
+```
+
 Liste des Bösen:
 * eine Variable *darf* innerhalb eines Blocks neu verwendet werden, dies ist kein Fehler
 * globale Variablen
 
+# Typen
+
+Eingebaute Typen (ohne include)
+* bool
+* char, unsigned char, *wchar_t*, *char16_t*, *char32_t*
+* short, int, long, long long
+* unsigned short, unsigned, unsigned long, unsigned long long
+* float, double long double
+* weitere
+
+## Literale
+* U/L für Integer (unsigned/long), Gross-/Kleinschreibung egal
+* Exponenten mit E für float/double
+* "ab"s macht einen String aus "ab", benötigt ``using namespace std::literals`` <== TODO prüfen, V2 S16
+
+
+# Streams
+Streams haben einen Status, der anzeigt ob I/O erfolgreich war oder nicht
+
+* Nur .good() Streams können noch I/O
+* Nach einem Fehler (.fail) muss man den Zustand mit .clear() wieder löschen, die ungültigen Eingaben rausholen und weiterfahren
+
+istream Zustände:
+| bit | query | entered |
+| failbit | ``is.fail()`` | formatted input failed |
+| eofbit | ``is.eof`` | end of input reached |
+| badbit | ``is.bad`` | unrecoverable I/O error |
+
+
+
+Beispiel: robustes Einlesen eines int, mit istringstream als Zwischenstream
+```C++
+int inputAge(std::istream& in) {
+  while(in) {
+    std::string line{};
+    getline(in, line);
+    std::istringstream is{line};
+    int age{-1};
+    if(is >> age) {
+      return age;
+    }
+  }
+  return -1;
+}
+```
+
 # Operatoren
 
+* Wie aus Java bekannt
+* ``and, or, not`` sind alternative Schreibweisen für ``&&, ||, !``
+* ``bitand, bitor, xor`` sind ``&, |, ^``
+
+
+
 ## Reihenfolge
+
+Achtung: in einer einzelnen Expression, wenn die Funktionsaufrufe nur durch Komma getrennt sind, ist die Reihenfolge undefiniert.
+
 <table class="wikitable">
 
 <tbody><tr>

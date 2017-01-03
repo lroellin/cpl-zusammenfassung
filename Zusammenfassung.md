@@ -64,14 +64,7 @@ void sayHello(std::ostream &out);
 #endif /* SAYHELLO_H_ */
 ```
 
-# Klassen
-
-Es gibt zwei Keywords, ``struct``und ``class``. Die sind äquivalent, ausser
-
-* struct ist standardmässig public
-* class ist standardmässig private
-
-Beispiel mit 3 Files
+### Beispiel mit 3 Files
 
 Hello.h
 
@@ -109,6 +102,150 @@ int main() {
   hello.sayHello(std::cout);
 }
 ```
+
+# Klassen
+
+Es gibt zwei Keywords, ``struct``und ``class``. Die sind äquivalent, ausser
+
+* struct ist standardmässig public
+* class ist standardmässig private
+
+Eine gute Klasse kennt eine Klasseninvariante, d.h. dass eine Instanz sich immer in einem guten Zustand befindet. Falls eine Änderung diese Invarianz verletzt, wird sie entweder zurückgerollt oder zerstört. Aber nicht im FUBAR-Zustand belassen.
+
+## Beispielklasse Date
+
+```C++
+#ifndef DATE_H_
+#define DATE_H_
+class Date {
+	int year, month, day;
+public:
+	Date(int year, int month, int day)
+	: year{year}, month{month}, day{day}
+	{
+		...
+	}
+	static bool isLeapYear(int year) {
+		...
+	}
+private:
+	bool isValidDate() const {
+		...
+	}
+};
+
+#endif /* DATE_H_ */
+```
+
+## Access Specifier
+* private
+* protected (auch Subklassen)
+* public
+
+Visibilities können auch mehrmals verwendet werden
+
+## Member Variables
+Haben einen Typ und einen Namen. So const wie möglich. 
+
+``<type> <name>``
+
+## Konstruktor
+Der Konstruktor ist eine spezielle Member Funktion. Er hat **keinen** Rückgabewert. Es gibt eine Initializer-List für Member-Initialisierung
+
+```C++
+<class name>(<parameters>)
+	: <initializer-list>
+{}
+```
+
+### Spezielle Konstruktoren
+
+**Default Constructor**
+``Date(); / Date d{};``
+
+Keine Parameter, implizit verfügbar wenn es keine anderen Konstruktoren gibt. Initialisiert die Member-Variablen mit Default-Werten
+
+**Copy Constructor**
+``Date(Date const &); / Date d2{d};``
+
+Hat einen ``<own type> const &`` Parameter. Implizit verfügbar (ausser es gibt einen expliziten Move-Konstruktor oder Assignment-Operator). Kopiert alle Member-Variablen. Implementiert man normalerweise nicht selber. 
+
+**Move Constructor**
+``Date(date &&); / date d2{std::move(d)}``
+
+Hat einen ``<own type> &&`` Parameter. Implizit verfügbar (ausser es gibt einen expliziten Copy-Konstruktor oder Assignment-Operator). Verschiebt alle Member (d ist dann tot). Impemenetiert man normalerweise nicht selber.
+
+**Typeconversion Constructor**
+``explicit Date(std::string const &); / Date d{"19/10/2016"s}``
+
+Hat einen ``<other-type> const &`` Parameter. Konvertiert den Input-Typ wenn möglich. ``explicit`` deklarieren, damit nicht versucht wird ein anderer Typ in diesen String (im Beispiel) hineinzupressen.
+
+
+### Implementation
+Der Konstruktor soll die Invariante etablieren und die Member initialisieren. Konstruktoren bauen nur valide Instanzen und werfen ansonsten Exceptions. Beim Default-Konstruktor ohne Parameter sollten sinnvolle Defaultwerte gesetzt werden
+
+Date.cpp
+
+```C++ 
+Date::Date(int year, int month, int day)
+	: year{year}, month{month}, day{day}
+{
+	if(!isValidDate()) {
+		throw std::out_of_range("invalid date");
+	}
+}
+
+Date::Date() : Date{1980, 1, 1} {}
+
+Date(Date const & other) : Date{other.year, other.month, other.day) {}
+```
+## Destruktoren
+Genannt wie der Default-Konstruktor mit einem ~ zu Beginn: 
+``~Date();``
+
+Muss alle Ressourcen freigeben. Implizit verfügbar. Darf keine Exception werfen! Wird automatisch am Ende des Blocks für alle lokalen Instanzen aufgerufen.
+
+## Vererbung
+Base-Klassen werden nach dem Klassennamen spezifiziert
+
+``class <name> : <base1>, ..., <baseN>``
+
+Die Vererbung kann sogar eine Visibility haben. Dies beschränkt die **maximale** Visibility der geerbten Member.
+
+## Implementation
+Die eigentliche Implementierung sollte die Klasse im Header-File inkludieren und dann die Methoden implementieren. Wichtig: die Scope Specifier beachten
+
+```C++
+#include "Date.h"
+
+Date::Date(int year, int month, int day)
+	: year{year}, month{month}, day{day}
+{
+		...
+}
+bool Date::isLeapYear(int year) {
+	...
+}
+bool Date::isValidDate() const {
+	...
+}
+```
+
+## Benutzung
+
+```C++
+#include "Date.h"
+
+void foo() {
+	Date today{2016, 10, 19};
+	
+	Date::isLeapYear(2016)
+}
+```
+
+## Member Funktionen
+
+
 
 # Variablen
 
@@ -541,6 +678,9 @@ Es gibt vordefinierte Exception Types in ``<stdexcept>>``
 	* std::underflow_error
 
 Man kann als Konstruktorargument immer einen String als Grund angeben. Ebenso gibt es die ``.what()`` Member Funktion um den Grund zu erfragen
+
+### CUTE Exceptions
+Mit CUTE kann man die Exception mit ``ASSERT_THROWS(square_root(-1.0), std::invalid_argument);`` erfragen
 
 # Move
 Streams können nicht kopiert werden, aber "gemovet". Dabei werden sie wie kopiert, aber die Innereien werden rausgerissen". Die alte Variable ist dann unbrauchbar.

@@ -48,6 +48,10 @@ TODO
 
 Eigene Includes immer zuoberst!
 
+Funktionen in Header-Files typischerweise nur als Deklaration. Wenn kurze Funktion (oder Template): ``inline``
+
+* Klassen-Member-Funktionen sowie Templates sind implizit inline.
+
 ## Include Guard
 
 Um die ODR (One Definition Rule) nicht zu verletzen, verwendet man Guard Statements
@@ -436,6 +440,113 @@ Achtung: in einer einzelnen Expression, wenn die Funktionsaufrufe nur durch Komm
 <td> Left-to-right
 </td></tr></tbody></table>
 
+# Funktionen
+
+Wenn der Block Scope endet ``}`` ist die Lebenszeit vorbei
+> } collects garbage
+
+Achtung: in Funktionen können Variablen Shadowing machen, dies ist nicht verboten (wie in Java)
+
+## Scopes Summary
+
+* Global Scope ::
+	* named Namespaces ::name:: (may be nested)
+		* anonymous namespace (hides name from linker)
+			* class scope (members)
+				* function scope (parameters)
+					* block scope (local variables)
+						* temporaries (subexpression results) 
+
+Achtung mit Referenzen. Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Stack abräumen geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
+
+## Parameter Passing - Return Values
+
+* Pass by value: ``f(type par)`` (bevorzugt)
+* Pass by const ref: ``f(type const & par)``
+* Pass by reference: ``f(type & par)``
+
+* Return by value: ``type f()``
+* return by reference: ``type & f(); type const &g``
+
+## Function Overloading
+
+```C++
+void incr(int & var);
+void incr(int & var, unsigned delta);
+```
+
+Nur wenn die Parameter-Typen unterschiedlich sind oder eine andere Anzahl haben, nicht der Rückgabewert. Overload wird zur Compile-Zeit entschieden. 
+
+##  Default Arguments
+``void incr(int & var, unsigned delta=1);``
+
+Implizites Overloading. Wenn es n default Argumente gibt, gibt es n+1 Versionen der Funktion. 
+
+## Funktionen als Parameter
+Funktionen sind First-Class-Parameter in C++
+
+```C++
+void printfunc(double x, double f(double)) {
+	std::cout << f(x);
+}
+```
+
+In C nur als Function Pointer möglich
+
+## Contract/Exceptions
+
+Wenn eine Funktion ihren Contract nicht erfüllen kann, kann man ein paar Sachen tun. Hier aufgeführt sind nur diese, welche mit C++ besonders Sinn machen oder deren Syntax speziell ist
+
+* Ignorieren
+* Standard-Resultat (z.B. anonymous)
+	* Macht mehr Sinn, wenn der Aufrufer das Standardresultat im Fehlerfall bestimmen kann
+* Error-Wert: Sentinel
+* Error Status Side Effect: Parameter oder globale Variable verändern
+* Exceptions
+
+### Exceptions
+
+Benötigen kein throw, es kann alles geworfen werden was kopierbar ist ``throw 15;``. 
+
+* Es gibt keine Möglichkeit zu spezifizieren was geworfen werden kann. 
+* Es gibt keine Checks, ob man eine Exception nicht auffängt. 
+* Es gibt keine Meta-Informationne
+	* kein Stacktrace, keine Quellcode-Position
+* Wenn eine Exception geworfen wird während eine Exception nach oben propagiert wird, bricht das Programm ab
+
+Exceptions können natürlich gefangen werden
+
+```C++
+try {
+	...
+} catch ( type const &e) { // als Referenz
+	...
+}
+``` 
+
+> throw by value, catch by const reference
+
+Reihenfolge ist wichtig, der erste gewinnt. Ein Catch All ``catch(...) {}`` (das ist tatsächlich die Syntax) muss zuletzt sein.
+
+Es gibt vordefinierte Exception Types in ``<stdexcept>>``
+
+* std::logic_error 
+	* std::domain_error
+	* std::invalid_argument
+	* std::length_error
+	* std::out_of_range
+* std::runtime_error
+	* std::range_error
+	* std::overflow_error
+	* std::underflow_error
+
+Man kann als Konstruktorargument immer einen String als Grund angeben. Ebenso gibt es die ``.what()`` Member Funktion um den Grund zu erfragen
+
+# Move
+Streams können nicht kopiert werden, aber "gemovet". Dabei werden sie wie kopiert, aber die Innereien werden rausgerissen". Die alte Variable ist dann unbrauchbar.
+
+Move-Constructor: ``std::ofstream(std::ofstream &&)`` 
+
 # Lambdas
 
 Wenn es alle möglichen Klammern hat, ist es wahrscheinlich ein Lambda.
@@ -453,6 +564,38 @@ Wenn es alle möglichen Klammern hat, ist es wahrscheinlich ein Lambda.
 	* Typ wird abgeleitet
 * Parameter sind wie Funktionsparameter, auto möglich
 * return_type kann weggelassen werden wenn void oder die return-Statements im Typ konsistent sind (Compiler erkennts) 
+
+# Namespaces
+
+Es gibt den globalen Namespaces, ``::``, zum Beispiel ``::read``. Sub-Namespaces sind erlaubt.
+
+Ein Namespace kann mehrere Male geöffnet und geschlossen werden. Mit ``using`` kann man Namen von anderen Namespaces in den eigenen Scope importieren
+
+Beispiel
+
+```C++
+namespace demo {
+	void foo(); // 1
+	namespace subdemo {
+		void foo() {//2}
+	}
+namespace demo {
+	void bar() {
+		foo(); // 1
+		subdemo::foo(); // 2
+	}
+}
+void demo::foo() {//1} // definition
+int main() {
+	using demo::subdemo::foo;
+	foo() // 2
+	demo::foo() // 1
+	demo::bar()
+}
+```
+
+Dazu gibt es noch den anonymen Namespace, wenn man den Namen weglässt. Damit kann man Sachen ausserhalb des Files verstecken. Ist aber pöse. 
+
 
 # Using
 Von ``using`` gibt es zwei Varianten
@@ -1533,8 +1676,5 @@ Wenn man eine Funktion ``print(int x)`` hat, geht auch
 </td></tr>
 
 
-<tr>
-<td colspan="2"> <h5> <span class="mw-headline" id="Operations_on_uninitialized_memory">  Operations on uninitialized memory </span></h5>
-</td></tr>
 
 </tbody></table>

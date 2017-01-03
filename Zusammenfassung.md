@@ -16,7 +16,6 @@ TODO
     * Oct, dec usw.
 * Cute
 * Klassen
-    * Unterschied class, struct
     * Vererbung
     * Virtual
     * Interface
@@ -36,7 +35,6 @@ TODO
 * Exceptions
 * Header files
     * Inline
-    * Guard statements
 * Constructor
     * Konstruktoren mit direkter Zuweisung, Reihenfolge?
     * Copy
@@ -45,6 +43,321 @@ TODO
 * Files lesen / schreiben
 
 [TOC]
+
+
+
+# Include Files
+
+Eigene Includes immer zuoberst!
+
+## Include Guard
+
+Um die ODR (One Definition Rule) nicht zu verletzen, verwendet man Guard Statements
+
+```C++
+#ifndef SAYHELLO_H_
+#define SAYHELLO_H_
+#include <iosfwd>
+void sayHello(std::ostream &out);
+#endif /* SAYHELLO_H_ */
+```
+
+# Klassen
+
+Es gibt zwei Keywords, ``struct``und ``class``. Die sind äquivalent, ausser
+* struct ist standardmässig public
+* class ist standardmässig private
+
+Beispiel mit 3 Files
+
+Hello.h
+```C++
+#ifndef HELLO_H_
+#define HELLO_H_
+#include <iosfwd>
+
+struct Hello {
+  void sayHello(std::ostream &out) const;
+};
+#endif /* HELLO_H_ */
+```
+Semikolon nicht vergessen!
+
+Hello.cpp
+```C++
+#include "Hello.h"
+#include <ostream>
+
+void Hello::sayHello(std::ostream &out) const {
+  out << "Hello world!\n";
+}
+```
+
+main.cpp
+```C++
+#include "Hello.h"
+#include <iostream>
+
+int main() {
+  Hello hello{};
+  hello.sayHello(std::cout);
+}
+```
+
+# Variablen
+``<type> <name> {<value>};``
+```C++
+int anAnswer{42};
+int const zero{};
+```
+
+Initialisierung kann weggelassen werden, wird aber nicht empfohlen. Leere Klammern bedeuten Default-Initialization
+Mit ``=``können wir den Compiler den Typ entscheiden lassen (nicht mit geschw. Klammern kombinieren)
+```C++
+auto const i = 5
+```
+Mit ``const`` **muss** initialisiert werden (mit geschweiften Klammern). Mit ``constexpr``wird der Wert zur Compile-Zeit festgelegt.
+Nicht vergessen: **As const as possible**
+```C++
+int const theAnswer{6*7}
+double constexpr pi{3.14}
+```
+
+Liste des Bösen:
+* eine Variable *darf* innerhalb eines Blocks neu verwendet werden, dies ist kein Fehler
+* globale Variablen
+
+# Operatoren
+
+## Reihenfolge
+<table class="wikitable">
+
+<tbody><tr>
+<th style="text-align: left"> Precedence
+</th>
+<th style="text-align: left"> Operator
+</th>
+<th style="text-align: left"> Description
+</th>
+<th style="text-align: left"> Associativity
+</th></tr>
+<tr>
+<th> 1
+</th>
+<td> <code>::</code>
+</td>
+<td> <a href="/w/cpp/language/identifiers#Qualified_identifiers" title="cpp/language/identifiers">Scope resolution</a>
+</td>
+<td style="vertical-align: top" rowspan="6"> Left-to-right
+</td></tr>
+<tr>
+<th rowspan="5"> 2
+</th>
+<td style="border-bottom-style: none"> <code>a++</code>&nbsp;&nbsp; <code>a--</code>
+</td>
+<td style="border-bottom-style: none"> Suffix/postfix <a href="/w/cpp/language/operator_incdec" title="cpp/language/operator incdec">increment and decrement</a>
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code><i>type</i>()</code>&nbsp;&nbsp; <code><i>type</i>{}</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/explicit_cast" title="cpp/language/explicit cast">Functional cast</a>
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>a()</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/operator_other#Built-in_function_call_operator" title="cpp/language/operator other">Function call</a>
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>a[]</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/operator_member_access#Built-in_subscript_operator" title="cpp/language/operator member access">Subscript</a>
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>.</code>&nbsp;&nbsp; <code>-&gt;</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/operator_member_access#Built-in_member_access_operators" title="cpp/language/operator member access">Member access</a>
+</td></tr>
+<tr>
+<th rowspan="9"> 3
+</th>
+<td style="border-bottom-style: none"> <code>++a</code>&nbsp;&nbsp; <code>--a</code>
+</td>
+<td style="border-bottom-style: none"> Prefix <a href="/w/cpp/language/operator_incdec" title="cpp/language/operator incdec">increment and decrement</a>
+</td>
+<td style="vertical-align: top" rowspan="9"> Right-to-left
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>+a</code>&nbsp;&nbsp; <code>-a</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> Unary <a href="/w/cpp/language/operator_arithmetic#Unary_arithmetic_operators" title="cpp/language/operator arithmetic">plus and minus</a>
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>!</code>&nbsp;&nbsp; <code>~</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/operator_logical" title="cpp/language/operator logical">Logical NOT</a> and <a href="/w/cpp/language/operator_arithmetic#Bitwise_logic_operators" title="cpp/language/operator arithmetic">bitwise NOT</a>
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>(<i>type</i>)</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/explicit_cast" title="cpp/language/explicit cast">C-style cast</a>
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>*a</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/operator_member_access#Built-in_indirection_operator" title="cpp/language/operator member access">Indirection</a> (dereference)
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>&amp;a</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/operator_member_access#Built-in_address-of_operator" title="cpp/language/operator member access">Address-of</a>
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>sizeof</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/sizeof" title="cpp/language/sizeof">Size-of</a><sup id="cite_ref-1" class="reference"><a href="#cite_note-1">[note 1]</a></sup>
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>new</code>&nbsp;&nbsp; <code>new[]</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/new" title="cpp/language/new">Dynamic memory allocation</a>
+</td></tr>
+<tr>
+<td style="border-top-style: none"> <code>delete</code>&nbsp;&nbsp; <code>delete[]</code>
+</td>
+<td style="border-top-style: none"> <a href="/w/cpp/language/delete" title="cpp/language/delete">Dynamic memory deallocation</a>
+</td></tr>
+<tr>
+<th> 4
+</th>
+<td> <code>.*</code>&nbsp;&nbsp; <code>-&gt;*</code>
+</td>
+<td> <a href="/w/cpp/language/operator_member_access#Built-in_pointer-to-member_access_operators" title="cpp/language/operator member access">Pointer-to-member</a>
+</td>
+<td style="vertical-align: top" rowspan="12"> Left-to-right
+</td></tr>
+<tr>
+<th> 5
+</th>
+<td> <code>a*b</code>&nbsp;&nbsp; <code>a/b</code>&nbsp;&nbsp; <code>a%b</code>
+</td>
+<td> <a href="/w/cpp/language/operator_arithmetic#Multiplicative_operators" title="cpp/language/operator arithmetic">Multiplication, division, and remainder</a>
+</td></tr>
+<tr>
+<th> 6
+</th>
+<td> <code>a+b</code>&nbsp;&nbsp; <code>a-b</code>
+</td>
+<td> <a href="/w/cpp/language/operator_arithmetic#Additive_operators" title="cpp/language/operator arithmetic">Addition and subtraction</a>
+</td></tr>
+<tr>
+<th> 7
+</th>
+<td> <code>&lt;&lt;</code>&nbsp;&nbsp; <code>&gt;&gt;</code>
+</td>
+<td> Bitwise <a href="/w/cpp/language/operator_arithmetic#Bitwise_shift_operators" title="cpp/language/operator arithmetic">left shift and right shift</a>
+</td></tr>
+<tr>
+<th rowspan="2"> 8
+</th>
+<td style="border-bottom-style: none"> <code>&lt;</code>&nbsp;&nbsp; <code>&lt;=</code>
+</td>
+<td style="border-bottom-style: none"> For <a href="/w/cpp/language/operator_comparison" title="cpp/language/operator comparison">relational operators</a> &lt; and ≤ respectively
+</td></tr>
+<tr>
+<td style="border-top-style: none"> <code>&gt;</code>&nbsp;&nbsp; <code>&gt;=</code>
+</td>
+<td style="border-top-style: none"> For <a href="/w/cpp/language/operator_comparison" title="cpp/language/operator comparison">relational operators</a> &gt; and ≥ respectively
+</td></tr>
+<tr>
+<th> 9
+</th>
+<td> <code>==</code>&nbsp;&nbsp; <code>!=</code>
+</td>
+<td> For <a href="/w/cpp/language/operator_comparison" title="cpp/language/operator comparison">relational operators</a> = and ≠ respectively
+</td></tr>
+<tr>
+<th> 10
+</th>
+<td> <code>a&amp;b</code>
+</td>
+<td> <a href="/w/cpp/language/operator_arithmetic#Bitwise_logic_operators" title="cpp/language/operator arithmetic">Bitwise AND</a>
+</td></tr>
+<tr>
+<th> 11
+</th>
+<td> <code>^</code>
+</td>
+<td> <a href="/w/cpp/language/operator_arithmetic#Bitwise_logic_operators" title="cpp/language/operator arithmetic">Bitwise XOR</a> (exclusive or)
+</td></tr>
+<tr>
+<th> 12
+</th>
+<td> <code>|</code>
+</td>
+<td> <a href="/w/cpp/language/operator_arithmetic#Bitwise_logic_operators" title="cpp/language/operator arithmetic">Bitwise OR</a> (inclusive or)
+</td></tr>
+<tr>
+<th> 13
+</th>
+<td> <code>&amp;&amp;</code>
+</td>
+<td> <a href="/w/cpp/language/operator_logical" title="cpp/language/operator logical">Logical AND</a>
+</td></tr>
+<tr>
+<th> 14
+</th>
+<td> <code>||</code>
+</td>
+<td> <a href="/w/cpp/language/operator_logical" title="cpp/language/operator logical">Logical OR</a>
+</td></tr>
+<tr>
+<th rowspan="7"> 15
+</th>
+<td style="border-bottom-style: none"> <code>a?b:c</code>
+</td>
+<td style="border-bottom-style: none"> <a href="/w/cpp/language/operator_other#Conditional_operator" title="cpp/language/operator other">Ternary conditional</a><sup id="cite_ref-2" class="reference"><a href="#cite_note-2">[note 2]</a></sup>
+</td>
+<td style="vertical-align: top" rowspan="7"> Right-to-left
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>throw</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/throw" title="cpp/language/throw">throw operator</a>
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>=</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/operator_assignment#Builtin_direct_assignment" title="cpp/language/operator assignment">Direct assignment</a> (provided by default for C++ classes)
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>+=</code>&nbsp;&nbsp; <code>-=</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/operator_assignment#Builtin_compound_assignment" title="cpp/language/operator assignment">Compound assignment</a> by sum and difference
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>*=</code>&nbsp;&nbsp; <code>/=</code>&nbsp;&nbsp; <code>%=</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/operator_assignment#Builtin_compound_assignment" title="cpp/language/operator assignment">Compound assignment</a> by product, quotient, and remainder
+</td></tr>
+<tr>
+<td style="border-bottom-style: none; border-top-style: none"> <code>&lt;&lt;=</code>&nbsp;&nbsp; <code>&gt;&gt;=</code>
+</td>
+<td style="border-bottom-style: none; border-top-style: none"> <a href="/w/cpp/language/operator_assignment#Builtin_compound_assignment" title="cpp/language/operator assignment">Compound assignment</a> by bitwise left shift and right shift
+</td></tr>
+<tr>
+<td style="border-top-style: none"> <code>&amp;=</code>&nbsp;&nbsp; <code>^=</code>&nbsp;&nbsp; <code>|=</code>
+</td>
+<td style="border-top-style: none"> <a href="/w/cpp/language/operator_assignment#Builtin_compound_assignment" title="cpp/language/operator assignment">Compound assignment</a> by bitwise AND, XOR, and OR
+</td></tr>
+<tr>
+<th> 16
+</th>
+<td> <code>,</code>
+</td>
+<td> <a href="/w/cpp/language/operator_other#Built-in_comma_operator" title="cpp/language/operator other">Comma</a>
+</td>
+<td> Left-to-right
+</td></tr></tbody></table>
 
 # Iterators
 
@@ -401,19 +714,3 @@ HashSet in Java, nicht benutzen → C++ advanced
 ## std::unordered_map
 
 HashMap in Java, nicht benutzen → C++ advanced
-
-# Include Files
-
-Eigene Includes immer zuoberst!
-
-## Include Guard
-
-Um die ODR (One Definition Rule) nicht zu verletzen, verwendet man Guard Statements
-
-```C++
-#ifndef SAYHELLO_H_
-#define SAYHELLO_H_
-#include <iosfwd>
-void sayHello(std::ostream &out);
-#endif /* SAYHELLO_H_
-```

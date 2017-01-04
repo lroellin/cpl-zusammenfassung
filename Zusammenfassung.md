@@ -4,11 +4,13 @@ C++ Spick
 TODO
 * Ausgaben-Formatierung (Oct, dec usw.)
 * ADL
-* Beispiele für Algorithms
-	* Lexicographic Compare
+* Beispiele
+	* Lexicographic Compare mit Algorithms
+	* Ring5 (V6, S31, auch Übung)
 * const Beschreiben, unterschied const Methoden und const Variabeln 
 * Functor
 * Function Interface (C++11)
+	* V9 S.19-28 anschauen (übersprungen)
 * Häufige Includes
 	* iofwd, iostream und de quatsch
 * Initialisierung mit () vs {}
@@ -24,6 +26,7 @@ TODO
 * Beispiel für Anonymous Namespace?
 * Call by value / call by reference
 * Files lesen / schreiben
+* Dekonstruktor ist nicht virtual
 
 [TOC]
 
@@ -447,6 +450,58 @@ Dieses "Pattern" braucht man immer wieder, auch z.B. fürs Einlesen. In den Stre
 # Argument Dependent Lookup (ADL)
 Wenn man Funktionen ausserhalb der Klasse, aber im selben Headerfile nutzt, sollte man die Klasse und die Funktion mit demselben Namespace versehen. Wenn der Compiler eine nicht-qualified Funktion oder einen nicht-qualified Operator auffindet, schaut er sich den Namespace der Typen an, die involviert sind.
 
+
+# Enums
+
+Syntax
+
+```C++
+enum day_of_week {
+	Mon, Tue, Wed, Thu, Fri, Sat, Sun
+}
+```
+Alternativ noch mit class
+
+```C++
+enum class day of week (...)
+```
+
+Unterschied: ohne ``class`` leaken sie in den umgebenden Scope (``day = date::Sat``), am besten als Member einer Klasse genutzt. Mit ``class`` leaken sie nicht (``day == date::day_of_week::Sat``), und der darunterliegende Typ kann spezifiziert werden.
+
+Die Enums starten normalerweise bei 0 und erhöhen sich um 1. Es ist möglich, die Operatoren zu überschreiben.
+
+## Wert festlegen
+
+Mit ``=`` kann man den Wert festlegen. Folgende erhalten dann einfach den Wert + 1.
+
+**Beispiel Monate**
+Bei den Monaten will man mit 1 beginnen, und man will auch Kurznamen. Dabei gibt es für Mai (May) aber keinen Kurznamen.
+
+```C++
+enum momth {
+	jan = 1, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec,
+	january=jan, february, march, april, june=jun, july, august, september, october, november, december
+};
+```
+
+## Typ festlegen
+Der darunterliegende Typ kann jeder Ganzzahl-Typ sein (auch bool und char). 
+
+```C++
+enum class launch_policy : unsigned_char
+```
+
+Wenn man den "Namen" eines Enums wieder will, muss man selber eine Lookup-Table implementieren. 
+
+```C++
+enum class launch_policy : unsigned_char {
+	sync = 1,
+	async = 2,
+	gpu = 4,
+	process = 8,
+	none = 0
+}
+```
 
 # Variablen
 
@@ -928,12 +983,58 @@ Wenn es alle möglichen Klammern hat, ist es wahrscheinlich ein Lambda.
 }
 ```
 
+Beispiel:
+```C++
+auto const g=[](char c)->{return std::toupper(c);}; // beide Semikolon nicht vergessen!``
+g('a');
+```
+
+* Parameter sind wie Funktionsparameter, auto möglich. Klammer kann auch weggelassen werden
+* return_type kann weggelassen werden wenn void oder die return-Statements im Typ konsistent sind (Compiler erkennts). **Dann aber auch den Pfeil weglassen**.
+
+## Captures und Parameter
+
 * Capture benennt Variablen die vom umgebenden Scope genommen werden oder erstellt sogar neue
 	* ``=`` copy
 	* ``&`` reference
+	* ``var=value`` erzeugt neue Capture-Variable mit Wert
+	* Können auch kombiniert werden
+		* ``=, &out`` capturet alle by copy, aber ``out`` by reference
+		* ``&,=x`` capturet alle by reference, aber x by copy/value
+		* Guideline: alle Captures explizit machen
 	* Typ wird abgeleitet
+	* Wenn man Member-Variablen captured, sind diese automatisch by reference, auch wenn man ``[=]`` automatisch by copy macht.
+		* this ist schon eine Reference
 * Parameter sind wie Funktionsparameter, auto möglich
-* return_type kann weggelassen werden wenn void oder die return-Statements im Typ konsistent sind (Compiler erkennts)
+* **Captures werden zur Definitionszeit festgelegt, Parameter zur Aufrufzeit**
+
+```C++
+void testLambdaCapture() {
+	int n{5};
+	auto lambdaCapture=[n](){return n;};
+	n++;
+	ASSERT_EQUAL(lambdaCapture(), 5);
+	ASSERT_EQUAL(n, 6);
+}
+
+void testLambdaCaptureReference() {
+	int n{5};
+	auto lambdaCapture=[&n](){return n;};
+	n++;
+	ASSERT_EQUAL(lambdaCapture(), 6);
+	ASSERT_EQUAL(n, 6);
+}
+
+void testLambdaParameter() {
+	int n{5};
+	auto lambdaCapture=[](int m){return m;};
+	n++;
+	ASSERT_EQUAL(lambdaCapture(n), 6);
+	ASSERT_EQUAL(n, 6);
+}
+```
+### Spezialfall mutable
+Variables die by copy gecaptured werden sind im Lambda const, ausser wenn das Lambda als ``mutable`` gekennzeichnet wird. Das Lambda bekommt seine eigene Kopie der Variable oder das Lambda definiert die Variable gleich neu.
 
 # Namespaces
 
@@ -989,7 +1090,34 @@ Include für alle Iterators: ``#include <iterator>``
 
 Achtung, das Ende ist **vor** ``end``.
 
-Um read-only zu garantieren sollte ``cbegin()/cend()`` verwendet werden.
+Um read-only zu garantieren sollte ``cbegin()/cend()`` verwendet werden. Wenn man von "hinten" beginnen möchte gibts ``rbegin()/rend()``. 
+
+Wenn man Iteratoren speichern will, am besten Typ ``auto``.
+
+Beispiele:
+
+```C++
+void testRIterators() {
+	std::vector<int> v {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	auto it = v.rbegin();
+	it++;
+	ASSERT_EQUAL(*it, 9);
+}
+
+int main() {
+ std::vector<int> v {1,2,3,4,5,6,7,8,9};
+ std::cout << *(--v.end()) << ", " << *(--v.rend());
+ // Output 9, 1
+}
+
+int main() { 
+ std::vector<int> v {1,2,3,4,5,6,7,8,9}; 
+ std::cout << *v.begin() << ", "<< *(--v.end()) 
+   << ", " << *v.rbegin() << ", " << *(--v.rend()); 
+ // Output 1, 9, 9, 1 
+}
+```
+
 
 Liste des Bösen
 
@@ -1038,7 +1166,42 @@ int main() {
 }
 ```
 
+## Erase/Remove
+Wenn man Elemente löschen will, so macht man das immer in zwei Teilen
+
+1. Finden, was zu löschen ist. Technisch: alles zu Löschende ans Ende verscbieben und Iterator auf erstes zu löschendes Element zurückgeben: ``remove``
+2. Danach löscht man von diesem gegebenen Iterator bis zum ``end``: ``erase`
+
+```C++
+// removes all elements with the value 5
+v.erase( std::remove( v.begin(), v.end(), 5 ), v.end() ); 
+```
+
 ## Kategorien
+
+**Input Iteratoren**
+
+* Das aktuelle Element kann nur einmal ausgelesen werden, der Iterator muss danach inkrementiert werden
+* Kann Iteratoren vergleichen
+
+**Forward Iterator**
+
+* Das Element kann gelesen und verändert werden (ausser der Container oder die Elemente sind const)
+* Kann nicht rückwärts lesen
+* Der Iterator kann aber kopiert werden für spätere Referenz
+
+**Bidirectional Iterator**
+* Das Element kann gelesen und verändert werden (ausser...)
+* Kann vorwärts und rückwärts gehen
+* Random Access sind bidirectional, aber können auch indexen
+
+**Output Iterator**
+
+* Kann einen Wert schreiben, aber nur einmal und muss danach inkrementiert werden
+
+## Spezialfunktionen 
+Mit ``distance`` kann man die Anzahl Hops zählen, bis man zum anderen Iterator kommt. Mit ``advance`` kann man n Male hüpfen.
+
 
 <table class="boxed">
 <tbody><tr><th colspan="4">category</th><th>properties</th><th>valid expressions</th></tr>
@@ -1215,9 +1378,9 @@ pop_back();
 
 ## std::array
 
-Wrapper über Klassischen C array mit length feld
+Wrapper über Klassischen C array mit length Feld
 
-**Include/Initialisieren**: ``#include <array>/std::array<int, 6> a{}; //6=size``
+**Include/Initialisieren**: ``#include <array>/std::array<int, 6> a{{1, 2, 3, 4, 5}}; // 6=size, Achtung doppelte geschw. Klammern!``
 
 **Iterator**: random access
 
@@ -1345,9 +1508,9 @@ Pop nimmt grösstes Element aus der Queue, **keine Iteratoren!**
 
 ## std::set
 
-Entspricht TreeSet in Java, aufsteigend sortiert ohne Duplikate
+Entspricht TreeSet in Java, aufsteigend sortiert ohne Duplikate (Sortierung als zweiter Template-Parameter möglich)
 
-**Include / Initialisieren**: ``#include <set> / std::set<int> s{};``
+**Include / Initialisieren**: ``#include <set> / std::set<int> s{}; ODER AUCH std::set<int, std::less> s{}``
 
 **Iterator**: bidirectional (immer const)
 
@@ -1423,6 +1586,66 @@ HashSet in Java, nicht benutzen → C++ advanced
 
 HashMap in Java, nicht benutzen → C++ advanced
 
+# Functor
+Ein Functor ist eine Klasse, die einen Call-Operator hat: ``operator()``. Gegenüber einer normalen Funktion hat sie Speicher zur Verfügung, der auch bleibt. 
+
+Der Functor kann auch gleich mit ``donothingfunctor{}()`` konstruiert und gleich aufgerufen werden.
+
+```C++
+struct Accumulator {
+	int count{0};
+	int accumulated_value{0};
+	void operator()(int value) {
+		count++;
+		accumulated_value += value;
+	}
+	int average() const;
+	int sum() const;
+}
+
+// Achtung nicht Implementation von oberem
+int average(std::vector<int> values) {
+	Accumulator acc{};
+	for(auto v: values) { acc(v); }
+	return acc.average();
+}
+```
+
+Lambdas werden intern mit Functors realisiert.
+
+Es gibt ein paar Standard Functors, wie z.B. ``std::greater<>{}`` in ``<functional>``.
+
+Binary Arithmetic and logical
+
+* ``plus<>`` (+)
+* ``minus<>`` (-)
+* ``divides<>`` (/)
+* ``multiplies<>`` (``*``)
+* ``modulus<>`` (%)
+* ``logical_and<>`` (&&)
+* ``logical_or<>`` (||)
+
+Unary
+
+* ``negate<>`` (-)
+* ``logcal_not<>`` (!)
+
+Binary Comparison
+
+* ``less<>`` (<)
+* ``less_equal<>`` (<=)
+* ``equal_to<>`` (==)
+* ``greater_equal<>`` (>=)
+* ``greater<>`` (>)
+* ``not_equal_to<>`` (!=)
+
+Diese lassen sich dann in manchen Containern als Vergleichsoperator mitgeben, allerdings nur wenn wie irreflexiv und transitiv sind (ah ja.)
+
+### Als Parameter
+``std::function<SIGNATURE>;``, also zum Beispiel ``std::function<bool(int)> apredicate{};``
+
+Die Signatur wird geprüft.
+
 # Algorithms
 Ein paar Beispiele:
 Jeder Container hat ``size()``. Was wenn man nur zwei Iteratoren hat? ``std::distance(begin, end)``
@@ -1437,6 +1660,54 @@ for_each(begin(v), end(v),[](auto x) {
 
 Wenn man eine Funktion ``print(int x)`` hat, geht auch
 ``for_each(begin(v), end(v), print);``
+
+## Ranges
+Algorithmen brauchen oft Ranges, die man mit Iteratoren angibt.
+
+## Beispiele aus Vorlesung
+**transform**
+Eine Range zu neuen Values umwandeln, oder zwei Ranges derselben Grösse.
+Input: ``counts``: 3, 0, 1, 4, 0, 2
+Input: ``letters``: g, a, u, y, f, o
+Output: ggg, , u, yyyy, , oo
+
+```C++
+std::vector<std::string> combined{};
+auto times = [](int i, char c) {return std::string(i, c);};
+std::transform(begin(counts), end(counts), begin(letters), std::back_inserter(combined), times)
+```
+
+**merge**
+Zwei Ranges sortiert mergen
+
+**accumulate**
+Kann auch so gewürgt werden dass es nicht-numerisches unterstützt, z.B. Listen.
+
+## Suffix-Versionen
+**``_if``**
+Von manchen gibts noch eine ``_if``-Version, die noch ein Predicate nimmt
+
+**``_n``**
+Vielfach statt dem ``last``-Iterator einfach eine Angabe wie oft.
+
+## Heap-Algorithmen
+Bauen die Container so um, dass sie einem Heap entsprechen
+
+**Operationen**
+
+* ``make_heap``: 3*N Vergleiche
+* ``pop_heap``: 2*log(N) Vergleiche
+* ``push_heap``: log(N) Vergleiche
+* ``sort_heap``: N*log(N) Vergleiche
+
+## Fallen
+
+* Die Iteratoren müssen natürlich zum selben Range gehören, sonst brennt die HSR ab.
+* Bei den copy-Algorithmen muss genügend Platz im Ziel sein, sonst brennt die HSR ab. Wenn man sich nicht darum kümmern will: ``back_inserter``, ``front_inserter`` oder ``inserter``.
+* Manche Operationen machen die Iteratoren ungültig, zum Beispiel ein Push-Back auf einem Vector. Der end-Iterator zeigt dann nicht mehr auf den richtigen Ort.
+
+
+
 
 <table class="t-dsc-begin">
 

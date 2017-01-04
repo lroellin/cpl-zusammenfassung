@@ -2,6 +2,7 @@
 C++ Spick
 
 TODO
+Lroellin: Ausgaben-Formatierung
 
 * Const
 * Streams
@@ -243,7 +244,188 @@ void foo() {
 }
 ```
 
-## Member Funktionen
+## Member-Funktionen
+Dürfen die Invariante nicht verletzen. 
+
+Es gibt das implizite ``this``-Objekt. Zugriff mit dem Pfeil ``->``: ``this->day``. Aber auch einfach ``day``.
+
+In einer const-Memberfunktion dürfen die Member nicht verändert werden. Es können nur const-Member aufgerufen werden. 
+
+### Static Member-Funktionen
+Es gibt kein this-Objekt, können **nicht** const sein. Kein static Keyword. 
+
+Aufruf: ``<classname>::<member>(): Date::isLeapYear(2016);``
+
+## Static Member-Variablen
+**Im Header**: als ``static`` oder als ``static const`` deklarieren. ``static const`` dürfen auch gleich initialisiert werden: 
+
+```C++
+Class Date {
+	static const Date myBirthday;
+	staic const Date favoriteStudentsBirthday;
+	static const int zero{0};
+}
+```
+
+**Im Implementationsfile**: kein ``static``. Es dürfen auch const-Variablen hier initialisiert werden (aber auch nicht const): 
+
+```C++
+#include "Date.h"
+Date const Date::myBirthday{1964, 12, 24};
+Date Date::favoriteStudentsBirthday{1995, 5, 10};
+```
+
+**Ausserhalb der Klasse**: mit ``<Classname>::<member>
+```C++
+#include "Date.h"
+Date::favoriteStudentsBirthday = ...;
+```
+
+## Operator-Overloading
+> When in doubt, do as the ints do
+
+Wie eine Funktion deklariert, allerdings als mit speziellem Namen: ``<returntype> operator<op>(<parameters>);
+
+Unäre/binäre Parameter haben einen bzw. zwei Parameter. 
+
+**Überladbare Operatoren**:
+
+```
++----+-----+-----+-------+--------+----------+
+| +  | -   | *   | /     | %      | ^        |
++----+-----+-----+-------+--------+----------+
+| &  | |   | ~   | !     | ,      | =        |
++----+-----+-----+-------+--------+----------+
+| <  | >   | <=  | >=    | ++     | --       |
++----+-----+-----+-------+--------+----------+
+| << | >>  | ==  | !=    | &&     | ||       |
++----+-----+-----+-------+--------+----------+
+| += | -=  | /=  | %=    | ^=     | &=       |
++----+-----+-----+-------+--------+----------+
+| |= | *=  | <<= | >>=   | []     | ()       |
++----+-----+-----+-------+--------+----------+
+| -> | ->* | new | new[] | delete | delete[] |
++----+-----+-----+-------+--------+----------+
+```
+
+
+**Nicht überladbare Operatoren**
+
+* ::
+* .*
+* .
+* ?:
+
+### Beispiel: Date vergleichbar machen
+year, month und day vergleichen. Wir nutzen den ``operator<``. Immer const &! Rückgabewert ``bool``. Achtung, hier wird eine Entwicklung gezeigt, damit man den Unterschied sieht.
+
+Erste Variante: als freier Operator (in Klassenfile, aber unterhalb Klassendefinition). Hier zwei Parameter, Date lhs und Date rhs. ``inline`` verwenden, da im Header definiert.
+
+```C++
+class Date {
+	int year, month, day; // private
+};
+
+ACHTUNG DAS GEHT NICHT!!!
+inline bool operator<(Date const & lhs, Date const & rhs) {
+	lhs.year? Geht nicht, kein Access auf private Member
+}
+```
+
+Zweite Variante: als Member Operator (innerhalb Klassendefinition). Nur noch ein Parameter, Date rhs (implizites lhs/this). Ebenso implizites ``inline`` als Member. Da die Methode ``const`` ist, ist auch das ``this`` const.
+
+```C++
+class Date {
+	int year, month, day; // private
+	
+	bool operator<(Date const & rhs) const {
+		return year < rhs.year || 
+			(year == rhs.year && (month < rhs.month ||
+				(month == rhs.month &&  day == rhs.day )))
+};
+```
+
+**In Verwendung**: einfach den ``<`` Operator verwenden:
+
+```C++
+std::cout << "is d older? " << (d < Date::myBirthday);
+```
+
+**Syntactic Sugar für Vergleiche**
+``std::tie``kreiert ein Tupel. (``<tuple>``)
+
+```C++
+	return std::tie(year, month,day) < std::tie(rhs.year, rhs.month, rhs.day);
+```
+
+``std::tuple`` (Header) bietet die folgenden Operatoren
+
+* operator==
+* operator!=
+* operator<
+* operator<=
+* operator>
+* operator>=
+
+Der Vergleich ist immer komponentenweise von links nach rechts. 
+
+**Andere Vergleiche implementieren**
+
+```C++
+class Date {	int year, month, day; //privatepublic:	bool operator<(Date const & rhs) const;};
+inline bool operator>(Date const & lhs, Date const & rhs) {  return rhs < lhs;}inline bool operator>=(Date const & lhs, Date const & rhs) {  return !(lhs < rhs);}inline bool operator<=(Date const & lhs, Date const & rhs) { 
+	return !(rhs < lhs);}inline bool operator==(Date const & lhs, Date const & rhs) {	return !(lhs < rhs) && !(rhs < lhs); 
+}inline bool operator!=(Date const & lhs, Date const & rhs) { 
+	return !(lhs == rhs);}
+```
+
+Die ganzen Operatoren ausserhalb der Klasse sehen wie Boilerplate-Code aus. Deshalb gibts von Boost eine Klasse von der man erben kann, die genau diese zusätzlichen Operatoren bietet. ``private`` erben reicht aus.
+
+Benötigt ``<``, bietet
+
+* ``>``
+* ``<=``
+* ``>=``
+
+```C++
+#include "boost/operators.hpp"
+#include <tuple>
+
+class Date : private boost::less_than_comparable<Date> {	int year, month, day; //privatepublic:	bool operator<(Date const & rhs) const {
+		return std::tie(year, month,day) < std::tie(rhs.year, rhs.month, rhs.day);
+	}};
+```
+
+### Beispiel: Date an std::cout senden
+Was wir wollen:
+```C++
+std::cout << Date::myBirthday;
+```
+
+Erste Variante: als freier Operator. Parameter: ``std::ostream &`` und ``Date const &``. Rückgabewert: ``std::ostream &`` für Output Chaining
+
+Problem: kann private Member nicht ansprechen.
+
+Zweite Variante: als Memberfunktion. Problem: std::ostream darf nicht links sein in Calls. Andersherum würds zwar vom Compiler her gehen (``Date::myBirthday << std::cout``) aber das ist per Konvention falsch.
+
+Dritte Variante: public ``print(std::ostream & os) const``-Memberfunktion, die von operator<< aufgerufen wird. Jetzt funktioniert alles!
+```C++
+#include <ostream>
+
+class Date {
+	int year, month, day;
+public:
+	std::ostream & print(std::ostream & os) const {
+		os << year << "/" << month << "/" 
+
+};
+
+inline std::ostream & operator<<(std::ostream & os, Date const & date) {
+	return date.print(os);
+}
+```
+
+Dieses "Pattern" braucht man immer wieder, auch z.B. fürs Einlesen.
 
 
 

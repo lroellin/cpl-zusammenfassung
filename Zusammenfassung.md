@@ -2,7 +2,11 @@
 C++ Spick
 
 TODO
-Lroellin: Ausgaben-Formatierung
+Lroellin: 
+
+* Ausgaben-Formatierung
+* ADL
+
 
 * Const
 * Streams
@@ -42,7 +46,7 @@ Lroellin: Ausgaben-Formatierung
     * Destructor
 * Files lesen / schreiben
 
-
+[TOC]
 
 
 # Include Files
@@ -150,6 +154,33 @@ Haben einen Typ und einen Namen. So const wie möglich.
 
 ``<type> <name>``
 
+## Static Member-Variablen
+**Im Header**: als ``static`` oder als ``static const`` deklarieren. ``static const`` dürfen auch gleich initialisiert werden: 
+
+```C++
+Class Date {
+	static const Date myBirthday;
+	staic const Date favoriteStudentsBirthday;
+	static const int zero{0};
+}
+```
+
+**Im Implementationsfile**: kein ``static``. Es dürfen auch const-Variablen hier initialisiert werden (aber auch nicht const): 
+
+```C++
+#include "Date.h"
+Date const Date::myBirthday{1964, 12, 24};
+Date Date::favoriteStudentsBirthday{1995, 5, 10};
+```
+
+**Ausserhalb der Klasse**: mit ``<Classname>::<member>
+
+```C++
+#include "Date.h"
+Date::favoriteStudentsBirthday = ...;
+```
+
+
 ## Konstruktor
 Der Konstruktor ist eine spezielle Member Funktion. Er hat **keinen** Rückgabewert. Es gibt eine Initializer-List für Member-Initialisierung
 
@@ -198,8 +229,38 @@ Date::Date(int year, int month, int day)
 
 Date::Date() : Date{1980, 1, 1} {}
 
-Date(Date const & other) : Date{other.year, other.month, other.day) {}
+Date(Date const & other) : Date(other.year, other.month, other.day) {}
 ```
+
+### Konstruktor mit std::istream &
+Man kann einen Konstruktor definieren, der explizit nur istreams entgegennimmt:
+``explicit Date(std::istream & in)``
+
+Wenn das erstellen fehlschlägt, wird eine Exception geworfen.
+
+```C++
+Date::Date(std::istream & in) 
+	: year{}, month{}, day{}
+{
+	read(in)
+	if(in.fail)) {
+		throw std::out_of_range("invalid date");
+	}
+}
+```
+
+Man könnte natürlich auch eine Factory-Funktion machen. 
+
+### Konstruktoren wieder default machen/löschen
+Wenn man einen eigenen Konstruktur gemacht hat, ist der Default-Konstruktor weg. Nun kann man einen der Konstruktoren wieder default machen mit
+
+``<constructor-name>() = default``
+
+Ebenso kann man Konstruktoren löschen:
+
+``<constructor-name>() = delete
+
+
 ## Destruktoren
 Genannt wie der Default-Konstruktor mit einem ~ zu Beginn: 
 ``~Date();``
@@ -255,31 +316,6 @@ In einer const-Memberfunktion dürfen die Member nicht verändert werden. Es kö
 Es gibt kein this-Objekt, können **nicht** const sein. Kein static Keyword. 
 
 Aufruf: ``<classname>::<member>(): Date::isLeapYear(2016);``
-
-## Static Member-Variablen
-**Im Header**: als ``static`` oder als ``static const`` deklarieren. ``static const`` dürfen auch gleich initialisiert werden: 
-
-```C++
-Class Date {
-	static const Date myBirthday;
-	staic const Date favoriteStudentsBirthday;
-	static const int zero{0};
-}
-```
-
-**Im Implementationsfile**: kein ``static``. Es dürfen auch const-Variablen hier initialisiert werden (aber auch nicht const): 
-
-```C++
-#include "Date.h"
-Date const Date::myBirthday{1964, 12, 24};
-Date Date::favoriteStudentsBirthday{1995, 5, 10};
-```
-
-**Ausserhalb der Klasse**: mit ``<Classname>::<member>
-```C++
-#include "Date.h"
-Date::favoriteStudentsBirthday = ...;
-```
 
 ## Operator-Overloading
 > When in doubt, do as the ints do
@@ -409,6 +445,7 @@ Problem: kann private Member nicht ansprechen.
 Zweite Variante: als Memberfunktion. Problem: std::ostream darf nicht links sein in Calls. Andersherum würds zwar vom Compiler her gehen (``Date::myBirthday << std::cout``) aber das ist per Konvention falsch.
 
 Dritte Variante: public ``print(std::ostream & os) const``-Memberfunktion, die von operator<< aufgerufen wird. Jetzt funktioniert alles!
+
 ```C++
 #include <ostream>
 
@@ -425,8 +462,11 @@ inline std::ostream & operator<<(std::ostream & os, Date const & date) {
 }
 ```
 
-Dieses "Pattern" braucht man immer wieder, auch z.B. fürs Einlesen.
+Dieses "Pattern" braucht man immer wieder, auch z.B. fürs Einlesen. In den Streams gibt es auch ein Beispiel fürs Einlesen von Dates.
 
+
+# Argument Dependent Lookup (ADL)
+Wenn man Funktionen ausserhalb der Klasse, aber im selben Headerfile nutzt, sollte man die Klasse und die Funktion mit demselben Namespace versehen. Wenn der Compiler eine nicht-qualified Funktion oder einen nicht-qualified Operator auffindet, schaut er sich den Namespace der Typen an, die involviert sind. 
 
 
 # Variablen
@@ -516,6 +556,35 @@ int inputAge(std::istream& in) {
   return -1;
 }
 ```
+
+## Beispiel: Date read() implementieren
+**Header:**
+
+```C++
+In der Klasse:
+std::istream & read(std::istream & is);
+
+Unterhalb der Klasse:
+inline std::istream & operator>> std::istream & is, Date & date) {
+	return date.read(is);
+}
+```
+
+**``.read()`` implementieren**
+Precondition: std::istream ist im .good()-State. Wenn wir kein Datum extrahieren können, setzen wir std::istream in den fail-State.
+
+Wenn der Input nicht verwendet werden kann, wird das Objekt nicht überschrieben. 
+
+```C++
+class Date {  int year, month, day;public:	std::istream & read(std::istream & is) {		int year{-1}, month{-1}, day{-1};		char sep1, sep2;		//read values		is >> year >> sep1 >> month >> sep2 >> day; 
+		try {			Date input{year, month, day};			//overwrite content of this object (copy-ctor)
+			(*this) = input;			//clear stream if read was ok			is.clear();		} catch (std::out_of_range & e) {			//set failbit			is.setstate(std::ios::failbit | is.rdstate());		}		return is; }
+	}
+};
+```
+
+ 
+
 
 # Operatoren
 
@@ -917,6 +986,8 @@ int main() {
 ```
 
 Dazu gibt es noch den anonymen Namespace, wenn man den Namen weglässt. Damit kann man Sachen ausserhalb des Files verstecken. Ist aber pöse. 
+
+
 
 
 # Using

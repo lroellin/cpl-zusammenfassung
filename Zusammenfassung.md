@@ -2,23 +2,16 @@
 C++ Spick
 
 TODO
-Lroellin: 
-
-* Ausgaben-Formatierung
+* Ausgaben-Formatierung (Oct, dec usw.)
 * ADL
-
-
-* Const
-* Streams
-    * String stream
-    * Buffered
-* Algorithms
+* Beispiele für Algorithms
+	* Lexicographic Compare
+* const Beschreiben, unterschied const Methoden und const Variabeln 
+* Functor
+* Function Interface (C++11)
+* Häufige Includes
+	* iofwd, iostream und de quatsch
 * Initialisierung mit () vs {}
-* Lambdas
-    * Functor
-    * Function Interface
-* Cin / cout
-    * Oct, dec usw.
 * Cute
 * Klassen
     * Vererbung
@@ -28,22 +21,8 @@ Lroellin:
     * Enum
         * Scoped
         * unscoped
-* Operator overloading
-    * In Klasse und extern
-* inline
-* Using
-* Namespace
-    * Anonymous
-* Variable Scopes
+* Beispiel für Anonymous Namespace?
 * Call by value / call by reference
-* Exceptions
-* Header files
-    * Inline
-* Constructor
-    * Konstruktoren mit direkter Zuweisung, Reihenfolge?
-    * Copy
-    * Move
-    * Destructor
 * Files lesen / schreiben
 
 [TOC]
@@ -150,12 +129,12 @@ private:
 Visibilities können auch mehrmals verwendet werden
 
 ## Member Variables
-Haben einen Typ und einen Namen. So const wie möglich. 
+Haben einen Typ und einen Namen. So const wie möglich.
 
 ``<type> <name>``
 
 ## Static Member-Variablen
-**Im Header**: als ``static`` oder als ``static const`` deklarieren. ``static const`` dürfen auch gleich initialisiert werden: 
+**Im Header**: als ``static`` oder als ``static const`` deklarieren. ``static const`` dürfen auch gleich initialisiert werden:
 
 ```C++
 Class Date {
@@ -165,7 +144,7 @@ Class Date {
 }
 ```
 
-**Im Implementationsfile**: kein ``static``. Es dürfen auch const-Variablen hier initialisiert werden (aber auch nicht const): 
+**Im Implementationsfile**: kein ``static``. Es dürfen auch const-Variablen hier initialisiert werden (aber auch nicht const):
 
 ```C++
 #include "Date.h"
@@ -200,7 +179,7 @@ Keine Parameter, implizit verfügbar wenn es keine anderen Konstruktoren gibt. I
 **Copy Constructor**
 ``Date(Date const &); / Date d2{d};``
 
-Hat einen ``<own type> const &`` Parameter. Implizit verfügbar (ausser es gibt einen expliziten Move-Konstruktor oder Assignment-Operator). Kopiert alle Member-Variablen. Implementiert man normalerweise nicht selber. 
+Hat einen ``<own type> const &`` Parameter. Implizit verfügbar (ausser es gibt einen expliziten Move-Konstruktor oder Assignment-Operator). Kopiert alle Member-Variablen. Implementiert man normalerweise nicht selber.
 
 **Move Constructor**
 ``Date(date &&); / date d2{std::move(d)}``
@@ -218,7 +197,7 @@ Der Konstruktor soll die Invariante etablieren und die Member initialisieren. Ko
 
 Date.cpp
 
-```C++ 
+```C++
 Date::Date(int year, int month, int day)
 	: year{year}, month{month}, day{day}
 {
@@ -239,7 +218,7 @@ Man kann einen Konstruktor definieren, der explizit nur istreams entgegennimmt:
 Wenn das erstellen fehlschlägt, wird eine Exception geworfen.
 
 ```C++
-Date::Date(std::istream & in) 
+Date::Date(std::istream & in)
 	: year{}, month{}, day{}
 {
 	read(in)
@@ -249,7 +228,7 @@ Date::Date(std::istream & in)
 }
 ```
 
-Man könnte natürlich auch eine Factory-Funktion machen. 
+Man könnte natürlich auch eine Factory-Funktion machen.
 
 ### Konstruktoren wieder default machen/löschen
 Wenn man einen eigenen Konstruktur gemacht hat, ist der Default-Konstruktor weg. Nun kann man einen der Konstruktoren wieder default machen mit
@@ -262,7 +241,7 @@ Ebenso kann man Konstruktoren löschen:
 
 
 ## Destruktoren
-Genannt wie der Default-Konstruktor mit einem ~ zu Beginn: 
+Genannt wie der Default-Konstruktor mit einem ~ zu Beginn:
 ``~Date();``
 
 Muss alle Ressourcen freigeben. Implizit verfügbar. Darf keine Exception werfen! Wird automatisch am Ende des Blocks für alle lokalen Instanzen aufgerufen.
@@ -300,20 +279,20 @@ bool Date::isValidDate() const {
 
 void foo() {
 	Date today{2016, 10, 19};
-	
+
 	Date::isLeapYear(2016)
 }
 ```
 
 ## Member-Funktionen
-Dürfen die Invariante nicht verletzen. 
+Dürfen die Invariante nicht verletzen.
 
 Es gibt das implizite ``this``-Objekt. Zugriff mit dem Pfeil ``->``: ``this->day``. Aber auch einfach ``day``.
 
-In einer const-Memberfunktion dürfen die Member nicht verändert werden. Es können nur const-Member aufgerufen werden. 
+In einer const-Memberfunktion dürfen die Member nicht verändert werden. Es können nur const-Member aufgerufen werden.
 
 ### Static Member-Funktionen
-Es gibt kein this-Objekt, können **nicht** const sein. Kein static Keyword. 
+Es gibt kein this-Objekt, können **nicht** const sein. Kein static Keyword.
 
 Aufruf: ``<classname>::<member>(): Date::isLeapYear(2016);``
 
@@ -322,7 +301,7 @@ Aufruf: ``<classname>::<member>(): Date::isLeapYear(2016);``
 
 Wie eine Funktion deklariert, allerdings als mit speziellem Namen: ``<returntype> operator<op>(<parameters>);
 
-Unäre/binäre Parameter haben einen bzw. zwei Parameter. 
+Unäre/binäre Parameter haben einen bzw. zwei Parameter.
 
 **Überladbare Operatoren**:
 
@@ -373,9 +352,9 @@ Zweite Variante: als Member Operator (innerhalb Klassendefinition). Nur noch ein
 ```C++
 class Date {
 	int year, month, day; // private
-	
+
 	bool operator<(Date const & rhs) const {
-		return year < rhs.year || 
+		return year < rhs.year ||
 			(year == rhs.year && (month < rhs.month ||
 				(month == rhs.month &&  day == rhs.day )))
 };
@@ -403,15 +382,15 @@ std::cout << "is d older? " << (d < Date::myBirthday);
 * operator>
 * operator>=
 
-Der Vergleich ist immer komponentenweise von links nach rechts. 
+Der Vergleich ist immer komponentenweise von links nach rechts.
 
 **Andere Vergleiche implementieren**
 
 ```C++
 class Date {	int year, month, day; //privatepublic:	bool operator<(Date const & rhs) const;};
-inline bool operator>(Date const & lhs, Date const & rhs) {  return rhs < lhs;}inline bool operator>=(Date const & lhs, Date const & rhs) {  return !(lhs < rhs);}inline bool operator<=(Date const & lhs, Date const & rhs) { 
-	return !(rhs < lhs);}inline bool operator==(Date const & lhs, Date const & rhs) {	return !(lhs < rhs) && !(rhs < lhs); 
-}inline bool operator!=(Date const & lhs, Date const & rhs) { 
+inline bool operator>(Date const & lhs, Date const & rhs) {  return rhs < lhs;}inline bool operator>=(Date const & lhs, Date const & rhs) {  return !(lhs < rhs);}inline bool operator<=(Date const & lhs, Date const & rhs) {
+	return !(rhs < lhs);}inline bool operator==(Date const & lhs, Date const & rhs) {	return !(lhs < rhs) && !(rhs < lhs);
+}inline bool operator!=(Date const & lhs, Date const & rhs) {
 	return !(lhs == rhs);}
 ```
 
@@ -453,7 +432,7 @@ class Date {
 	int year, month, day;
 public:
 	std::ostream & print(std::ostream & os) const {
-		os << year << "/" << month << "/" 
+		os << year << "/" << month << "/"
 
 };
 
@@ -466,7 +445,7 @@ Dieses "Pattern" braucht man immer wieder, auch z.B. fürs Einlesen. In den Stre
 
 
 # Argument Dependent Lookup (ADL)
-Wenn man Funktionen ausserhalb der Klasse, aber im selben Headerfile nutzt, sollte man die Klasse und die Funktion mit demselben Namespace versehen. Wenn der Compiler eine nicht-qualified Funktion oder einen nicht-qualified Operator auffindet, schaut er sich den Namespace der Typen an, die involviert sind. 
+Wenn man Funktionen ausserhalb der Klasse, aber im selben Headerfile nutzt, sollte man die Klasse und die Funktion mit demselben Namespace versehen. Wenn der Compiler eine nicht-qualified Funktion oder einen nicht-qualified Operator auffindet, schaut er sich den Namespace der Typen an, die involviert sind.
 
 
 # Variablen
@@ -573,17 +552,17 @@ inline std::istream & operator>> std::istream & is, Date & date) {
 **``.read()`` implementieren**
 Precondition: std::istream ist im .good()-State. Wenn wir kein Datum extrahieren können, setzen wir std::istream in den fail-State.
 
-Wenn der Input nicht verwendet werden kann, wird das Objekt nicht überschrieben. 
+Wenn der Input nicht verwendet werden kann, wird das Objekt nicht überschrieben.
 
 ```C++
-class Date {  int year, month, day;public:	std::istream & read(std::istream & is) {		int year{-1}, month{-1}, day{-1};		char sep1, sep2;		//read values		is >> year >> sep1 >> month >> sep2 >> day; 
+class Date {  int year, month, day;public:	std::istream & read(std::istream & is) {		int year{-1}, month{-1}, day{-1};		char sep1, sep2;		//read values		is >> year >> sep1 >> month >> sep2 >> day;
 		try {			Date input{year, month, day};			//overwrite content of this object (copy-ctor)
 			(*this) = input;			//clear stream if read was ok			is.clear();		} catch (std::out_of_range & e) {			//set failbit			is.setstate(std::ios::failbit | is.rdstate());		}		return is; }
 	}
 };
 ```
 
- 
+
 
 
 # Operatoren
@@ -843,7 +822,7 @@ Achtung: in Funktionen können Variablen Shadowing machen, dies ist nicht verbot
 			* class scope (members)
 				* function scope (parameters)
 					* block scope (local variables)
-						* temporaries (subexpression results) 
+						* temporaries (subexpression results)
 
 Achtung mit Referenzen. Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Stack abräumen geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
 
@@ -863,12 +842,12 @@ void incr(int & var);
 void incr(int & var, unsigned delta);
 ```
 
-Nur wenn die Parameter-Typen unterschiedlich sind oder eine andere Anzahl haben, nicht der Rückgabewert. Overload wird zur Compile-Zeit entschieden. 
+Nur wenn die Parameter-Typen unterschiedlich sind oder eine andere Anzahl haben, nicht der Rückgabewert. Overload wird zur Compile-Zeit entschieden.
 
 ##  Default Arguments
 ``void incr(int & var, unsigned delta=1);``
 
-Implizites Overloading. Wenn es n default Argumente gibt, gibt es n+1 Versionen der Funktion. 
+Implizites Overloading. Wenn es n default Argumente gibt, gibt es n+1 Versionen der Funktion.
 
 ## Funktionen als Parameter
 Funktionen sind First-Class-Parameter in C++
@@ -894,10 +873,10 @@ Wenn eine Funktion ihren Contract nicht erfüllen kann, kann man ein paar Sachen
 
 ### Exceptions
 
-Benötigen kein throw, es kann alles geworfen werden was kopierbar ist ``throw 15;``. 
+Benötigen kein throw, es kann alles geworfen werden was kopierbar ist ``throw 15;``.
 
-* Es gibt keine Möglichkeit zu spezifizieren was geworfen werden kann. 
-* Es gibt keine Checks, ob man eine Exception nicht auffängt. 
+* Es gibt keine Möglichkeit zu spezifizieren was geworfen werden kann.
+* Es gibt keine Checks, ob man eine Exception nicht auffängt.
 * Es gibt keine Meta-Informationne
 	* kein Stacktrace, keine Quellcode-Position
 * Wenn eine Exception geworfen wird während eine Exception nach oben propagiert wird, bricht das Programm ab
@@ -910,7 +889,7 @@ try {
 } catch ( type const &e) { // als Referenz
 	...
 }
-``` 
+```
 
 > throw by value, catch by const reference
 
@@ -918,7 +897,7 @@ Reihenfolge ist wichtig, der erste gewinnt. Ein Catch All ``catch(...) {}`` (das
 
 Es gibt vordefinierte Exception Types in ``<stdexcept>>``
 
-* std::logic_error 
+* std::logic_error
 	* std::domain_error
 	* std::invalid_argument
 	* std::length_error
@@ -936,7 +915,7 @@ Mit CUTE kann man die Exception mit ``ASSERT_THROWS(square_root(-1.0), std::inva
 # Move
 Streams können nicht kopiert werden, aber "gemovet". Dabei werden sie wie kopiert, aber die Innereien werden rausgerissen". Die alte Variable ist dann unbrauchbar.
 
-Move-Constructor: ``std::ofstream(std::ofstream &&)`` 
+Move-Constructor: ``std::ofstream(std::ofstream &&)``
 
 # Lambdas
 
@@ -954,7 +933,7 @@ Wenn es alle möglichen Klammern hat, ist es wahrscheinlich ein Lambda.
 	* ``&`` reference
 	* Typ wird abgeleitet
 * Parameter sind wie Funktionsparameter, auto möglich
-* return_type kann weggelassen werden wenn void oder die return-Statements im Typ konsistent sind (Compiler erkennts) 
+* return_type kann weggelassen werden wenn void oder die return-Statements im Typ konsistent sind (Compiler erkennts)
 
 # Namespaces
 
@@ -970,6 +949,7 @@ namespace demo {
 	namespace subdemo {
 		void foo() {//2}
 	}
+}
 namespace demo {
 	void bar() {
 		foo(); // 1
@@ -985,7 +965,7 @@ int main() {
 }
 ```
 
-Dazu gibt es noch den anonymen Namespace, wenn man den Namen weglässt. Damit kann man Sachen ausserhalb des Files verstecken. Ist aber pöse. 
+Dazu gibt es noch den anonymen Namespace, wenn man den Namen weglässt. Damit kann man Sachen ausserhalb des Files verstecken. Ist aber pöse.
 
 
 
@@ -1005,9 +985,9 @@ Include für alle Iterators: ``#include <iterator>``
 * Es gibt die "allgemeine" Version wie oben, oder die spezialisierte Version ``v.begin()/v.end()``. Im Zweifelsfall die spezialisierte Version verwenden.
 * C++-Iteratoren kennen das Ende nicht. Man kann aber gegen das Ende vergleichen ``iterator != v.end()``
 * Auf Elemente mittels ``*`` zugreifen ``*iterator``
-* Nächster Schritt des Iterators: ``++iterator`` 
+* Nächster Schritt des Iterators: ``++iterator``
 
-Achtung, das Ende ist **vor** ``end``. 
+Achtung, das Ende ist **vor** ``end``.
 
 Um read-only zu garantieren sollte ``cbegin()/cend()`` verwendet werden.
 
@@ -1447,7 +1427,7 @@ HashMap in Java, nicht benutzen → C++ advanced
 Ein paar Beispiele:
 Jeder Container hat ``size()``. Was wenn man nur zwei Iteratoren hat? ``std::distance(begin, end)``
 
-for_each (halbböse): 
+for_each (halbböse):
 
 ```C++
 for_each(begin(v), end(v),[](auto x) {

@@ -32,7 +32,6 @@ TODO
 * Files lesen / schreiben
 * Dekonstruktor ist nicht virtual
 
-[TOC]
 
 
 # Include Files
@@ -467,6 +466,187 @@ inline std::ostream & operator<<(std::ostream & os, Date const & date) {
 ```
 
 Dieses "Pattern" braucht man immer wieder, auch z.B. fürs Einlesen. In den Streams gibt es auch ein Beispiel fürs Einlesen von Dates.
+
+
+# Vererbung
+
+Syntax
+
+```C++
+class Base {};
+class Derived : public Base {};
+```
+
+Die Reihenfolge ist wichtig! Wenn man ein Interface erbt, muss die Base public geerbt werden. Private ist möglich, aber für Mix-Ins gedacht (Mix-Ins sind Klassen die nur Funktionen hinzufügen, z.B. boost/operators.hpp)
+
+## Mehrfachvererbung
+
+```C++
+class Base {};
+struct MixIn{};
+class MultipleBases : public Base, private MixIn {};
+```
+
+Die Basisklassen werden in Reihenfolge ihrer Angaben initialisiert. Normalerweise sind private Basisklassen falsches Design. 
+
+## Initialisierung
+Die Base-Class-Konstruktoren-Aufrufe kommen vor die Member-Initializers in der Konstruktor-Initializer-List (vor Body).
+
+Es gibt kein ``super()``. Die Klasse muss selber konstruiert werden, bevor der Body anfängt zu laufen.
+
+```C++
+class DerivedWithCtor : public Base {
+	DerivedWithCtor(int i, int j):Base{i}, mvar{j} {}
+};
+```
+
+TODO was ist mvar?! V14 S8
+
+## Sichtbarkeit
+
+* ``public``: Member der Basis-Klasse sichtbar und benutzbar auf abgeleiteten Klassenobjekten
+	* ausser die abgeleitete Klasse definiert Member mit selbem Namen (auch wenn andere Parameter)
+	* für Member die das Interface der Klasse bilden. Normalerweise Memberfunktionen, Typen (Aliase) die man verwenden möchte und Konstanten
+* ``protected``: Member derselben Base-Klasse können in der abgeleiteten Klasse benutzt werden
+	* Member die man in einer abgeleiteten Klasse nutzen möchte. 
+* ``private``: Member der Base-Klasse können nicht benutzt werden
+	* Member für die Implementation benötigt aber nicht für andere Benutzer dieser Klasse gedacht  
+
+## Probleme mit Vererbung und pass-by-value
+Wenn man eine abgeleitete Klasse als eine Basis-Klasse mitgibt, gibt es Object Slicing. Das kann man sich auch relativ gut vorstellen:
+
+Im Speicher liegt das Objekt letztendlich auf dem Stack. Wenn man eine abgeleitete Klasse angibt, weiss der Compiler, wie gross das ganze Objekt ist. Erwartet man aber eigentlich eine Basisklasse, so wird nur der Speicher betrachtet welcher Teil der Basisklasse ist. 
+
+Wenn eine abgeleitete Klasse Funktionen definiert, werden die Base-Funktionen versteckt. Kann problematisch sein, vorallem mit const/non-const. **Achtung: dies gilt nicht wenn die Funktion einmal const (z.B. in Base) und einmal non-const (z.B. in Derived) gemacht wird.**
+
+Um das zu umgehen macht man ein ``using`` auf die Base Class Funktionen, dann wird die Base-Funktion so behandelt als wär sie in der abgeleiteten Klasse und nimmt am Overloading teil.
+
+## Virtual
+Wenn eine Funktion mit dynamischem Polymorphismus aufgerufen werden soll, muss sie in der Base-Klasse als ``virtual``deklariert werden. Sie bleibt dann virtual in allen abgeleiteten Klassen, bis eine sie als ``final`` deklariert.
+
+```C++
+class PolymorphicBase {
+public:
+	virtual void doit() { /* etwas */ }
+};
+
+class Implementor : public PolymorphicBase {
+public:
+	void doit() { /* etwas anderes */ }
+};
+```
+
+Welche Funktion tatsächlich aufgerufen wird kommt auch drauf an, ob man einen Wert oder eine Referenz hat:
+
+* Value-Objekt: Klassentyp definiert aufgerufene Funktion, egal ob virtual
+* Reference oder Pointer: Virtual Member der abgeleiteten Klasse wird aufgerufen (durch Referenzen auf Basisklasse). Aber nur für Funktionen die ``virtual`` sind.
+
+Wieso braucht man virtual: C++ baut Sachen nur auf, wenn man sie tatsächlich braucht. Wenn man eine Funktion ``virtual`` deklariert, wird eine ``vtable`` für diese Funktion aufgebaut, die immer trackt welche Funktion denn jetzt tatsächlich aufgerufen werden soll.
+
+**Beispiel: Bird**
+
+```C++
+#include <iostream>
+using std::cout;
+
+struct Animal {
+	void makeSound() {
+		cout << "---\n";
+	}
+	virtual void move() {
+		cout << "---\n";
+	}
+	Animal() {
+		cout << "animal born\n";
+	}
+	~Animal() {
+		cout << "animal died\n";
+	}
+};
+struct Bird: Animal {
+	virtual void makeSound() {
+		cout << "chirp\n";
+	}
+	void move() {
+		cout << "fly\n";
+	}
+	Bird() {
+		cout << "bird hatched\n";
+	}
+	~Bird() {
+		cout << "bird crashed\n";
+	}
+};
+struct Hummingbird: Bird {
+	void makeSound() {
+		cout << "peep\n";
+	}
+	virtual void move() {
+		cout << "hum\n";
+	}
+	Hummingbird() {
+		cout << "hummingbird hatched\n";
+	}
+	~Hummingbird() {
+		cout << "hummingbird died\n";
+	}
+};
+
+int main() {
+	cout << "(a)----------------------------\n";
+	Hummingbird hummingbird;
+	cout << "=\n";
+	Bird bird = hummingbird;
+	cout << "&, =\n";
+	Animal & animal = hummingbird;
+	cout << "(b)-----------------------------\n";
+	hummingbird.makeSound();
+	bird.makeSound();
+	animal.makeSound();
+	cout << "(c)-----------------------------\n";
+	hummingbird.move();
+	bird.move();
+	animal.move();
+	cout << "(d)-----------------------------\n";
+}
+```
+
+Output:
+
+```
+(a)----------------------------
+animal born
+bird hatched
+hummingbird hatched
+=
+&, =
+(b)-----------------------------
+peep
+chirp
+---
+(c)-----------------------------
+hum
+fly
+hum
+(d)-----------------------------
+bird crashed
+animal died
+hummingbird died
+bird crashed
+animal died
+```
+
+## Abstrakte Klassen
+```C++
+struct AbstractBase {
+	virtual ~AbstractBase(){}
+	virtual void doitnow()=0;
+};
+```
+
+Abstrakte Funktionen nennt man auch "pure virtual". Wenn man keine Implementation anbietet und dies explizit sagen will: ``= 0;``
+
+Wenn (!) man Baissklassen mit virtuellen Member auf dem Heap alloziert **ohne ``shared_ptr``** muss der Destruktor auch ``virtual`` sein. Aber das ist sowieso pöse.
 
 
 # Argument Dependent Lookup (ADL)

@@ -2,6 +2,7 @@
 C++ Spick
 
 TODO
+
 * Ausgaben-Formatierung (Oct, dec usw.)
 * ADL
 * Beispiele
@@ -991,7 +992,7 @@ Templates erlauben es, die eigene Klasse an Code zu adaptieren, den es beim Erst
 Templates gehören immer ins Header-File! Grund: das .cpp-File kann man auch kompiliert als Objektcode abgeben. Den Header gibt man aber im Source-Code ab. Da der Compiler bei Templates mehr oder minder Textersetzung macht (...), muss er das Template selber kompilieren können.
 
 ## Function Templates
-Die Typen werden bei Function Templates automatisch erkannt!
+Die Typen werden bei Function Templates automatisch erkannt! Es ist aber möglich, sie in den spitzen Klammern zu deklarieren um Unklarheiten zu umgehen.
 
 Header-File:
 
@@ -1008,18 +1009,32 @@ Benutzung:
 
 ```C++
 using MyMin::min;
-int i{88};
-double pi{3.141};
-doule e{2.718};
-cout << min(i, 42);
-cout << MyMin::min("Hallo", "Hallihallo") // Klassen-Qualifier nötig, weil std::string in std ist -> std::min wäre ansonsten auch möglich. Beispiel für ADL
-cout << min(static_cast<double>(2),pi)
-cout << min<double>(2, pi)
+using std::cout;
+int i = 88;
+cout << "min(i,42) = " << min(i,42) << '\n';
+double pi = 3.1415;
+double e = 2.7182;
+cout << "min(e,pi) = " << min(e,pi) << '\n';
+std::string s1 = "Hallo";
+std::string s2 = "Hallihallo";
+
+/* Es gibt auch std::min und wegen ADL wird ansonsten dieses genommen (s1 und s2 sind std::string) */
+cout << "min(Hallo,Hallihallo) = " << MyMin::min(s1,s2)<<'\n';
+
+/* Unterschiedliche Typen. Also festlegen! */
+//min(2,pi); // compile error
+min(static_cast<double>(2),pi);
+min<double>(2,pi);
+
+/* geht nicht wegen unterschiedlichen Längen 
+cout << "min(Peter,Toni) = " << min("Peter","Toni") << '\n'; */
+
+cout << "min(Pete,Toni) = " << min("Peter","Toni") << '\n';
 ```
 
-Das Ausrechnen der Typen nennt sich **Concepts**. Hierbei ist wichtig, dass sie GENAU dieselben Typen sind. Vergleicht man bspw. zwei C-Style-Strings (char arrays) miteinander, die nicht gleich lang sind, geht der Aufruf nicht. Wenn das Concept zwei Variationen zulässt, muss man es spezifizieren oder die Argumente casten.
+Das Ausrechnen der Typen nennt sich **Concepts**. Hierbei ist wichtig, dass sie GENAU dieselben Typen sind. Vergleicht man bspw. zwei C-Style-Strings (``char``-Arrays) miteinander, die nicht gleich lang sind, geht der Aufruf nicht. Wenn das Concept zwei Variationen zulässt, muss man es spezifizieren oder die Argumente casten.
 
-TODO: warum braucht bei den Strings MyMin::min und nicht nur min?
+Random Fact: C-Style-Strings degenerieren zu einem Pointer, (es sind ``char``-Arrays), wenn sie einer Funktion übergeben werden.
 
 # Move
 Streams können nicht kopiert werden, aber "gemovet". Dabei werden sie wie kopiert, aber die Innereien werden rausgerissen". Die alte Variable ist dann unbrauchbar.

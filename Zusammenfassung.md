@@ -590,6 +590,185 @@ failbit | ``is.fail()`` | formatted input failed
 eofbit | ``is.eof`` | end of input reached
 badbit | ``is.bad`` | unrecoverable I/O error
 
+<table class="wikitable" style="font-size:85%; text-align:center;">
+
+<tbody><tr>
+<td colspan="3"> <a href="/w/cpp/io/ios_base/iostate" title="cpp/io/ios base/iostate"><tt>ios_base::iostate</tt></a> flags
+</td>
+<td colspan="6"> <code>basic_ios</code> accessors
+</td></tr>
+<tr>
+<td> eofbit
+</td>
+<td> failbit
+</td>
+<td> badbit
+</td>
+<td> <strong class="selflink"><tt>good()</tt></strong>
+</td>
+<td> <a href="/w/cpp/io/basic_ios/fail" title="cpp/io/basic ios/fail"><tt>fail()</tt></a>
+</td>
+<td> <a href="/w/cpp/io/basic_ios/bad" title="cpp/io/basic ios/bad"><tt>bad()</tt></a>
+</td>
+<td> <a href="/w/cpp/io/basic_ios/eof" title="cpp/io/basic ios/eof"><tt>eof()</tt></a>
+</td>
+<td> <a href="/w/cpp/io/basic_ios/operator_bool" title="cpp/io/basic ios/operator bool"><tt>operator bool</tt></a>
+</td>
+<td> <a href="/w/cpp/io/basic_ios/operator!" title="cpp/io/basic ios/operator!"><tt>operator!</tt></a>
+</td></tr>
+<tr>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td></tr>
+<tr>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td></tr>
+<tr>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td></tr>
+<tr>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td></tr>
+<tr>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td></tr>
+<tr>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td></tr>
+<tr>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td></tr>
+<tr>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td>
+<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;" class="table-no"> false
+</td>
+<td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;" class="table-yes">true
+</td></tr></tbody></table>
+
 
 
 Beispiel: robustes Einlesen eines int, mit istringstream als Zwischenstream
@@ -992,7 +1171,7 @@ Templates erlauben es, die eigene Klasse an Code zu adaptieren, den es beim Erst
 Templates gehören immer ins Header-File! Grund: das .cpp-File kann man auch kompiliert als Objektcode abgeben. Den Header gibt man aber im Source-Code ab. Da der Compiler bei Templates mehr oder minder Textersetzung macht (...), muss er das Template selber kompilieren können.
 
 ## Function Templates
-Die Typen werden bei Function Templates automatisch erkannt! Es ist aber möglich, sie in den spitzen Klammern zu deklarieren um Unklarheiten zu umgehen.
+Die Typen werden bei Function Templates automatisch erkannt! Es ist aber möglich, sie in den spitzen Klammern zu deklarieren um Unklarheiten zu beseitigen.
 
 Header-File:
 
@@ -1002,7 +1181,7 @@ template <typename T>
 T const & min(T const & a, T const & b) {
 	return (a < b)? a : b;
 }
-}
+}	
 ```
 
 Benutzung:
@@ -1021,7 +1200,8 @@ std::string s2 = "Hallihallo";
 /* Es gibt auch std::min und wegen ADL wird ansonsten dieses genommen (s1 und s2 sind std::string) */
 cout << "min(Hallo,Hallihallo) = " << MyMin::min(s1,s2)<<'\n';
 
-/* Unterschiedliche Typen. Also festlegen! */
+/* Unterschiedliche Typen. Also festlegen! 
+Entweder im Template Argument (Template-Ebene) oder beim Aufruf mit Cast */
 //min(2,pi); // compile error
 min(static_cast<double>(2),pi);
 min<double>(2,pi);
@@ -1029,12 +1209,89 @@ min<double>(2,pi);
 /* geht nicht wegen unterschiedlichen Längen 
 cout << "min(Peter,Toni) = " << min("Peter","Toni") << '\n'; */
 
-cout << "min(Pete,Toni) = " << min("Peter","Toni") << '\n';
+/* ergibt Toni, weil hier Pointerwerte (Adressen) miteinander verglichen werden 
+Toni kommt später auf den Stack und hat damit auf x86-PCs eine tiefere Adresse */
+cout << "min(Pete,Toni) = " << min("Pete","Toni") << '\n';
+
+/* Lösung, damit tatsächlich Pete herauskommt und wir auch andere Längen testen können
+Ansonsten gingen auch String Literals, "Toni"s */
+cout << "min<std::string>(Pete,Toni) = " << min<std::string>("Pete","Toni") << '\n';
 ```
 
-Das Ausrechnen der Typen nennt sich **Concepts**. Hierbei ist wichtig, dass sie GENAU dieselben Typen sind. Vergleicht man bspw. zwei C-Style-Strings (``char``-Arrays) miteinander, die nicht gleich lang sind, geht der Aufruf nicht. Wenn das Concept zwei Variationen zulässt, muss man es spezifizieren oder die Argumente casten.
-
 Random Fact: C-Style-Strings degenerieren zu einem Pointer, (es sind ``char``-Arrays), wenn sie einer Funktion übergeben werden.
+
+## Concepts
+Das Ausrechnen der Bedingungen an den Typ nennt sich **Concepts**. Anders als in Java kann man den Typ von T nicht genauer festlegen (z.B. ``implements Comparable<T>``). Wenn man sich unseren ``min``-Code anschaut erkennt man folgendes
+
+* ``operator<(T const &, T const &)`` muss definiert sein
+* Oder ``operator<(T,T)``
+* Es muss einen Operator bool zurückgeben (wegen ``?:``)
+
+## Overloads
+Wir mussten beim bisherigen ``min`` einen Workaround einbauen, wenn wir mit C-Style-Strings hereinkommen. Das bedingt aber das Wissen durch den Aufrufer. Um das zu umgehen, bauen wir einen Overload ein.
+
+Jetziges Header-File:
+
+```C++
+namespace MyMin  { // namespace nicht zwingend
+template <typename T>
+T const & min(T const & a, T const & b) {
+	return (a < b)? a : b;
+}
+char const* min(char const* a, char const* b);
+}	
+```
+
+Und dazu noch ein Implementations-File:
+
+```C++
+#include "MyMin.h"
+#include <string>
+namespace MyMin {
+char const* min(char const* a, char const* b) {
+	return std::string(a) < std::string(b) ? a : b;
+}
+}
+```
+
+Sollte nicht zu oft verwendet werden. **Es gewinnt der spezifischste**. 
+
+## Variadic Template Function
+Wenn man z.B. Funktionen wie printf implementieren will, kennt man die Anzahl Parameter zu Beginn nicht. Der ``...``-Operator gehört zur Syntax:
+
+* vor einem Namen: definiert den Namen als Platzhalter für variable Anzahl Elemente
+* nach einem Namen: expandiert den Namen zu allen Elementen
+* zwischen zwei Namen: definiert den hinteren Namen als Liste von Parametern, vom Typ des vorderen Namen
+
+Bei der Implementierung verwendet man die Rekursion
+
+* Base Case ist 0 Argumente
+* Rekursiver Fall ist 1 explizites Argument mit einem Schwanz als variadische Liste von Argumenten
+
+```C++
+template<typename...ARGS>
+void variadic(ARGS...args) {
+	println(std::cout, args...);
+}
+
+template<typename Head, typename... Tail>
+void println(std::ostream & out, Head const & head, Tail const & ...tail) {
+	out << head;
+	if(sizeof...(tail)) { // expandiert, wenn sizeof grösser 0 ist
+		out << ", ";
+	}
+	println(out, tail...); // recurse on tail
+}
+```
+
+# Const/non-const und Value/Reference
+Beispiel an der ``Word``-Klasse vom Testat
+
+|           | value                                                                                                                                                             | reference                                                                                                                                                                                           |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| non-const | Word(std::string value)<br><br> - Argument wird kopiert<br> - Änderungen im Wert haben keine Auswirkungen auf Aufrufer-Seite<br> - Für primitive und kleine Typen | Word(std::string & value)<br><br> - Argument wird aus dem Speicher as-is benutzt<br> - Änderungen im Wert haben Auswirkungen auf Aufrufer-Seite<br> - Benutzt wenn die Seiteneffekte gewünscht sind |
+| const     | Word(std::string const value)<br><br> - Argument wird kopiert<br> - Wert kann nicht verändert werden<br> - Für primitive und kleine Typen                         | Word(std::string const & value)<br><br> - Argument wird aus dem Speicher as-is benutzt<br> - Wert kann nicht verändert werden<br> - Kann für grössere Objekte verändert werdn                       |
+
 
 # Move
 Streams können nicht kopiert werden, aber "gemovet". Dabei werden sie wie kopiert, aber die Innereien werden rausgerissen". Die alte Variable ist dann unbrauchbar.
@@ -1137,7 +1394,8 @@ int main() {
 
 Dazu gibt es noch den anonymen Namespace, wenn man den Namen weglässt. Damit kann man Sachen ausserhalb des Files verstecken. Ist aber pöse.
 
-
+# CUTE
+CUTE kennt viele Makros und man sollte sie auch nutzen. Will man zum Beispiel die relationalen Operatoren prüfen, dann nicht einfach ``ASSERT_EQUAL(true, a < b)`` sondern ``ASSERT_LESS(a, b)``.
 
 
 # Using
@@ -1250,7 +1508,7 @@ v.erase( std::remove( v.begin(), v.end(), 5 ), v.end() );
 
 **Input Iteratoren**
 
-* Das aktuelle Element kann nur einmal ausgelesen werden, der Iterator muss danach inkrementiert werden
+* Das aktuelle Element kann nur einmal ausgelesen werden, der Iterator muss danach inkrementiert werden -- TODO strikethrough, das war anscheinend falsch (Errata in Vorlesung 11)
 * Kann Iteratoren vergleichen
 
 **Forward Iterator**

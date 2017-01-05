@@ -261,7 +261,7 @@ Wenn man einen eigenen Konstruktur gemacht hat, ist der Default-Konstruktor weg.
 
 Ebenso kann man Konstruktoren löschen:
 
-``<constructor-name>() = delete
+``<constructor-name>() = delete``
 
 
 ## Destruktoren
@@ -740,6 +740,7 @@ x++ // ok
 ```
 
 Liste des Bösen:
+
 * eine Variable *darf* innerhalb eines Blocks neu verwendet werden, dies ist kein Fehler
 * globale Variablen
 
@@ -1521,6 +1522,7 @@ Das Name-Lookup kann verwirrend sein. Immer ``this->`` oder alternativ ``classna
 
 ### Spezialisierung
 Man kann Class Templates auch spezialisieren (wie Function Templates), zum Beispiel zum Umgang mit Pointern. Es wird auch hier wieder am meisten spezialisierte genommen. Achtung, die Templates müssen nicht miteinander verwandt sein, das ist eigentlich eher Konvention...
+
 ```C++
 // forward declaration
 template <typename T> class Sack;
@@ -1641,11 +1643,14 @@ char s[6]{"hello"}; // 5 chars + '\0'
 Achtung: mehrdimensionale Arrays nicht mit Komma schreiben. Der ``operator,`` evaluiert alle Subexpressions sequentiell und ist nur nützlich, wenn der erste Teil einen Seiteneffekt hat.
 
 ## Länge erkennen mit Type Deduction
+
+```C++
 template <typename T, unsigned N>
 // () benötigt
 void printArray(std::ostream & out, T const (&x)[N]) {
 	copy(x, x+N, std::ostream_iterator<T>{out, ", "});
 }
+``
 
 Die Type Deduction presst das dann so rein dass in N die Grösse steht. Wenn man ein Array mittels Liste erstellt, wird die Grösse automatisch festgelegt.
 

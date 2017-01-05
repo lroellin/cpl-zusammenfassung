@@ -1650,7 +1650,7 @@ template <typename T, unsigned N>
 void printArray(std::ostream & out, T const (&x)[N]) {
 	copy(x, x+N, std::ostream_iterator<T>{out, ", "});
 }
-``
+```
 
 Die Type Deduction presst das dann so rein dass in N die Grösse steht. Wenn man ein Array mittels Liste erstellt, wird die Grösse automatisch festgelegt.
 

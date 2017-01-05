@@ -1436,6 +1436,117 @@ Beispiel an der ``Word``-Klasse vom Testat
 | const     | Word(std::string const value)<br><br> - Argument wird kopiert<br> - Wert kann nicht verändert werden<br> - Für primitive und kleine Typen                         | Word(std::string const & value)<br><br> - Argument wird aus dem Speicher as-is benutzt<br> - Wert kann nicht verändert werden<br> - Kann für grössere Objekte verändert werdn                       |
 
 
+# Kommandozeilenargumente übergeben
+Main ist folgendermassen definiert:
+``int main(int argc, char * argv[])``
+
+``argc`` hat die Anzahl Argumente drin. ``argv[]`` ist ein Array von Char-Pointern (ein Array von "Strings"), also die einzelnen Argumente. 
+
+Die eigentlichen Argumente beginnen erst bei ``argv+1``, im ersten Element steht der Programmname. Es endet bei ``argv+argv``.
+
+# Nackte Arrays
+Wenn man mit nackten Arrays arbeitet, kann man diese trotzdem mit Iteratoren verwenden:
+
+* Anfang: ``array``
+* Ende: ``array+size``.
+
+## Initialisieren
+```C++
+int five[5]{}; // 5 zeros
+int four[4] = {1, 2, 3, 5};
+doule d[4]{1.0, 2.0}; // d[2] = d[3] = 0.0
+double m[2][3]{ {1, 2, 3} , {4, 5, 6} };
+char s[6]{"hello"}; // 5 chars + '\0'
+```
+Achtung: mehrdimensionale Arrays nicht mit Komma schreiben. Der ``operator,`` evaluiert alle Subexpressions sequentiell und ist nur nützlich, wenn der erste Teil einen Seiteneffekt hat.
+
+## Länge erkennen mit Type Deduction
+template <typename T, unsigned N>
+// () benötigt
+void printArray(std::ostream & out, T const (&x)[N]) {
+	copy(x, x+N, std::ostream_iterator<T>{out, ", "});
+}
+
+Die Type Deduction presst das dann so rein dass in N die Grösse steht. Wenn man ein Array mittels Liste erstellt, wird die Grösse automatisch festgelegt.
+
+**Nackte Arrays sollten nicht verwendet werden. Ersetzen mit ``std::array``**
+
+# Memory (Heap)
+Man könnte das Memory selber mit ``new`` allozieren. Das ist aber pöse.
+
+Ebenso sollte man nie plain-Pointers verwenden. 
+
+**``std::unique_ptr<T>`` und ``std::make_unique``**
+
+Für unshared Heap-Memory, oder für lokales was auf den Heap muss (z.B. Stack zu klein). 
+
+```C++
+std::unique_ptr<int> aFactory(int i) {
+	return std::make_unique<int>(i);
+}
+
+auto answer = aFactory(42);
+// Transfer of Ownership
+auto answer2=std::move(answer)
+```
+
+Die Pointer haben immer nur einen Owner und können nicht kopiert werden (nur by value zurückgegeben werden)
+
+
+Wenn man C-Pointer (z.B. von gewissen Funktionen) als unique_ptr verpackt, werden sie beim ``}`` automatisch ge-free-d.
+
+Weil immer nur einem der Pointer gehört, wird irgendwann garantiert das Memory aufgeräumt.
+
+**``std::shared_ptr<T>`` und ``std::make_shared<T>``**
+
+Funktionieren mehr wie die Java-Referenzen. Können kopiert und umhergereicht werden, der letzte löscht das Licht aus und löscht das allozierte Objekt. ``make_shared<T>`` sorgt dafür, dass die public Konstruktorparameter von T benutzt werden können
+
+Wenn etwas wirklich auf den Heap muss, Factory verwenden
+
+```C++
+#include <memory> // oder <boost/shared_ptr.hpp>
+#include <string>
+struct A {
+	A(int a, std::string b, char c){}
+};
+
+std::shared_ptr<A> A_factory() {
+	return std::make_shared<A>(5, "hi", 'a');
+}
+
+// Usage
+int main() {
+	auto an_a=A_factory();
+	auto b = an_a; // second pointer to same object
+	A c{*b} // copy constructor
+	auto another = std::make(shared)<A>(c); // copy-constructor on heap
+}
+```
+
+Wenn Instanzen einer Klassenhierarchie durch ``shared_ptr<base>`` repräsentiert werden, aber durch ``make_shared<concrete>()`` erstellt werden, muss der Destruktor nicht mehr virtual sein. shared_ptr mekrt sich den konkreten Destruktor. 
+
+Man kann in ein zirkuläres Dependency-Problem rennen. Um das zu umgehen, braucht man ``weak_ptr`` um diese zu brechen.
+
+## Beispiel: Eltern und Kinder
+``shared_ptr`` Zyklen: ``weak_ptr/shared_from_this``
+
+Eine Personenklasse soll erstellt werden:
+
+* jede Person kennt ihre Eltern (Vater, Mutter) wenn noch am Leben
+* Jede Person kann verheiratet werden
+* Jede Person kennt ihre Kinder
+	* Mutter und Vater kennen beide ihre Kinder
+
+Damit das sauber funktioniert:
+
+* Alle lebenden Objekte in einer separaten Datenstruktur als ``shared_ptr``
+* Abhängigkeiten durch ``weak_ptr``
+
+Wenn man sie nun aus der Datenstruktur der lebenden Objekte entfernt, werden die Objekte zerstört. Der ``weak_ptr`` hat zwar eine Referenz, muss aber konkretisiert werden (zu einem ``shared_ptr``) und bei diesem Schritt kann erkannt werden dass das eigentliche Objekt weg ist. 
+
+==> [Biblische Familie](BiblischeFamilie.pdf)
+
+
 # Move
 Streams können nicht kopiert werden, aber "gemovet". Dabei werden sie wie kopiert, aber die Innereien werden rausgerissen". Die alte Variable ist dann unbrauchbar.
 

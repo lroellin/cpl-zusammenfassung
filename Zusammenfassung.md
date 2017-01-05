@@ -967,6 +967,43 @@ Man kann als Konstruktorargument immer einen String als Grund angeben. Ebenso gi
 ### CUTE Exceptions
 Mit CUTE kann man die Exception mit ``ASSERT_THROWS(square_root(-1.0), std::invalid_argument);`` erfragen
 
+# Templates
+
+Templates erlauben es, die eigene Klasse an Code zu adaptieren, den es beim Erstellen der eigenen Klasse noch garnicht gibt.
+
+Templates gehören immer ins Header-File! Grund: das .cpp-File kann man auch kompiliert als Objektcode abgeben. Den Header gibt man aber im Source-Code ab. Da der Compiler bei Templates mehr oder minder Textersetzung macht (...), muss er das Template selber kompilieren können.
+
+## Function Templates
+Die Typen werden bei Function Templates automatisch erkannt!
+
+Header-File:
+
+```C++
+namespace MyMin  { // namespace nicht zwingend
+template <typename T>
+T const & min(T const & a, T const & b) {
+	return (a < b)? a : b;
+}
+}
+```
+
+Benutzung:
+
+```C++
+using MyMin::min;
+int i{88};
+double pi{3.141};
+doule e{2.718};
+cout << min(i, 42);
+cout << MyMin::min("Hallo", "Hallihallo") // Klassen-Qualifier nötig, weil std::string in std ist -> std::min wäre ansonsten auch möglich. Beispiel für ADL
+cout << min(static_cast<double>(2),pi)
+cout << min<double>(2, pi)
+```
+
+Das Ausrechnen der Typen nennt sich **Concepts**. Hierbei ist wichtig, dass sie GENAU dieselben Typen sind. Vergleicht man bspw. zwei C-Style-Strings (char arrays) miteinander, die nicht gleich lang sind, geht der Aufruf nicht. Wenn das Concept zwei Variationen zulässt, muss man es spezifizieren oder die Argumente casten.
+
+TODO: warum braucht bei den Strings MyMin::min und nicht nur min?
+
 # Move
 Streams können nicht kopiert werden, aber "gemovet". Dabei werden sie wie kopiert, aber die Innereien werden rausgerissen". Die alte Variable ist dann unbrauchbar.
 

@@ -90,6 +90,23 @@ int main() {
 }
 ```
 
+## Wichtige includes
+```C++
+#include <algorithm> // für alle Algorithms ausser die in <numeric>
+#include <functional>
+#include <iterator>
+#include <numeric>
+#include <exception> // für Standard Exceptions TODO Beispiel
+#include <stdexcept> // was ist der Unterschied zu exception?
+#include <string> // std::string
+// IO
+#include <iosfwd> // forwärtsdeklaration von istream und ostream (nur typedefs ohne Methoden usw.), nur in Headers verwenden
+#include <istream> // istream definition und implementation und cin
+#include <ostream> // ostream definition und implementation und cout
+#include <iostream> // definition und implementation von istream und ostream und cin, cout
+#include <sstream>> // string stream
+```
+
 # Klassen
 
 Es gibt zwei Keywords, ``struct``und ``class``. Die sind äquivalent, ausser

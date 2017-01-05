@@ -3,6 +3,9 @@ C++ Spick
 
 TODO
 
+* Demo verstehen (V12, S. 11)
+* V12, S.21
+* Templates-Erweiterungen (V12)
 * Ausgaben-Formatierung (Oct, dec usw.)
 * ADL
 * Beispiele
@@ -101,9 +104,10 @@ int main() {
 #include <stdexcept> // was ist der Unterschied zu exception?
 #include <string> // std::string
 // IO
-#include <iosfwd> // forwärtsdeklaration von istream und ostream (nur typedefs ohne Methoden usw.), nur in Headers verwenden
-#include <istream> // istream definition und implementation und cin
-#include <ostream> // ostream definition und implementation und cout
+#include <iosfwd> // Vorwärtsdeklaration von istream und ostream (nur typedefs ohne Methoden usw.), nur in Headers verwenden
+#include <istream> // istream definition und implementation
+#include <ostream> // ostream definition und implementation
+#include <iostream> // istream, ostream und cin, cout
 #include <iostream> // definition und implementation von istream und ostream und cin, cout
 #include <sstream>> // string stream
 ```
@@ -481,7 +485,7 @@ enum day_of_week {
 Alternativ noch mit class
 
 ```C++
-enum class day of week (...)
+enum class day of week (usw.)
 ```
 
 Unterschied: ohne ``class`` leaken sie in den umgebenden Scope (``day = date::Sat``), am besten als Member einer Klasse genutzt. Mit ``class`` leaken sie nicht (``day == date::day_of_week::Sat``), und der darunterliegende Typ kann spezifiziert werden.
@@ -1166,9 +1170,8 @@ Mit CUTE kann man die Exception mit ``ASSERT_THROWS(square_root(-1.0), std::inva
 
 # Templates
 
-Templates erlauben es, die eigene Klasse an Code zu adaptieren, den es beim Erstellen der eigenen Klasse noch garnicht gibt.
+Templates erlauben es, den eigenen Code an Code zu adaptieren, den es beim Erstellen des eigenen Code noch garnicht gibt.
 
-Templates gehören immer ins Header-File! Grund: das .cpp-File kann man auch kompiliert als Objektcode abgeben. Den Header gibt man aber im Source-Code ab. Da der Compiler bei Templates mehr oder minder Textersetzung macht (...), muss er das Template selber kompilieren können.
 
 ## Function Templates
 Die Typen werden bei Function Templates automatisch erkannt! Es ist aber möglich, sie in den spitzen Klammern zu deklarieren um Unklarheiten zu beseitigen.
@@ -1284,12 +1287,152 @@ void println(std::ostream & out, Head const & head, Tail const & ...tail) {
 }
 ```
 
+## Class Templates
+Bei Klassen-Templates muss das Template-Argument immer spezifiziert werden. Es gibt keine Auto Deduction. **Die Begriffe Template Class und Class Template bedeuten dasselbe**. 
+
+Funktionen haben die Class Template-Parameter, können aber auch weitere Parameter haben (also auch Function Templates)
+
+Beispiel Sack:
+
+```C++
+template <typename T>
+class Sack
+{
+	using SackType=std::vector<T>
+	// dependent name: wir verwenden einen Typ gegen aussen, der vom Template Parameter abhängt
+	using size_type=typename SackType:size_type; 
+	SackType theSack{};
+public:
+	bool empty() const { return theSack.empty(); }
+	// Weil wir den size_type ausgeben wollen, brauchen wir den dependent name oben
+	
+	size_type size() const { return theSack.size(); }
+	void putInto(T const & item) { theSak.push_back(item); }
+};
+
+// Member-Funktion ausserhalb der Template-Klasse
+template <typename T>
+inline T Sack<T>::getOut() {
+	if(!size()) { throw std::logic_error{"empty Sack"}; }
+	// Pick random element
+	auto index = static_cast<size_type>(rand() % size())
+	T retval{theSack.at(index)};
+	theSack.erase(theSack.begin()+index);
+	return retval;
+}
+```
+
+Es ist normal, dass Template Definitionen Typ-Aliase verwenden. Neuerdings mit using, früher mit typedef:
+
+* ``using newname=existingtype;``
+* ``typedef existingtype newname;``
+
+Bei Membern ausserhalb des Class Templates (wie oben ``getOut()``):
+
+* Template Intro wiederholen
+* Inline um ODR zu gewährleisten
+
+Templates gehören immer ins Header-File! Grund: das .cpp-File kann man auch kompiliert als Objektcode abgeben. Den Header gibt man aber im Source-Code ab. Da der Compiler bei Templates mehr oder minder Textersetzung macht (...), muss er das Template selber kompilieren können.
+
+Funktionen immer direkt innerhalb der Klasse oder als inline-Funktion im Headerfile.
+
+### Erben in Template Classes
+Das Name-Lookup kann verwirrend sein. Immer ``this->`` oder alternativ ``classname::`` verwenden, damit man mit der richtigen Klasse spricht. TODO: evtl. noch anderes von V12 S. 12?
+
+### Spezialisierung
+Man kann Class Templates auch spezialisieren (wie Function Templates), zum Beispiel zum Umgang mit Pointern. Es wird auch hier wieder am meisten spezialisierte genommen. Achtung, die Templates müssen nicht miteinander verwandt sein, das ist eigentlich eher Konvention...
+```C++
+// forward declaration
+template <typename T> class Sack;
+
+// brauchts
+template <>
+class Sack<char const *> { // Spezialisierung
+	// zum Beispiel andere Implementierung
+};
+```
+
+### Template Terminologie
+
+**Template Definition**
+```C++
+template <typename T>
+class Sack{...}
+```
+
+**Template Declaration**
+```C++
+template <typename T>
+class Sack;
+```
+
+**Class Template Explicit Specialization**
+```C++
+template<>
+class Sack<char const *> {...}
+```
+
+**Template Partial Specialization**
+```C++
+template <typename T>
+class Sack<T *> {...}
+```
+
+**Class Template Member Specialization**
+```C++
+template<>
+void Sack<char const *>::putInto(char const *p) {...}
+```
+
+### Sack mit Initializer List füllen
+Wenn man den Sack mit einer Initializer List füllen will (z.B. ``Sack<int> sack{1, 2, 3};``), kann man die bereitgestellte ``std::initializer_list<T>`` nutzen. Dazu definieren wir einen speziellen Konstruktur
+
+```C++
+Sack(std::initializer_list<T> il):theSack(il){}
+```
+
+### Container variieren
+Man könnte jetzt auch noch den Container variieren. Achtung: hier müssen dann evtl. die Iteratoren angepasst/verallgemeinert werden. Da Container oft mehr als ein Argument haben, machen wir es gleich variadisch. Und damit man nicht immer ``std::vector`` angeben muss, bauen wir einen Default ein.
+
+Unsere Template-Definition schaut jetzt wie folgt aus (Klammerung beachten!, Keyword ``class`` ebenso)
+```C++
+template <typename T, template<typename...> class container=std::vector>
+class Sack {
+(usw.)
+```
+
+Und dann z.B.: `Sack<int, std::list> listSack{1,2,3,4,5};
+
+### Templates als Adapter
+Wenn man zum Beispiel einen SafeVector bauen will, der den Vektor implementiert, aber ``operator[]`` so implementiert dass ein Index Bounday Check stattfindet.
+
+
+```C++
+template <typename T>
+class safeVector : public std::vector<T> {
+	using Base=std::vector<T>;
+public:
+	using size_type=typename Base::size_type;
+	using std::vector<T>::vector; // ctors übernehmen, using ohne =
+	
+	T const & operator[](size_type index) const {
+		return this->at(index);
+	}
+	
+	T & operator[](size_type index) {
+		return Base::at(index); // ginge auch this->
+	}
+	
+	// dann noch front/base
+};
+```
+
 # Const/non-const und Value/Reference
 Beispiel an der ``Word``-Klasse vom Testat
 
 |           | value                                                                                                                                                             | reference                                                                                                                                                                                           |
 |-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| non-const | Word(std::string value)<br><br> - Argument wird kopiert<br> - Änderungen im Wert haben keine Auswirkungen auf Aufrufer-Seite<br> - Für primitive und kleine Typen | Word(std::string & value)<br><br> - Argument wird aus dem Speicher as-is benutzt<br> - Änderungen im Wert haben Auswirkungen auf Aufrufer-Seite<br> - Benutzt wenn die Seiteneffekte gewünscht sind |
+| non-const | Word(std::string value)<br><br> - Argument wird kopiert<br> - Änderungen im Wert haben keine Auswirkungen auf Aufrufer-Seite<br> - F 	ür primitive und kleine Typen | Word(std::string & value)<br><br> - Argument wird aus dem Speicher as-is benutzt<br> - Änderungen im Wert haben Auswirkungen auf Aufrufer-Seite<br> - Benutzt wenn die Seiteneffekte gewünscht sind |
 | const     | Word(std::string const value)<br><br> - Argument wird kopiert<br> - Wert kann nicht verändert werden<br> - Für primitive und kleine Typen                         | Word(std::string const & value)<br><br> - Argument wird aus dem Speicher as-is benutzt<br> - Wert kann nicht verändert werden<br> - Kann für grössere Objekte verändert werdn                       |
 
 

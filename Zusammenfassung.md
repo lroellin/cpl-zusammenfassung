@@ -36,10 +36,11 @@ TODO
 
 # Include Files
 
-Eigene Includes immer zuoberst!
+Zu Beachten:
 
-Funktionen in Header-Files typischerweise nur als Deklaration. Wenn kurze Funktion (oder Template): ``inline``
-
+* Eigene Includes immer zuoberst!
+* Funktionen in Header-Files typischerweise nur als Deklaration.
+* Wenn kurze Funktion (oder Template): ``inline``
 * Klassen-Member-Funktionen sowie Templates sind implizit inline.
 
 ## Include Guard
@@ -411,11 +412,27 @@ Der Vergleich ist immer komponentenweise von links nach rechts.
 **Andere Vergleiche implementieren**
 
 ```C++
-class Date {	int year, month, day; //privatepublic:	bool operator<(Date const & rhs) const;};
-inline bool operator>(Date const & lhs, Date const & rhs) {  return rhs < lhs;}inline bool operator>=(Date const & lhs, Date const & rhs) {  return !(lhs < rhs);}inline bool operator<=(Date const & lhs, Date const & rhs) {
-	return !(rhs < lhs);}inline bool operator==(Date const & lhs, Date const & rhs) {	return !(lhs < rhs) && !(rhs < lhs);
-}inline bool operator!=(Date const & lhs, Date const & rhs) {
-	return !(lhs == rhs);}
+class Date {
+	int year, month, day; //private
+public:
+	bool operator<(Date const & rhs) const;
+};
+
+inline bool operator>(Date const & lhs, Date const & rhs) {
+  return rhs < lhs;
+}
+inline bool operator>=(Date const & lhs, Date const & rhs) {
+  return !(lhs < rhs);
+}
+inline bool operator<=(Date const & lhs, Date const & rhs) {
+	return !(rhs < lhs);
+}
+inline bool operator==(Date const & lhs, Date const & rhs) {
+	return !(lhs < rhs) && !(rhs < lhs);
+}
+inline bool operator!=(Date const & lhs, Date const & rhs) {
+	return !(lhs == rhs);
+}
 ```
 
 Die ganzen Operatoren ausserhalb der Klasse sehen wie Boilerplate-Code aus. Deshalb gibts von Boost eine Klasse von der man erben kann, die genau diese zusätzlichen Operatoren bietet. ``private`` erben reicht aus.
@@ -430,9 +447,13 @@ Benötigt ``<``, bietet
 #include "boost/operators.hpp"
 #include <tuple>
 
-class Date : private boost::less_than_comparable<Date> {	int year, month, day; //privatepublic:	bool operator<(Date const & rhs) const {
+class Date : private boost::less_than_comparable<Date> {
+	int year, month, day; //private
+public:
+	bool operator<(Date const & rhs) const {
 		return std::tie(year, month,day) < std::tie(rhs.year, rhs.month, rhs.day);
-	}};
+	}
+};
 ```
 
 ### Beispiel: Date an std::cout senden
@@ -992,9 +1013,25 @@ Precondition: std::istream ist im .good()-State. Wenn wir kein Datum extrahieren
 Wenn der Input nicht verwendet werden kann, wird das Objekt nicht überschrieben.
 
 ```C++
-class Date {  int year, month, day;public:	std::istream & read(std::istream & is) {		int year{-1}, month{-1}, day{-1};		char sep1, sep2;		//read values		is >> year >> sep1 >> month >> sep2 >> day;
-		try {			Date input{year, month, day};			//overwrite content of this object (copy-ctor)
-			(*this) = input;			//clear stream if read was ok			is.clear();		} catch (std::out_of_range & e) {			//set failbit			is.setstate(std::ios::failbit | is.rdstate());		}		return is; }
+class Date {
+  int year, month, day;
+public:
+	std::istream & read(std::istream & is) {
+		int year{-1}, month{-1}, day{-1};
+		char sep1, sep2;
+		//read values
+		is >> year >> sep1 >> month >> sep2 >> day;
+		try {
+			Date input{year, month, day};
+			//overwrite content of this object (copy-ctor)
+			(*this) = input;
+			//clear stream if read was ok
+			is.clear();
+		} catch (std::out_of_range & e) {
+			//set failbit
+			is.setstate(std::ios::failbit | is.rdstate());
+		}
+		return is; }
 	}
 };
 ```

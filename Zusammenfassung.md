@@ -124,9 +124,9 @@
 - [Enums](#enums)
   - [Wert festlegen](#wert-festlegen)
   - [Typ festlegen](#typ-festlegen)
-  - [Contract/Exceptions](#contractexceptions)
-    - [Exceptions](#exceptions)
-    - [CUTE Exceptions](#cute-exceptions)
+- [Contract/Exceptions](#contractexceptions)
+  - [Exceptions](#exceptions)
+  - [Exceptions abfragen mit CUTE](#exceptions-abfragen-mit-cute)
 - [Templates](#templates)
   - [Function Templates](#function-templates)
   - [Concepts](#concepts)
@@ -698,15 +698,20 @@ failbit | ``is.fail()`` | formatted input failed
 eofbit | ``is.eof`` | end of input reached
 badbit | ``is.bad`` | unrecoverable I/O error
 
+<style>
+	.strong-border-left {
+		border-left: #202020 3px solid;
+	}
+</style>
 <table  style="font-size:85%; text-align:center;">
   <tr>
     <td colspan="3"> <tt>ios_base::iostate</tt> flags</td>
-    <td colspan="6"> <code>basic_ios</code> accessors</td></tr>
+    <td colspan="6" class="strong-border-left"> <code>basic_ios</code> accessors</td></tr>
   <tr>
     <td>eofbit</td>
     <td>failbit</td>
     <td>badbit</td>
-    <td><strong><tt>good()</tt></strong></td>
+    <td class="strong-border-left"><strong><tt>good()</tt></strong></td>
     <td><tt>fail()</tt></td>
     <td><tt>bad()</tt></td>
     <td><tt>eof()</tt></td>
@@ -716,7 +721,7 @@ badbit | ``is.bad`` | unrecoverable I/O error
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
-    <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
+    <td class="strong-border-left" style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
@@ -727,7 +732,7 @@ badbit | ``is.bad`` | unrecoverable I/O error
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
-    <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
+    <td class="strong-border-left" style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
@@ -737,7 +742,7 @@ badbit | ``is.bad`` | unrecoverable I/O error
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
-    <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
+    <td class="strong-border-left" style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
@@ -747,7 +752,7 @@ badbit | ``is.bad`` | unrecoverable I/O error
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
-    <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
+    <td class="strong-border-left" style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
@@ -757,7 +762,7 @@ badbit | ``is.bad`` | unrecoverable I/O error
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
-    <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
+    <td class="strong-border-left" style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
@@ -767,7 +772,7 @@ badbit | ``is.bad`` | unrecoverable I/O error
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
-    <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
+    <td class="strong-border-left" style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
@@ -777,7 +782,7 @@ badbit | ``is.bad`` | unrecoverable I/O error
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
-    <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
+    <td class="strong-border-left" style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
@@ -787,7 +792,7 @@ badbit | ``is.bad`` | unrecoverable I/O error
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
-    <td style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
+    <td class="strong-border-left" style="background:#ff9090; color:black; vertical-align: middle; text-align: center;"> false</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
     <td style="background: #90ff90; color: black; vertical-align: middle; text-align: center;">true</td>
@@ -2918,7 +2923,7 @@ enum class launch_policy : unsigned_char {
 }
 ```
 
-## Contract/Exceptions
+# Contract/Exceptions
 
 Wenn eine Funktion ihren Contract nicht erfüllen kann, kann man ein paar Sachen tun. Hier aufgeführt sind nur diese, welche mit C++ besonders Sinn machen oder deren Syntax speziell ist
 
@@ -2929,7 +2934,7 @@ Wenn eine Funktion ihren Contract nicht erfüllen kann, kann man ein paar Sachen
 * Error Status Side Effect: Parameter oder globale Variable verändern
 * Exceptions
 
-### Exceptions
+## Exceptions
 
 Benötigen kein throw, es kann alles geworfen werden was kopierbar ist ``throw 15;``.
 
@@ -2967,7 +2972,7 @@ Es gibt vordefinierte Exception Types in ``<stdexcept>>``
 
 Man kann als Konstruktorargument immer einen String als Grund angeben. Ebenso gibt es die ``.what()`` Member Funktion um den Grund zu erfragen
 
-### CUTE Exceptions
+## Exceptions abfragen mit CUTE
 Mit CUTE kann man die Exception mit ``ASSERT_THROWS(square_root(-1.0), std::invalid_argument);`` erfragen
 
 # Templates

@@ -477,6 +477,16 @@ void printfunc(double x, double f(double)) {
 
 In C nur als Function Pointer möglich
 
+## Aufruf Sequenz von Funktionen
+
+```C++
+void main() {
+	askForName(std::cout);
+	sayGreeting(std::cout, inputName(std::cin), inputName(std::cin));
+}
+```
+Es ist nicht klar welche Funktion inputName zuerst aufgerufen wird.
+
 # Include Files
 
 Zu Beachten:

@@ -1424,6 +1424,13 @@ Entspricht TreeMap in Java, aufsteigend sortiert mit Key und Value
 **Iterator**: bidirectional über std::pair<Key, Value>
 
 **Insert**: ``insert (std::pair<Key, Value>{"key", “value”});``
+```C++
+std::map<std::string,size_t> words;
+std::string s;
+
+while (std::cin >> s)
+  ++words[s]; //erstellt automatisch einen Eintrag
+``` 
 
 **Delete**:
 

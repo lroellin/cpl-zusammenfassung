@@ -501,6 +501,7 @@ Zu Beachten:
 ## Include Guard
 
 Um die ODR (One Definition Rule) nicht zu verletzen, verwendet man Guard Statements
+Include Guards werden vom Prepocesser bearbeitet. Dies bedeutet, dass man für Klassen/Methoden in verschiedenen Namespaces und Files, auch das Include Guard verschieden sein.
 
 ```C++
 #ifndef SAYHELLO_H_

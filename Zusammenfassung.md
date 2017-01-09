@@ -576,7 +576,7 @@ Main ist folgendermassen definiert:
 Die eigentlichen Argumente beginnen erst bei ``argv+1``, im ersten Element steht der Programmname. Es endet bei ``argv+argv``.
 
 # Memory (Heap)
-Man könnte das Memory selber mit ``new`` allozieren. Das ist aber pöse.
+Man könnte das Memory selber mit ``new`` allozieren. Das ist aber böse.
 
 Ebenso sollte man nie plain-Pointers verwenden.
 
@@ -687,7 +687,26 @@ int main() {
 }
 ```
 
-Dazu gibt es noch den anonymen Namespace, wenn man den Namen weglässt. Damit kann man Sachen ausserhalb des Files verstecken. Ist aber pöse.
+Dazu gibt es noch den anonymen Namespace, wenn man den Namen weglässt. Damit kann man Sachen ausserhalb des Files verstecken.
+
+```C++
+//File 1
+namespace {
+	void doit() {
+		//do something
+	}
+}
+
+void print() {
+	doit();
+}
+//File 2
+void caller() {
+	print();
+	//doit(); linker error
+}
+```
+
 
 # CUTE TODO ist das nötig?
 CUTE kennt viele Makros und man sollte sie auch nutzen. Will man zum Beispiel die relationalen Operatoren prüfen, dann nicht einfach ``ASSERT_EQUAL(true, a < b)`` sondern ``ASSERT_LESS(a, b)``.

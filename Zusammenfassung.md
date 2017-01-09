@@ -413,6 +413,7 @@ Achtung: in Funktionen können Variablen Shadowing machen, dies ist nicht verbot
 * Return by value: ``type f()``
 * return by reference: ``type & f(); type const &g``
 
+Achtung return by reference nur wenn die Referenzen als Parameter bereits herein gekommen sind, sonst führt es zu dangling references
 Achtung mit Referenzen. Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Stack abräumen geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
 
 <table>

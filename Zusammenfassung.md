@@ -396,7 +396,7 @@ Achtung: in Funktionen können Variablen Shadowing machen, dies ist nicht verbot
 ## Parameter Passing - Return Values
 
 * Pass by value: ``f(type par)`` (bevorzugt)
-* Pass by const ref: ``f(type const & par)``
+* Pass by const ref: ``f(type const & par)`` (bevorzugt wenn nichts verändert wird)
 * Pass by reference: ``f(type & par)``
 
 * Return by value: ``type f()``

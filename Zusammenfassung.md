@@ -192,10 +192,21 @@ Eingebaute Typen (ohne include)
 * float, double long double
 * weitere
 
+## bool
+In Bedingungen können alle Werte stehen, die zu bool oder Zahlen konvertiert werden können. Dabei gilt der Wert 0 als false.
+
 ## Literale
 * U/L für Integer (unsigned/long), Gross-/Kleinschreibung egal
 * Exponenten mit E für float/double
-* "ab"s macht einen String aus "ab", benötigt ``using namespace std::literals`` <== TODO prüfen, V2 S16
+* "ab"s macht einen String aus "ab", benötigt ``using namespace std::literals``
+
+```C++
+void sayHello(){
+	using namespace std::literals;
+	out << "hello"s;
+}
+```
+
 
 # Operatoren
 
@@ -393,16 +404,53 @@ Achtung: in Funktionen können Variablen Shadowing machen, dies ist nicht verbot
 					* block scope (local variables)
 						* temporaries (subexpression results)
 
-Achtung mit Referenzen. Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Stack abräumen geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
-
 ## Parameter Passing - Return Values
 
 * Pass by value: ``f(type par)`` (bevorzugt)
-* Pass by const ref: ``f(type const & par)``
+* Pass by const ref: ``f(type const & par)`` (bevorzugt wenn nichts verändert wird)
 * Pass by reference: ``f(type & par)``
 
 * Return by value: ``type f()``
 * return by reference: ``type & f(); type const &g``
+
+Achtung mit Referenzen. Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Stack abräumen geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
+
+<table>
+	<tr>
+		<th></th> <th>value</th> <th>reference</th>
+	</tr>
+	<tr>
+		<td>non-const</td>
+		<td>
+			Word(std::string value)<br><br>
+			- Argument wird kopiert<br>
+			- Änderungen im Wert haben keine Auswirkungen auf Aufrufer-Seite<br>
+			- Für primitive und kleine Typen
+		</td>
+		<td>
+			Word(std::string & value)<br>
+			<br>
+			- Argument wird aus dem Speicher as-is benutzt<br>
+			- Änderungen im Wert haben Auswirkungen auf Aufrufer-Seite<br>
+			- Benutzt wenn die Seiteneffekte gewünscht sind
+		</td>
+	</tr>
+	<tr>
+		<td>const</td>
+		<td>
+			Word(std::string const value)<br><br>
+			- Argument wird kopiert<br>
+			- Wert kann nicht verändert werden<br>
+			- Für primitive und kleine Typen
+		</td>
+		<td>
+			Word(std::string const & value)<br><br>
+			- Argument wird aus dem Speicher as-is benutzt<br>
+			- Wert kann nicht verändert werden<br>
+			- Kann für grössere Objekte verändert werden
+		</td>
+	</tr>
+</table>
 
 ## Function Overloading
 
@@ -466,7 +514,6 @@ struct Hello {
 };
 #endif /* HELLO_H_ */
 ```
-Semikolon am Ende der Klassendefinition nicht vergessen!
 
 Hello.cpp
 
@@ -505,54 +552,13 @@ int main() {
 #include <istream> // istream definition und implementation
 #include <ostream> // ostream definition und implementation
 #include <iostream> // istream, ostream und cin, cout
-#include <iostream> // definition und implementation von istream und ostream und cin, cout
 #include <sstream>> // string stream
 ```
-
-
-# Const/non-const und Value/Reference
-Beispiel an der ``Word``-Klasse vom Testat
-
-<table>
-	<tr>
-		<th></th> <th>value</th> <th>reference</th>
-	</tr>
-	<tr>
-		<td>non-const</td> 
-		<td>
-			Word(std::string value)<br><br> 
-			- Argument wird kopiert<br> 
-			- Änderungen im Wert haben keine Auswirkungen auf Aufrufer-Seite<br> 
-			- Für primitive und kleine Typen
-		</td> 
-		<td>
-			Word(std::string & value)<br>
-			<br> 
-			- Argument wird aus dem Speicher as-is benutzt<br> 
-			- Änderungen im Wert haben Auswirkungen auf Aufrufer-Seite<br> 
-			- Benutzt wenn die Seiteneffekte gewünscht sind
-		</td>
-	</tr>
-	<tr>
-		<td>const</td> 
-		<td>
-			Word(std::string const value)<br><br> 
-			- Argument wird kopiert<br> 
-			- Wert kann nicht verändert werden<br> 
-			- Für primitive und kleine Typen
-		</td> 
-		<td>
-			Word(std::string const & value)<br><br> 
-			- Argument wird aus dem Speicher as-is benutzt<br> 
-			- Wert kann nicht verändert werden<br> 
-			- Kann für grössere Objekte verändert werden
-		</td>
-	</tr>
-</table>
 
 # Kommandozeilenargumente übergeben
 Main ist folgendermassen definiert:
 ``int main(int argc, char * argv[])``
+``int main()``
 
 ``argc`` hat die Anzahl Argumente drin. ``argv[]`` ist ein Array von Char-Pointern (ein Array von "Strings"), also die einzelnen Argumente.
 
@@ -821,23 +827,13 @@ int inputAge(std::istream& in) {
 ```
 
 ## Beispiel: Date read() implementieren
-**Header:**
-
-```C++
-In der Klasse:
-std::istream & read(std::istream & is);
-
-Unterhalb der Klasse:
-inline std::istream & operator>> std::istream & is, Date & date) {
-	return date.read(is);
-}
-```
 
 **``.read()`` implementieren**
 Precondition: std::istream ist im .good()-State. Wenn wir kein Datum extrahieren können, setzen wir std::istream in den fail-State.
 
 Wenn der Input nicht verwendet werden kann, wird das Objekt nicht überschrieben.
 
+**Header:**
 ```C++
 class Date {
   int year, month, day;
@@ -860,6 +856,10 @@ public:
 		return is; }
 	}
 };
+
+inline std::istream & operator>> std::istream & is, Date & date) {
+	return date.read(is);
+}
 ```
 
 # Iterators
@@ -1648,8 +1648,7 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 * Manche Operationen machen die Iteratoren ungültig, zum Beispiel ein Push-Back auf einem Vector. Der end-Iterator zeigt dann nicht mehr auf den richtigen Ort.
 
 ## Tabelle
-<table >
-
+<table>
 <tbody><tr>
 <td colspan="2"> <h5> Non-modifying sequence operations </h5>
 </td></tr>
@@ -2289,7 +2288,7 @@ private:
 	bool isValidDate() const {
 		...
 	}
-};
+}; //Semikolon am Ende der Klassendefinition nicht vergessen!
 
 #endif /* DATE_H_ */
 ```
@@ -2671,7 +2670,7 @@ Die Base-Class-Konstruktoren-Aufrufe kommen vor die Member-Initializers in der K
 
 Es gibt kein ``super()``. Die Klasse muss selber konstruiert werden, bevor der Body anfängt zu laufen.
 
-```C++ 
+```C++
 class DerivedWithCtor : public Base {
 	DerivedWithCtor(int i, int j):Base{i}, mvar{j} {}
 };
@@ -2681,13 +2680,13 @@ TODO was ist mvar?! V14 S8
 
 ## Sichtbarkeit
 
-Siehe Beispiel für Erklärung: 
+Siehe Beispiel für Erklärung:
 
-```C++ 
+```C++
 class Base {
 protected:
 	int a{0};
-public: 
+public:
 	int b{1};
 private:
 	int c{2}; // auf private members kann nie aus Subklassen Zugegriffen werden
@@ -2864,7 +2863,7 @@ struct AbstractBase {
 
 Abstrakte Funktionen nennt man auch "pure virtual". Wenn man keine Implementation anbietet und dies explizit sagen will: ``= 0;``
 
-Wenn (!) man Baissklassen mit virtuellen Member auf dem Heap alloziert **ohne ``shared_ptr``** muss der Destruktor auch ``virtual`` sein. Aber das ist sowieso pöse.
+Wenn (!) man Baissklassen mit virtuellen Member auf dem Heap alloziert **ohne ``shared_ptr``** muss der Destruktor auch ``virtual`` sein. Aber das ist sowieso böse.
 
 
 # Argument Dependent Lookup (ADL)

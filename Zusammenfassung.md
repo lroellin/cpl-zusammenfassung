@@ -1265,7 +1265,7 @@ Wrapper über Klassischen C array mit length Feld
 
 ## std::deque
 
-Ähnlich wie vector aber zusätzlich noch ``push_front(), pop_front()`` Methoden.
+Die Double Ended Queue funktioniert ähnlich wie ein vector aber zusätzlich noch ``push_front(), pop_front()`` Methoden.
 
 **Include / Initialisieren**: ``#include <dequeue> / std::deque<int> d{};``
 

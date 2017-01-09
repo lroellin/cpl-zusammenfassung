@@ -471,8 +471,16 @@ Implizites Overloading. Wenn es n default Argumente gibt, gibt es n+1 Versionen 
 Funktionen sind First-Class-Parameter in C++
 
 ```C++
+double specific(double y) {
+	return y;
+}
+
 void printfunc(double x, double f(double)) {
 	std::cout << f(x);
+}
+
+int main() {
+	printfunc(1, specific);
 }
 ```
 

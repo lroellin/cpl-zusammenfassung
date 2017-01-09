@@ -2960,6 +2960,12 @@ Unterschied: ohne ``class`` leaken sie in den umgebenden Scope (``day = date::Sa
 
 Die Enums starten normalerweise bei 0 und erhöhen sich um 1. Es ist möglich, die Operatoren zu überschreiben.
 
+## Enum Conversion
+Operatoren können ebenfalls für enums überschrieben werden
+
+enum to int: ``int day = Sun;``
+int to enum: ``dayOfWeek day = static_cast<dayOfWeek>(1);``
+
 ## Wert festlegen
 
 Mit ``=`` kann man den Wert festlegen. Folgende erhalten dann einfach den Wert + 1.

@@ -698,6 +698,7 @@ CUTE kennt viele Makros und man sollte sie auch nutzen. Will man zum Beispiel di
 * "Alias" mit ``using input=std::istream_iterator<std::string>``
 * Parent-Members in Namespace übernehmen, z.B. Konstruktoren mit ``using std::set<T, COMPARE>::set;``
 * Funktionen eines Namespaces in den scope übernehmen z.B. ``using namespace std``
+* Klasse eines Namespaces in den Scope übernehmen z.B. ``using std::string; string s{"abc"}``
 
 # Streams
 Streams haben einen Status, der anzeigt ob I/O erfolgreich war oder nicht

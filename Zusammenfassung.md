@@ -503,7 +503,6 @@ struct Hello {
 };
 #endif /* HELLO_H_ */
 ```
-Semikolon am Ende der Klassendefinition nicht vergessen!
 
 Hello.cpp
 
@@ -1638,7 +1637,6 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 
 ## Tabelle
 <table>
-
 <tbody><tr>
 <td colspan="2"> <h5> Non-modifying sequence operations </h5>
 </td></tr>
@@ -2278,7 +2276,7 @@ private:
 	bool isValidDate() const {
 		...
 	}
-};
+}; //Semikolon am Ende der Klassendefinition nicht vergessen!
 
 #endif /* DATE_H_ */
 ```

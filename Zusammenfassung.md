@@ -1658,6 +1658,615 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 * Manche Operationen machen die Iteratoren ungültig, zum Beispiel ein Push-Back auf einem Vector. Der end-Iterator zeigt dann nicht mehr auf den richtigen Ort.
 
 ## Tabelle
+<table>
+<tbody><tr>
+<td colspan="2"> <h5> Non-modifying sequence operations </h5>
+</td></tr>
+
+<tr>
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr>
+<td><div><div> all_of any_of none_of </div><div> (C++11) (C++11) (C++11) </div></div>
+</td>
+<td>checks if a predicate is true for all, any or none of the elements in a range
+</td></tr>
+
+<tr>
+<td><div><div> for_each </div></div>
+</td>
+<td>applies a function to a range of elements
+</td></tr>
+
+<tr>
+<td><div><div> for_each_n </div><div> (C++17) </div></div>
+</td>
+<td>applies a function object to the first n elements of a sequence
+</td></tr>
+
+<tr>
+<td><div><div> count count_if </div></div>
+</td>
+<td>returns the number of elements satisfying specific criteria
+</td></tr>
+
+<tr>
+<td><div><div> mismatch </div></div>
+</td>
+<td>finds the first position where two ranges differ
+</td></tr>
+
+<tr>
+<td><div><div> equal </div></div>
+</td>
+<td>determines if two sets of elements are the same
+</td></tr>
+
+<tr>
+<td><div><div> find find_if find_if_not </div><div> (C++11) </div></div>
+</td>
+<td>finds the first element satisfying specific criteria
+</td></tr>
+
+<tr>
+<td><div><div> find_end </div></div>
+</td>
+<td>finds the last sequence of elements in a certain range
+</td></tr>
+
+<tr>
+<td><div><div> find_first_of </div></div>
+</td>
+<td>searches for any one of a set of elements
+</td></tr>
+
+<tr>
+<td><div><div> adjacent_find </div></div>
+</td>
+<td>finds the first two adjacent items that are equal (or satisfy a given predicate)
+</td></tr>
+
+<tr>
+<td><div><div> search </div></div>
+</td>
+<td>searches for a range of elements
+</td></tr>
+
+<tr>
+<td><div><div> search_n </div></div>
+</td>
+<td>searches for a number consecutive copies of an element in a range
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> Modifying sequence operations </h5>
+</td></tr>
+
+<tr>
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr>
+<td><div><div> copy copy_if </div><div> (C++11) </div></div>
+</td>
+<td>copies a range of elements to a new location
+</td></tr>
+
+<tr>
+<td><div><div> copy_n </div><div> (C++11) </div></div>
+</td>
+<td>copies a number of elements to a new location
+</td></tr>
+
+<tr>
+<td><div><div> copy_backward </div></div>
+</td>
+<td>copies a range of elements in backwards order
+</td></tr>
+
+<tr>
+<td><div><div> move </div><div> (C++11) </div></div>
+</td>
+<td>moves a range of elements to a new location
+</td></tr>
+
+<tr>
+<td><div><div> move_backward </div><div> (C++11) </div></div>
+</td>
+<td>moves a range of elements to a new location in backwards order
+</td></tr>
+
+<tr>
+<td><div><div> fill </div></div>
+</td>
+<td>copy-assigns the given value to every element in a range
+</td></tr>
+
+<tr>
+<td><div><div> fill_n </div></div>
+</td>
+<td>copy-assigns the given value to N elements in a range
+</td></tr>
+
+<tr>
+<td><div><div> transform </div></div>
+</td>
+<td>applies a function to a range of elements
+</td></tr>
+
+<tr>
+<td><div><div> generate </div></div>
+</td>
+<td>assigns the results of successive function calls to every element in a range
+</td></tr>
+
+<tr>
+<td><div><div> generate_n </div></div>
+</td>
+<td>assigns the results of successive function calls to N elements in a range
+</td></tr>
+
+<tr>
+<td><div><div> remove remove_if </div></div>
+</td>
+<td>removes elements satisfying specific criteria
+</td></tr>
+
+<tr>
+<td><div><div> remove_copy remove_copy_if </div></div>
+</td>
+<td>copies a range of elements omitting those that satisfy specific criteria
+</td></tr>
+
+<tr>
+<td><div><div> replace replace_if </div></div>
+</td>
+<td>replaces all values satisfying specific criteria with another value
+</td></tr>
+
+<tr>
+<td><div><div> replace_copy replace_copy_if </div></div>
+</td>
+<td>copies a range, replacing elements satisfying specific criteria with another value
+</td></tr>
+
+<tr>
+<td><div><div> swap </div></div>
+</td>
+<td>swaps the values of two objects
+</td></tr>
+
+<tr>
+<td><div><div> swap_ranges </div></div>
+</td>
+<td>swaps two ranges of elements
+</td></tr>
+
+<tr>
+<td><div><div> iter_swap </div></div>
+</td>
+<td>swaps the elements pointed to by two iterators
+</td></tr>
+
+<tr>
+<td><div><div> reverse </div></div>
+</td>
+<td>reverses the order of elements in a range
+</td></tr>
+
+<tr>
+<td><div><div> reverse_copy </div></div>
+</td>
+<td>creates a copy of a range that is reversed
+</td></tr>
+
+<tr>
+<td><div><div> rotate </div></div>
+</td>
+<td>rotates the order of elements in a range
+</td></tr>
+
+<tr>
+<td><div><div> rotate_copy </div></div>
+</td>
+<td>copies and rotate a range of elements
+</td></tr>
+
+<tr>
+<td><div><div> random_shuffle shuffle </div><div> (until C++17) (C++11) </div></div>
+</td>
+<td>randomly re-orders elements in a range
+</td></tr>
+
+<tr>
+<td><div><div> sample </div><div> (C++17) </div></div>
+</td>
+<td>selects n random elements from a sequence
+</td></tr>
+
+<tr>
+<td><div><div> unique </div></div>
+</td>
+<td>removes consecutive duplicate elements in a range
+</td></tr>
+
+<tr>
+<td><div><div> unique_copy </div></div>
+</td>
+<td>creates a copy of some range of elements that contains no consecutive duplicates
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> Partitioning operations </h5>
+</td></tr>
+
+<tr>
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr>
+<td><div><div> is_partitioned </div><div> (C++11) </div></div>
+</td>
+<td>determines if the range is partitioned by the given predicate
+</td></tr>
+
+<tr>
+<td><div><div> partition </div></div>
+</td>
+<td>divides a range of elements into two groups
+</td></tr>
+
+<tr>
+<td><div><div> partition_copy </div><div> (C++11) </div></div>
+</td>
+<td>copies a range dividing the elements into two groups
+</td></tr>
+
+<tr>
+<td><div><div> stable_partition </div></div>
+</td>
+<td>divides elements into two groups while preserving their relative order
+</td></tr>
+
+<tr>
+<td><div><div> partition_point </div><div> (C++11) </div></div>
+</td>
+<td>locates the partition point of a partitioned range
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> Sorting operations </h5>
+</td></tr>
+
+<tr>
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr>
+<td><div><div> is_sorted </div><div> (C++11) </div></div>
+</td>
+<td>checks whether a range is sorted into ascending order
+</td></tr>
+
+<tr>
+<td><div><div> is_sorted_until </div><div> (C++11) </div></div>
+</td>
+<td>finds the largest sorted subrange
+</td></tr>
+
+<tr>
+<td><div><div> sort </div></div>
+</td>
+<td>sorts a range into ascending order
+</td></tr>
+
+<tr>
+<td><div><div> partial_sort </div></div>
+</td>
+<td>sorts the first N elements of a range
+</td></tr>
+
+<tr>
+<td><div><div> partial_sort_copy </div></div>
+</td>
+<td>copies and partially sorts a range of elements
+</td></tr>
+
+<tr>
+<td><div><div> stable_sort </div></div>
+</td>
+<td>sorts a range of elements while preserving order between equal elements
+</td></tr>
+
+<tr>
+<td><div><div> nth_element </div></div>
+</td>
+<td>partially sorts the given range making sure that it is partitioned by the given element
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> Binary search operations (on sorted ranges) </h5>
+</td></tr>
+
+<tr>
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr>
+<td><div><div> lower_bound </div></div>
+</td>
+<td>returns an iterator to the first element <i>not less</i> than the given value
+</td></tr>
+
+<tr>
+<td><div><div> upper_bound </div></div>
+</td>
+<td>returns an iterator to the first element <i>greater</i> than a certain value
+</td></tr>
+
+<tr>
+<td><div><div> binary_search </div></div>
+</td>
+<td>determines if an element exists in a certain range
+</td></tr>
+
+<tr>
+<td><div><div> equal_range </div></div>
+</td>
+<td>returns range of elements matching a specific key
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> Set operations (on sorted ranges) </h5>
+</td></tr>
+
+<tr>
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr>
+<td><div><div> merge </div></div>
+</td>
+<td>merges two sorted ranges
+</td></tr>
+
+<tr>
+<td><div><div> inplace_merge </div></div>
+</td>
+<td>merges two ordered ranges in-place
+</td></tr>
+
+<tr>
+<td><div><div> includes </div></div>
+</td>
+<td>returns true if one set is a subset of another
+</td></tr>
+
+<tr>
+<td><div><div> set_difference </div></div>
+</td>
+<td>computes the difference between two sets
+</td></tr>
+
+<tr>
+<td><div><div> set_intersection </div></div>
+</td>
+<td>computes the intersection of two sets
+</td></tr>
+
+<tr>
+<td><div><div> set_symmetric_difference </div></div>
+</td>
+<td>computes the symmetric difference between two sets
+</td></tr>
+
+<tr>
+<td><div><div> set_union </div></div>
+</td>
+<td>computes the union of two sets
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> Heap operations </h5>
+</td></tr>
+
+<tr>
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr>
+<td><div><div> is_heap </div><div> (C++11) </div></div>
+</td>
+<td>checks if the given range is a max heap
+</td></tr>
+
+<tr>
+<td><div><div> is_heap_until </div><div> (C++11) </div></div>
+</td>
+<td>finds the largest subrange that is a max heap
+</td></tr>
+
+<tr>
+<td><div><div> make_heap </div></div>
+</td>
+<td>creates a max heap out of a range of elements
+</td></tr>
+
+<tr>
+<td><div><div> push_heap </div></div>
+</td>
+<td>adds an element to a max heap
+</td></tr>
+
+<tr>
+<td><div><div> pop_heap </div></div>
+</td>
+<td>removes the largest element from a max heap
+</td></tr>
+
+<tr>
+<td><div><div> sort_heap </div></div>
+</td>
+<td>turns a max heap into a range of elements sorted in ascending order
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> Minimum/maximum operations </h5>
+</td></tr>
+
+<tr>
+<td colspan="2"> <div>Defined in header <code>&lt;algorithm&gt;</code> </div>
+</td></tr>
+
+<tr>
+<td><div><div> max </div></div>
+</td>
+<td>returns the greater of the given values
+</td></tr>
+
+<tr>
+<td><div><div> max_element </div></div>
+</td>
+<td>returns the largest element in a range
+</td></tr>
+
+<tr>
+<td><div><div> min </div></div>
+</td>
+<td>returns the smaller of the given values
+</td></tr>
+
+<tr>
+<td><div><div> min_element </div></div>
+</td>
+<td>returns the smallest element in a range
+</td></tr>
+
+<tr>
+<td><div><div> minmax </div><div> (C++11) </div></div>
+</td>
+<td>returns the smaller and larger of two elements
+</td></tr>
+
+<tr>
+<td><div><div> minmax_element </div><div> (C++11) </div></div>
+</td>
+<td>returns the smallest and the largest elements in a range
+</td></tr>
+
+<tr>
+<td><div><div> clamp </div><div> (C++17) </div></div>
+</td>
+<td>clamps a value between a pair of boundary values
+</td></tr>
+
+<tr>
+<td><div><div> lexicographical_compare </div></div>
+</td>
+<td>returns true if one range is lexicographically less than another
+</td></tr>
+
+<tr>
+<td><div><div> is_permutation </div><div> (C++11) </div></div>
+</td>
+<td>determines if a sequence is a permutation of another sequence
+</td></tr>
+
+<tr>
+<td><div><div> next_permutation </div></div>
+</td>
+<td>generates the next greater lexicographic permutation of a range of elements
+</td></tr>
+
+<tr>
+<td><div><div> prev_permutation </div></div>
+</td>
+<td>generates the next smaller lexicographic permutation of a range of elements
+</td></tr>
+
+
+<tr>
+<td colspan="2"> <h5> Numeric operations </h5>
+</td></tr>
+
+<tr>
+<td colspan="2"> <div>Defined in header <code>&lt;numeric&gt;</code> </div>
+</td></tr>
+
+<tr>
+<td><div><div> iota </div><div> (C++11) </div></div>
+</td>
+<td>fills a range with successive increments of the starting value
+</td></tr>
+
+<tr>
+<td><div><div> accumulate </div></div>
+</td>
+<td>sums up a range of elements
+</td></tr>
+
+<tr>
+<td><div><div> inner_product </div></div>
+</td>
+<td>computes the inner product of two ranges of elements
+</td></tr>
+
+<tr>
+<td><div><div> adjacent_difference </div></div>
+</td>
+<td>computes the differences between adjacent elements in a range
+</td></tr>
+
+<tr>
+<td><div><div> partial_sum </div></div>
+</td>
+<td>computes the partial sum of a range of elements
+</td></tr>
+
+<tr>
+<td><div><div> reduce </div><div> (C++17) </div></div>
+</td>
+<td>similar to std::accumulate , except out of order
+</td></tr>
+
+<tr>
+<td><div><div> exclusive_scan </div><div> (C++17) </div></div>
+</td>
+<td>similar to std::partial_sum , excludes the ith input element from the ith sum
+</td></tr>
+
+<tr>
+<td><div><div> inclusive_scan </div><div> (C++17) </div></div>
+</td>
+<td>similar to std::partial_sum , includes the ith input element in the ith sum
+</td></tr>
+
+<tr>
+<td><div><div> transform_reduce </div><div> (C++17) </div></div>
+</td>
+<td>applies a functor, then reduces out of order
+</td></tr>
+
+<tr>
+<td><div><div> transform_exclusive_scan </div><div> (C++17) </div></div>
+</td>
+<td>applies a functor, then calculates exclusive scan
+</td></tr>
+
+<tr>
+<td><div><div> transform_inclusive_scan </div><div> (C++17) </div></div>
+</td>
+<td>applies a functor, then calculates inclusive scan
+</td></tr>
+</tbody></table>
 
 
 # Klassen

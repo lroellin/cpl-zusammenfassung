@@ -2343,6 +2343,8 @@ Haben einen Typ und einen Namen. So const wie möglich.
 
 ``<type> <name>``
 
+Sie sind im Header File, damit das Speicherlayout bekannt ist. 
+
 ## Static Member-Variablen
 **Im Header**: als ``static`` oder als ``static const`` deklarieren. ``static const`` dürfen auch gleich initialisiert werden:
 

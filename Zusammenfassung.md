@@ -991,6 +991,8 @@ int main() {
 
 ## Kategorien
 
+Grund für verschiedene Kategorien: Verschiedene Algorithmen brauchen speziele Iterator z.B. random access
+
 **Input Iteratoren**
 
 * Das aktuelle Element kann nur einmal ausgelesen werden, der Iterator muss danach inkrementiert werden -- TODO strikethrough, das war anscheinend falsch (Errata in Vorlesung 11)

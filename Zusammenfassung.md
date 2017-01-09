@@ -547,6 +547,7 @@ int main() {
 # Kommandozeilenargumente übergeben
 Main ist folgendermassen definiert:
 ``int main(int argc, char * argv[])``
+``int main()``
 
 ``argc`` hat die Anzahl Argumente drin. ``argv[]`` ist ein Array von Char-Pointern (ein Array von "Strings"), also die einzelnen Argumente.
 

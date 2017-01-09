@@ -198,7 +198,15 @@ In Bedingungen können alle Werte stehen, die zu bool oder Zahlen konvertiert we
 ## Literale
 * U/L für Integer (unsigned/long), Gross-/Kleinschreibung egal
 * Exponenten mit E für float/double
-* "ab"s macht einen String aus "ab", benötigt ``using namespace std::literals`` <== TODO prüfen, V2 S16
+* "ab"s macht einen String aus "ab", benötigt ``using namespace std::literals``
+
+```C++
+void sayHello(){
+	using namespace std::literals;
+	out << "hello"s;
+}
+```
+
 
 # Operatoren
 

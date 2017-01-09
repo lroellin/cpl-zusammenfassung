@@ -393,8 +393,6 @@ Achtung: in Funktionen können Variablen Shadowing machen, dies ist nicht verbot
 					* block scope (local variables)
 						* temporaries (subexpression results)
 
-Achtung mit Referenzen. Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Stack abräumen geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
-
 ## Parameter Passing - Return Values
 
 * Pass by value: ``f(type par)`` (bevorzugt)
@@ -403,6 +401,9 @@ Achtung mit Referenzen. Wenn Parameter als Referenzen reinkommen, haben Änderun
 
 * Return by value: ``type f()``
 * return by reference: ``type & f(); type const &g``
+
+Achtung mit Referenzen. Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Stack abräumen geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
+
 
 ## Function Overloading
 
@@ -518,33 +519,33 @@ Beispiel an der ``Word``-Klasse vom Testat
 		<th></th> <th>value</th> <th>reference</th>
 	</tr>
 	<tr>
-		<td>non-const</td> 
+		<td>non-const</td>
 		<td>
-			Word(std::string value)<br><br> 
-			- Argument wird kopiert<br> 
-			- Änderungen im Wert haben keine Auswirkungen auf Aufrufer-Seite<br> 
+			Word(std::string value)<br><br>
+			- Argument wird kopiert<br>
+			- Änderungen im Wert haben keine Auswirkungen auf Aufrufer-Seite<br>
 			- Für primitive und kleine Typen
-		</td> 
+		</td>
 		<td>
 			Word(std::string & value)<br>
-			<br> 
-			- Argument wird aus dem Speicher as-is benutzt<br> 
-			- Änderungen im Wert haben Auswirkungen auf Aufrufer-Seite<br> 
+			<br>
+			- Argument wird aus dem Speicher as-is benutzt<br>
+			- Änderungen im Wert haben Auswirkungen auf Aufrufer-Seite<br>
 			- Benutzt wenn die Seiteneffekte gewünscht sind
 		</td>
 	</tr>
 	<tr>
-		<td>const</td> 
+		<td>const</td>
 		<td>
-			Word(std::string const value)<br><br> 
-			- Argument wird kopiert<br> 
-			- Wert kann nicht verändert werden<br> 
+			Word(std::string const value)<br><br>
+			- Argument wird kopiert<br>
+			- Wert kann nicht verändert werden<br>
 			- Für primitive und kleine Typen
-		</td> 
+		</td>
 		<td>
-			Word(std::string const & value)<br><br> 
-			- Argument wird aus dem Speicher as-is benutzt<br> 
-			- Wert kann nicht verändert werden<br> 
+			Word(std::string const & value)<br><br>
+			- Argument wird aus dem Speicher as-is benutzt<br>
+			- Wert kann nicht verändert werden<br>
 			- Kann für grössere Objekte verändert werden
 		</td>
 	</tr>
@@ -1648,7 +1649,7 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 * Manche Operationen machen die Iteratoren ungültig, zum Beispiel ein Push-Back auf einem Vector. Der end-Iterator zeigt dann nicht mehr auf den richtigen Ort.
 
 ## Tabelle
-<table >
+<table>
 
 <tbody><tr>
 <td colspan="2"> <h5> Non-modifying sequence operations </h5>
@@ -2671,7 +2672,7 @@ Die Base-Class-Konstruktoren-Aufrufe kommen vor die Member-Initializers in der K
 
 Es gibt kein ``super()``. Die Klasse muss selber konstruiert werden, bevor der Body anfängt zu laufen.
 
-```C++ 
+```C++
 class DerivedWithCtor : public Base {
 	DerivedWithCtor(int i, int j):Base{i}, mvar{j} {}
 };
@@ -2681,13 +2682,13 @@ TODO was ist mvar?! V14 S8
 
 ## Sichtbarkeit
 
-Siehe Beispiel für Erklärung: 
+Siehe Beispiel für Erklärung:
 
-```C++ 
+```C++
 class Base {
 protected:
 	int a{0};
-public: 
+public:
 	int b{1};
 private:
 	int c{2}; // auf private members kann nie aus Subklassen Zugegriffen werden

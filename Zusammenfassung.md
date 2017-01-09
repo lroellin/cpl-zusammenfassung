@@ -816,23 +816,13 @@ int inputAge(std::istream& in) {
 ```
 
 ## Beispiel: Date read() implementieren
-**Header:**
-
-```C++
-In der Klasse:
-std::istream & read(std::istream & is);
-
-Unterhalb der Klasse:
-inline std::istream & operator>> std::istream & is, Date & date) {
-	return date.read(is);
-}
-```
 
 **``.read()`` implementieren**
 Precondition: std::istream ist im .good()-State. Wenn wir kein Datum extrahieren können, setzen wir std::istream in den fail-State.
 
 Wenn der Input nicht verwendet werden kann, wird das Objekt nicht überschrieben.
 
+**Header:**
 ```C++
 class Date {
   int year, month, day;
@@ -855,6 +845,10 @@ public:
 		return is; }
 	}
 };
+
+inline std::istream & operator>> std::istream & is, Date & date) {
+	return date.read(is);
+}
 ```
 
 # Iterators

@@ -404,6 +404,42 @@ Achtung: in Funktionen können Variablen Shadowing machen, dies ist nicht verbot
 
 Achtung mit Referenzen. Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Stack abräumen geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
 
+<table>
+	<tr>
+		<th></th> <th>value</th> <th>reference</th>
+	</tr>
+	<tr>
+		<td>non-const</td>
+		<td>
+			Word(std::string value)<br><br>
+			- Argument wird kopiert<br>
+			- Änderungen im Wert haben keine Auswirkungen auf Aufrufer-Seite<br>
+			- Für primitive und kleine Typen
+		</td>
+		<td>
+			Word(std::string & value)<br>
+			<br>
+			- Argument wird aus dem Speicher as-is benutzt<br>
+			- Änderungen im Wert haben Auswirkungen auf Aufrufer-Seite<br>
+			- Benutzt wenn die Seiteneffekte gewünscht sind
+		</td>
+	</tr>
+	<tr>
+		<td>const</td>
+		<td>
+			Word(std::string const value)<br><br>
+			- Argument wird kopiert<br>
+			- Wert kann nicht verändert werden<br>
+			- Für primitive und kleine Typen
+		</td>
+		<td>
+			Word(std::string const & value)<br><br>
+			- Argument wird aus dem Speicher as-is benutzt<br>
+			- Wert kann nicht verändert werden<br>
+			- Kann für grössere Objekte verändert werden
+		</td>
+	</tr>
+</table>
 
 ## Function Overloading
 
@@ -508,47 +544,6 @@ int main() {
 #include <iostream> // istream, ostream und cin, cout
 #include <sstream>> // string stream
 ```
-
-
-# Const/non-const und Value/Reference
-Beispiel an der ``Word``-Klasse vom Testat
-
-<table>
-	<tr>
-		<th></th> <th>value</th> <th>reference</th>
-	</tr>
-	<tr>
-		<td>non-const</td>
-		<td>
-			Word(std::string value)<br><br>
-			- Argument wird kopiert<br>
-			- Änderungen im Wert haben keine Auswirkungen auf Aufrufer-Seite<br>
-			- Für primitive und kleine Typen
-		</td>
-		<td>
-			Word(std::string & value)<br>
-			<br>
-			- Argument wird aus dem Speicher as-is benutzt<br>
-			- Änderungen im Wert haben Auswirkungen auf Aufrufer-Seite<br>
-			- Benutzt wenn die Seiteneffekte gewünscht sind
-		</td>
-	</tr>
-	<tr>
-		<td>const</td>
-		<td>
-			Word(std::string const value)<br><br>
-			- Argument wird kopiert<br>
-			- Wert kann nicht verändert werden<br>
-			- Für primitive und kleine Typen
-		</td>
-		<td>
-			Word(std::string const & value)<br><br>
-			- Argument wird aus dem Speicher as-is benutzt<br>
-			- Wert kann nicht verändert werden<br>
-			- Kann für grössere Objekte verändert werden
-		</td>
-	</tr>
-</table>
 
 # Kommandozeilenargumente übergeben
 Main ist folgendermassen definiert:

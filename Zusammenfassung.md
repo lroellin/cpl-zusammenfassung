@@ -192,6 +192,9 @@ Eingebaute Typen (ohne include)
 * float, double long double
 * weitere
 
+## bool
+In Bedingungen können alle Werte stehen, die zu bool oder Zahlen konvertiert werden können. Dabei gilt der Wert 0 als false.
+
 ## Literale
 * U/L für Integer (unsigned/long), Gross-/Kleinschreibung egal
 * Exponenten mit E für float/double

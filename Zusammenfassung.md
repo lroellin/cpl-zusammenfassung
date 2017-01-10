@@ -2770,11 +2770,36 @@ Die Dekonstruktoren werden dann von Base zu Super dekonstruiert
 
 ```C++
 class DerivedWithCtor : public Base {
+	//zuerst Basis Konstruktor aufrufen und dann können die members wie gewohnt
 	DerivedWithCtor(int i, int j):Base{i}, mvar{j} {}
 };
 ```
 
-TODO was ist mvar?! V14 S8
+## Member Hiding Problem
+Überladene Memberfunktionen in abgeleiteten Klassen verstecken alle Funktionen mit selben Namen der Basis Klassen
+
+```C++ 
+struct Base {
+	void foo(int i) const;
+};
+struct Derived:Base {
+	void foo();
+};
+
+int main() {
+	Derviced d{};
+	//d.foo(31); //is hidden
+}
+``` 
+
+**Lösung**
+```C++ 
+struct Derived:Base {
+	using Base::foo; //zuerst using damit die Funktionen verfügbar sind
+	void foo();
+};
+
+``` 
 
 ## Sichtbarkeit
 Die Vererbung kann sogar eine Visibility haben. Dies beschränkt die **maximale** Visibility der geerbten Member.
@@ -2827,7 +2852,6 @@ struct Sub: Base {
 Sub sub{1,2};
 Base base{sub}; // ACHTUNG, Nur der Base Teil wird kopiert!
 ```
-
 
 ## Probleme mit Vererbung und pass-by-value
 

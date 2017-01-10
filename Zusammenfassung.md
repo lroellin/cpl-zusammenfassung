@@ -1716,8 +1716,9 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 * Manche Operationen machen die Iteratoren ungültig, zum Beispiel ein Push-Back auf einem Vector. Der end-Iterator zeigt dann nicht mehr auf den richtigen Ort.
 
 ## Tabelle
+{::nomarkdown}
 <table>
-<tbody><tr>
+<tr>
 <td colspan="2"> <h5> Non-modifying sequence operations </h5>
 </td></tr>
 
@@ -2324,8 +2325,8 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 </td>
 <td>applies a functor, then calculates inclusive scan
 </td></tr>
-</tbody></table>
-
+</table>
+{:/}
 
 # Klassen
 

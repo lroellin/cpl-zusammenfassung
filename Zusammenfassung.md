@@ -2872,6 +2872,7 @@ public:
 
 class Implementor : public PolymorphicBase {
 public:
+	//can be marked with override. this will lead to an compile error if there is no virtual in the base
 	void doit() { /* etwas anderes */ }
 };
 ```

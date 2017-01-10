@@ -2,6 +2,7 @@
 
 # C++ Spick
 ##TODO
+* Foliesatz 6 Folie 19-20 verstehen
 * Demo verstehen (V12, S. 11)
 * V12, S.21
 * Templates-Erweiterungen (V12)
@@ -2489,13 +2490,6 @@ Muss alle Ressourcen freigeben. Implizit verfügbar. Darf keine Exception werfen
 
 TODO muss bei Klassen mit virtual Methoden immer virtual deklariert werden.
 
-## Vererbung
-Base-Klassen werden nach dem Klassennamen spezifiziert
-
-``class <name> : <base1>, ..., <baseN>``
-
-Die Vererbung kann sogar eine Visibility haben. Dies beschränkt die **maximale** Visibility der geerbten Member.
-
 ## Implementation
 Die eigentliche Implementierung sollte die Klasse im Header-File inkludieren und dann die Methoden implementieren. Wichtig: die Scope Specifier beachten
 
@@ -2538,6 +2532,41 @@ In einer const-Memberfunktion dürfen die Member nicht verändert werden. Es kö
 Es gibt kein this-Objekt, können **nicht** const sein. Kein static Keyword.
 
 Aufruf: ``<classname>::<member>(): Date::isLeapYear(2016);``
+
+### Implementation Header oder CPP File
+Wenn die Methoden keine zusätzlichen Dependencies hat und die implementation klein und offensichtlich ist, können diese im Header implementiert werden.
+
+
+## Member(Function)-Pointers
+Man kann auf Member(Funktionen) referenzieren.
+
+**Beispiel**
+```C++
+struct x {
+	void foo() const;
+	void bar() const;
+	int a;
+	int b;
+}
+/**Funktion objekt und Funktion mitgeben, welche aufgerufen werden soll.**/
+void doit(void(X::*mfunc)() const, X const &x) {
+	()x.*mfunc)(); //Klammern nötig
+}
+
+/**Funktion objekt und variable mitgeben, welche den Wert ändern soll.**/
+void change(int X::*var, X& x, int val) {
+	x.*var = val;
+}
+
+int main() {
+	X x{1,2};
+	//Referenzen sind auf die Klasse für MemmberPointers!
+	doit(&X::foo,x);
+	change(&X::a,x,3);
+}
+
+```
+
 
 ## Operator-Overloading
 > When in doubt, do as the ints do
@@ -2738,16 +2767,43 @@ Die Basisklassen werden in Reihenfolge ihrer Angaben initialisiert. Normalerweis
 Die Base-Class-Konstruktoren-Aufrufe kommen vor die Member-Initializers in der Konstruktor-Initializer-List (vor Body).
 
 Es gibt kein ``super()``. Die Klasse muss selber konstruiert werden, bevor der Body anfängt zu laufen.
+Die Dekonstruktoren werden dann von Base zu Super dekonstruiert
 
 ```C++
 class DerivedWithCtor : public Base {
+	//zuerst Basis Konstruktor aufrufen und dann können die members wie gewohnt
 	DerivedWithCtor(int i, int j):Base{i}, mvar{j} {}
 };
 ```
 
-TODO was ist mvar?! V14 S8
+## Member Hiding Problem
+Überladene Memberfunktionen in abgeleiteten Klassen verstecken alle Funktionen mit selben Namen der Basis Klassen
+
+```C++ 
+struct Base {
+	void foo(int i) const;
+};
+struct Derived:Base {
+	void foo();
+};
+
+int main() {
+	Derviced d{};
+	//d.foo(31); //is hidden
+}
+``` 
+
+**Lösung**
+```C++ 
+struct Derived:Base {
+	using Base::foo; //zuerst using damit die Funktionen verfügbar sind
+	void foo();
+};
+
+``` 
 
 ## Sichtbarkeit
+Die Vererbung kann sogar eine Visibility haben. Dies beschränkt die **maximale** Visibility der geerbten Member.
 
 Siehe Beispiel für Erklärung:
 
@@ -2797,7 +2853,6 @@ struct Sub: Base {
 Sub sub{1,2};
 Base base{sub}; // ACHTUNG, Nur der Base Teil wird kopiert!
 ```
-
 
 ## Probleme mit Vererbung und pass-by-value
 
@@ -2948,9 +3003,9 @@ namespace one {
 
 namespace two {
 struct type_two{};
-void f(type_two);
-void g(one::type_one);
-void h(one::type_one);
+	void f(type_two);
+	void g(one::type_one);
+	void h(one::type_one);
 }
 void g(two::type_two);
 
@@ -2958,14 +3013,14 @@ void g(two::type_two);
 #include "adl.h"
 
 int main() {
-one::type_one t1{};
-f(t1); //one::f
-two::type_two t2{};
-f(t2); // two:f
-//h(t1) wird nicht gefunden
-two::g(t1);
-g(t1); //argument type does not match compile fehler
-g(t2); //ruft g ausserhalb namespace auf
+	one::type_one t1{};
+	f(t1); //one::f
+	two::type_two t2{};
+	f(t2); // two:f
+	//h(t1) wird nicht gefunden
+	two::g(t1);
+	g(t1); //argument type does not match compile fehler
+	g(t2); //ruft g ausserhalb namespace auf
 }
 
 ```
@@ -3178,17 +3233,25 @@ Wenn man z.B. Funktionen wie printf implementieren will, kennt man die Anzahl Pa
 * nach einem Namen: expandiert den Namen zu allen Elementen
 * zwischen zwei Namen: definiert den hinteren Namen als Liste von Parametern, vom Typ des vorderen Namen
 
+```C++
+template<typename...ARGS> //any number of types
+void variadic(ARGS...args) { //any number of argumenets
+	println(std::cout, args...); //expand parametes as arguments 
+}
+```
+
 Bei der Implementierung verwendet man die Rekursion
 
 * Base Case ist 0 Argumente
 * Rekursiver Fall ist 1 explizites Argument mit einem Schwanz als variadische Liste von Argumenten
 
 ```C++
-template<typename...ARGS>
-void variadic(ARGS...args) {
-	println(std::cout, args...);
+//base case
+void println(std::ostream& out) {
+	out << "\n"
 }
 
+//Rekusion
 template<typename Head, typename... Tail>
 void println(std::ostream & out, Head const & head, Tail const & ...tail) {
 	out << head;
@@ -3222,7 +3285,7 @@ public:
 	void putInto(T const & item) { theSak.push_back(item); }
 };
 
-// Member-Funktion ausserhalb der Template-Klasse
+// Member-Funktion ausserhalb der Template-Klasse müssen inline sein, ist aber ugly
 template <typename T>
 inline T Sack<T>::getOut() {
 	if(!size()) { throw std::logic_error{"empty Sack"}; }
@@ -3263,6 +3326,11 @@ template <>
 class Sack<char const *> { // Spezialisierung
 	// zum Beispiel andere Implementierung
 };
+
+template <typename T>
+class Sack<T*> { // Spezialisierung verbieten
+	~Sack() = delete; //dekonstruktor löschen um instanzierung zu verhindern.
+};
 ```
 
 ### Template Terminologie
@@ -3301,7 +3369,18 @@ void Sack<char const *>::putInto(char const *p) {...}
 Wenn man den Sack mit einer Initializer List füllen will (z.B. ``Sack<int> sack{1, 2, 3};``), kann man die bereitgestellte ``std::initializer_list<T>`` nutzen. Dazu definieren wir einen speziellen Konstruktur
 
 ```C++
-Sack(std::initializer_list<T> il):theSack(il){}
+Sack(std::initializer_list<T> il):theSack(il){  //theSack is a member variable of type vector
+}
+```
+
+### Sack mit Iteratoren füllen
+Konstruktor für Iteratoren begin und end Iteratoren initalisieren.
+
+```C++
+//Konstroktur
+template <typename ITER>
+Sack(ITER b, ITER e) : theSack(b,e){ //theSack is a member variable of type vector
+}
 ```
 
 ### Container variieren
@@ -3311,14 +3390,14 @@ Unsere Template-Definition schaut jetzt wie folgt aus (Klammerung beachten!, Key
 ```C++
 template <typename T, template<typename...> class container=std::vector>
 class Sack {
-(usw.)
+ //...
+}
 ```
 
 Und dann z.B.: `Sack<int, std::list> listSack{1,2,3,4,5};
 
 ### Templates als Adapter
 Wenn man zum Beispiel einen SafeVector bauen will, der den Vektor implementiert, aber ``operator[]`` so implementiert dass ein Index Bounday Check stattfindet.
-
 
 
 ```C++

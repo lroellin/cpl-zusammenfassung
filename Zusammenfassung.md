@@ -2,6 +2,7 @@
 
 # C++ Spick
 ##TODO
+* Foliesatz 6 Folie 19-20 verstehen
 * Demo verstehen (V12, S. 11)
 * V12, S.21
 * Templates-Erweiterungen (V12)

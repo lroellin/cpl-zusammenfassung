@@ -3265,7 +3265,7 @@ public:
 	void putInto(T const & item) { theSak.push_back(item); }
 };
 
-// Member-Funktion ausserhalb der Template-Klasse
+// Member-Funktion ausserhalb der Template-Klasse müssen inline sein, ist aber ugly
 template <typename T>
 inline T Sack<T>::getOut() {
 	if(!size()) { throw std::logic_error{"empty Sack"}; }

@@ -2978,9 +2978,9 @@ namespace one {
 
 namespace two {
 struct type_two{};
-void f(type_two);
-void g(one::type_one);
-void h(one::type_one);
+	void f(type_two);
+	void g(one::type_one);
+	void h(one::type_one);
 }
 void g(two::type_two);
 
@@ -2988,14 +2988,14 @@ void g(two::type_two);
 #include "adl.h"
 
 int main() {
-one::type_one t1{};
-f(t1); //one::f
-two::type_two t2{};
-f(t2); // two:f
-//h(t1) wird nicht gefunden
-two::g(t1);
-g(t1); //argument type does not match compile fehler
-g(t2); //ruft g ausserhalb namespace auf
+	one::type_one t1{};
+	f(t1); //one::f
+	two::type_two t2{};
+	f(t2); // two:f
+	//h(t1) wird nicht gefunden
+	two::g(t1);
+	g(t1); //argument type does not match compile fehler
+	g(t2); //ruft g ausserhalb namespace auf
 }
 
 ```

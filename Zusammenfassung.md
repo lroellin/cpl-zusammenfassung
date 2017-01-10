@@ -2257,6 +2257,7 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 <td>applies a functor, then calculates inclusive scan
 </td></tr>
 </table>
+
 # Klassen
 
 Es gibt zwei Keywords, ``struct``und ``class``. Die sind äquivalent, ausser

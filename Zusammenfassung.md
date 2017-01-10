@@ -413,6 +413,7 @@ Achtung: in Funktionen können Variablen Shadowing machen, dies ist nicht verbot
 * Return by value: ``type f()``
 * return by reference: ``type & f(); type const &g``
 
+Achtung return by reference nur wenn die Referenzen als Parameter bereits herein gekommen sind, sonst führt es zu dangling references
 Achtung mit Referenzen. Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Stack abräumen geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
 
 <table>
@@ -470,12 +471,30 @@ Implizites Overloading. Wenn es n default Argumente gibt, gibt es n+1 Versionen 
 Funktionen sind First-Class-Parameter in C++
 
 ```C++
+double specific(double y) {
+	return y;
+}
+
 void printfunc(double x, double f(double)) {
 	std::cout << f(x);
+}
+
+int main() {
+	printfunc(1, specific);
 }
 ```
 
 In C nur als Function Pointer möglich
+
+## Aufruf Sequenz von Funktionen
+
+```C++
+void main() {
+	askForName(std::cout);
+	sayGreeting(std::cout, inputName(std::cin), inputName(std::cin));
+}
+```
+Es ist nicht klar welche Funktion inputName zuerst aufgerufen wird.
 
 # Include Files
 
@@ -491,6 +510,7 @@ Zu Beachten:
 ## Include Guard
 
 Um die ODR (One Definition Rule) nicht zu verletzen, verwendet man Guard Statements
+Include Guards werden vom Prepocesser bearbeitet. Dies bedeutet, dass man für Klassen/Methoden in verschiedenen Namespaces und Files, auch das Include Guard verschieden sein.
 
 ```C++
 #ifndef SAYHELLO_H_
@@ -565,7 +585,7 @@ Main ist folgendermassen definiert:
 Die eigentlichen Argumente beginnen erst bei ``argv+1``, im ersten Element steht der Programmname. Es endet bei ``argv+argv``.
 
 # Memory (Heap)
-Man könnte das Memory selber mit ``new`` allozieren. Das ist aber pöse.
+Man könnte das Memory selber mit ``new`` allozieren. Das ist aber böse.
 
 Ebenso sollte man nie plain-Pointers verwenden.
 
@@ -676,19 +696,37 @@ int main() {
 }
 ```
 
-Dazu gibt es noch den anonymen Namespace, wenn man den Namen weglässt. Damit kann man Sachen ausserhalb des Files verstecken. Ist aber pöse.
+Dazu gibt es noch den anonymen Namespace, wenn man den Namen weglässt. Damit kann man Sachen ausserhalb des Files verstecken.
+
+```C++
+//File 1
+namespace {
+	void doit() {
+		//do something
+	}
+}
+
+void print() {
+	doit();
+}
+//File 2
+void caller() {
+	print();
+	//doit(); linker error
+}
+```
+
 
 # CUTE TODO ist das nötig?
 CUTE kennt viele Makros und man sollte sie auch nutzen. Will man zum Beispiel die relationalen Operatoren prüfen, dann nicht einfach ``ASSERT_EQUAL(true, a < b)`` sondern ``ASSERT_LESS(a, b)``.
 
 
 # Using
-Von ``using`` gibt es zwei Varianten
 
 * "Alias" mit ``using input=std::istream_iterator<std::string>``
 * Parent-Members in Namespace übernehmen, z.B. Konstruktoren mit ``using std::set<T, COMPARE>::set;``
-
-
+* Funktionen eines Namespaces in den scope übernehmen z.B. ``using namespace std``
+* Klasse eines Namespaces in den Scope übernehmen z.B. ``using std::string; string s{"abc"}``
 
 # Streams
 Streams haben einen Status, der anzeigt ob I/O erfolgreich war oder nicht
@@ -952,6 +990,8 @@ int main() {
 ```
 
 ## Kategorien
+
+Grund für verschiedene Kategorien: Verschiedene Algorithmen brauchen speziele Iterator z.B. random access
 
 **Input Iteratoren**
 
@@ -1225,7 +1265,7 @@ Wrapper über Klassischen C array mit length Feld
 
 ## std::deque
 
-Ähnlich wie vector aber zusätzlich noch ``push_front(), pop_front()`` Methoden.
+Die Double Ended Queue funktioniert ähnlich wie ein vector aber zusätzlich noch ``push_front(), pop_front()`` Methoden.
 
 **Include / Initialisieren**: ``#include <dequeue> / std::deque<int> d{};``
 
@@ -1384,6 +1424,13 @@ Entspricht TreeMap in Java, aufsteigend sortiert mit Key und Value
 **Iterator**: bidirectional über std::pair<Key, Value>
 
 **Insert**: ``insert (std::pair<Key, Value>{"key", “value”});``
+```C++
+std::map<std::string,size_t> words;
+std::string s;
+
+while (std::cin >> s)
+  ++words[s]; //erstellt automatisch einen Eintrag
+``` 
 
 **Delete**:
 
@@ -1464,7 +1511,7 @@ Wenn es alle möglichen Klammern hat, ist es wahrscheinlich ein Lambda.
 
 Beispiel:
 ```C++
-auto const g=[](char c)->{return std::toupper(c);}; // beide Semikolon nicht vergessen!``
+auto const g=[](char c){return std::toupper(c);}; // beide Semikolon nicht vergessen!``
 g('a');
 ```
 
@@ -1574,6 +1621,27 @@ Diese lassen sich dann in manchen Containern als Vergleichsoperator mitgeben, al
 ### Als Parameter
 ``std::function<SIGNATURE>;``, also zum Beispiel ``std::function<bool(int)> apredicate{};``
 
+**Beispiel**
+```C++
+void apply(std::ostream& out, std::function<bool(int)> f) {
+	if(f) {
+		//safe to use f
+	} else {
+		//empty function holder
+	}
+}
+
+int main() {
+	std::function<bool(int)> f;
+	f = [](int i) {return i%2};
+	apply(std::cout, f);
+	f = nullptr;
+	apply(std::cout, f);
+}
+
+```
+
+
 Die Signatur wird geprüft.
 
 # Algorithms
@@ -1649,7 +1717,7 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 
 ## Tabelle
 <table>
-<tbody><tr>
+<tr>
 <td colspan="2"> <h5> Non-modifying sequence operations </h5>
 </td></tr>
 
@@ -2256,8 +2324,7 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 </td>
 <td>applies a functor, then calculates inclusive scan
 </td></tr>
-</tbody></table>
-
+</table>
 
 # Klassen
 
@@ -2304,6 +2371,8 @@ Visibilities können auch mehrmals verwendet werden
 Haben einen Typ und einen Namen. So const wie möglich.
 
 ``<type> <name>``
+
+Sie sind im Header File, damit das Speicherlayout bekannt ist. 
 
 ## Static Member-Variablen
 **Im Header**: als ``static`` oder als ``static const`` deklarieren. ``static const`` dürfen auch gleich initialisiert werden:
@@ -2869,6 +2938,37 @@ Abstrakte Funktionen nennt man auch "pure virtual". Wenn man keine Implementatio
 # Argument Dependent Lookup (ADL)
 Wenn man Funktionen ausserhalb der Klasse, aber im selben Headerfile nutzt, sollte man die Klasse und die Funktion mit demselben Namespace versehen. Wenn der Compiler eine nicht-qualified Funktion oder einen nicht-qualified Operator auffindet, schaut er sich den Namespace der Typen an, die involviert sind.
 
+```C++
+//adl.h
+
+namespace one {
+	struct type_one{};
+	void f(type_one) {};
+}
+
+namespace two {
+struct type_two{};
+void f(type_two);
+void g(one::type_one);
+void h(one::type_one);
+}
+void g(two::type_two);
+
+//adl.cpp
+#include "adl.h"
+
+int main() {
+one::type_one t1{};
+f(t1); //one::f
+two::type_two t2{};
+f(t2); // two:f
+//h(t1) wird nicht gefunden
+two::g(t1);
+g(t1); //argument type does not match compile fehler
+g(t2); //ruft g ausserhalb namespace auf
+}
+
+```
 
 # Enums
 
@@ -2888,6 +2988,12 @@ enum class day of week (usw.)
 Unterschied: ohne ``class`` leaken sie in den umgebenden Scope (``day = date::Sat``), am besten als Member einer Klasse genutzt. Mit ``class`` leaken sie nicht (``day == date::day_of_week::Sat``), und der darunterliegende Typ kann spezifiziert werden.
 
 Die Enums starten normalerweise bei 0 und erhöhen sich um 1. Es ist möglich, die Operatoren zu überschreiben.
+
+## Enum Conversion
+Operatoren können ebenfalls für enums überschrieben werden
+
+enum to int: ``int day = Sun;``
+int to enum: ``dayOfWeek day = static_cast<dayOfWeek>(1);``
 
 ## Wert festlegen
 
@@ -3212,6 +3318,7 @@ Und dann z.B.: `Sack<int, std::list> listSack{1,2,3,4,5};
 
 ### Templates als Adapter
 Wenn man zum Beispiel einen SafeVector bauen will, der den Vektor implementiert, aber ``operator[]`` so implementiert dass ein Index Bounday Check stattfindet.
+
 
 
 ```C++

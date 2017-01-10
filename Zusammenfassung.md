@@ -2766,6 +2766,7 @@ Die Basisklassen werden in Reihenfolge ihrer Angaben initialisiert. Normalerweis
 Die Base-Class-Konstruktoren-Aufrufe kommen vor die Member-Initializers in der Konstruktor-Initializer-List (vor Body).
 
 Es gibt kein ``super()``. Die Klasse muss selber konstruiert werden, bevor der Body anfängt zu laufen.
+Die Dekonstruktoren werden dann von Base zu Super dekonstruiert
 
 ```C++
 class DerivedWithCtor : public Base {

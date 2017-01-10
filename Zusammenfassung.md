@@ -3208,17 +3208,25 @@ Wenn man z.B. Funktionen wie printf implementieren will, kennt man die Anzahl Pa
 * nach einem Namen: expandiert den Namen zu allen Elementen
 * zwischen zwei Namen: definiert den hinteren Namen als Liste von Parametern, vom Typ des vorderen Namen
 
+```C++
+template<typename...ARGS> //any number of types
+void variadic(ARGS...args) { //any number of argumenets
+	println(std::cout, args...); //expand parametes as arguments 
+}
+```
+
 Bei der Implementierung verwendet man die Rekursion
 
 * Base Case ist 0 Argumente
 * Rekursiver Fall ist 1 explizites Argument mit einem Schwanz als variadische Liste von Argumenten
 
 ```C++
-template<typename...ARGS> //any number of types
-void variadic(ARGS...args) { //any number of argumenets
-	println(std::cout, args...); //expand parametes as arguments 
+//base case
+void println(std::ostream& out) {
+	out << "\n"
 }
 
+//Rekusion
 template<typename Head, typename... Tail>
 void println(std::ostream & out, Head const & head, Tail const & ...tail) {
 	out << head;

@@ -3352,6 +3352,18 @@ Wenn man den Sack mit einer Initializer List füllen will (z.B. ``Sack<int> sack
 Sack(std::initializer_list<T> il):theSack(il){}
 ```
 
+### Sack mit Iteratoren füllen
+
+Konstruktor für Iteratoren begin und end Iteratoren initalisieren.
+
+
+```C++
+//Konstroktur
+template <typename ITER>
+Sack(ITER b, ITER e) : theSack(b,e){ //theSack is a member variable of type vector
+}
+```
+
 ### Container variieren
 Man könnte jetzt auch noch den Container variieren. Achtung: hier müssen dann evtl. die Iteratoren angepasst/verallgemeinert werden. Da Container oft mehr als ein Argument haben, machen wir es gleich variadisch. Und damit man nicht immer ``std::vector`` angeben muss, bauen wir einen Default ein.
 
@@ -3366,7 +3378,6 @@ Und dann z.B.: `Sack<int, std::list> listSack{1,2,3,4,5};
 
 ### Templates als Adapter
 Wenn man zum Beispiel einen SafeVector bauen will, der den Vektor implementiert, aber ``operator[]`` so implementiert dass ein Index Bounday Check stattfindet.
-
 
 
 ```C++

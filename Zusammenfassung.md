@@ -2489,13 +2489,6 @@ Muss alle Ressourcen freigeben. Implizit verfügbar. Darf keine Exception werfen
 
 TODO muss bei Klassen mit virtual Methoden immer virtual deklariert werden.
 
-## Vererbung
-Base-Klassen werden nach dem Klassennamen spezifiziert
-
-``class <name> : <base1>, ..., <baseN>``
-
-Die Vererbung kann sogar eine Visibility haben. Dies beschränkt die **maximale** Visibility der geerbten Member.
-
 ## Implementation
 Die eigentliche Implementierung sollte die Klasse im Header-File inkludieren und dann die Methoden implementieren. Wichtig: die Scope Specifier beachten
 
@@ -2783,6 +2776,7 @@ class DerivedWithCtor : public Base {
 TODO was ist mvar?! V14 S8
 
 ## Sichtbarkeit
+Die Vererbung kann sogar eine Visibility haben. Dies beschränkt die **maximale** Visibility der geerbten Member.
 
 Siehe Beispiel für Erklärung:
 

@@ -1716,7 +1716,6 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 * Manche Operationen machen die Iteratoren ungültig, zum Beispiel ein Push-Back auf einem Vector. Der end-Iterator zeigt dann nicht mehr auf den richtigen Ort.
 
 ## Tabelle
-{::nomarkdown}
 <table>
 <tr>
 <td colspan="2"> <h5> Non-modifying sequence operations </h5>
@@ -2326,8 +2325,6 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 <td>applies a functor, then calculates inclusive scan
 </td></tr>
 </table>
-{:/}
-
 # Klassen
 
 Es gibt zwei Keywords, ``struct``und ``class``. Die sind äquivalent, ausser

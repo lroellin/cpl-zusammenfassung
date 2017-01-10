@@ -1621,6 +1621,27 @@ Diese lassen sich dann in manchen Containern als Vergleichsoperator mitgeben, al
 ### Als Parameter
 ``std::function<SIGNATURE>;``, also zum Beispiel ``std::function<bool(int)> apredicate{};``
 
+**Beispiel**
+```C++
+void apply(std::ostream& out, std::function<bool(int)> f) {
+	if(f) {
+		//safe to use f
+	} else {
+		//empty function holder
+	}
+}
+
+int main() {
+	std::function<bool(int)> f;
+	f = [](int i) {return i%2};
+	apply(std::cout, f);
+	f = nullptr;
+	apply(std::cout, f);
+}
+
+```
+
+
 Die Signatur wird geprüft.
 
 # Algorithms

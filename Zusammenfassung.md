@@ -3306,6 +3306,11 @@ template <>
 class Sack<char const *> { // Spezialisierung
 	// zum Beispiel andere Implementierung
 };
+
+template <typename T>
+class Sack<T*> { // Spezialisierung verbieten
+	~Sack() = delete; //dekonstruktor löschen um instanzierung zu verhindern.
+};
 ```
 
 ### Template Terminologie

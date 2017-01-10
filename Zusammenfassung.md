@@ -3349,13 +3349,12 @@ void Sack<char const *>::putInto(char const *p) {...}
 Wenn man den Sack mit einer Initializer List füllen will (z.B. ``Sack<int> sack{1, 2, 3};``), kann man die bereitgestellte ``std::initializer_list<T>`` nutzen. Dazu definieren wir einen speziellen Konstruktur
 
 ```C++
-Sack(std::initializer_list<T> il):theSack(il){}
+Sack(std::initializer_list<T> il):theSack(il){  //theSack is a member variable of type vector
+}
 ```
 
 ### Sack mit Iteratoren füllen
-
 Konstruktor für Iteratoren begin und end Iteratoren initalisieren.
-
 
 ```C++
 //Konstroktur
@@ -3371,7 +3370,8 @@ Unsere Template-Definition schaut jetzt wie folgt aus (Klammerung beachten!, Key
 ```C++
 template <typename T, template<typename...> class container=std::vector>
 class Sack {
-(usw.)
+ //...
+}
 ```
 
 Und dann z.B.: `Sack<int, std::list> listSack{1,2,3,4,5};

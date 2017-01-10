@@ -2741,6 +2741,8 @@ TODO Beispiel
 ## Virtual
 Wenn eine Funktion mit dynamischem Polymorphismus aufgerufen werden soll, muss sie in der Base-Klasse als ``virtual``deklariert werden. Sie bleibt dann virtual in allen abgeleiteten Klassen, bis eine sie als ``final`` deklariert.
 
+**Sobald Funktionen ``virtual`` deklariert wurden, muss der Destruktur auch ``virtual`` sein!**
+
 ```C++
 class PolymorphicBase {
 public:
@@ -2862,8 +2864,6 @@ struct AbstractBase {
 ```
 
 Abstrakte Funktionen nennt man auch "pure virtual". Wenn man keine Implementation anbietet und dies explizit sagen will: ``= 0;``
-
-Wenn (!) man Baissklassen mit virtuellen Member auf dem Heap alloziert **ohne ``shared_ptr``** muss der Destruktor auch ``virtual`` sein. Aber das ist sowieso böse.
 
 
 # Argument Dependent Lookup (ADL)

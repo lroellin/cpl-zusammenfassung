@@ -1511,7 +1511,7 @@ Wenn es alle möglichen Klammern hat, ist es wahrscheinlich ein Lambda.
 
 Beispiel:
 ```C++
-auto const g=[](char c)->{return std::toupper(c);}; // beide Semikolon nicht vergessen!``
+auto const g=[](char c){return std::toupper(c);}; // beide Semikolon nicht vergessen!``
 g('a');
 ```
 
@@ -3298,6 +3298,7 @@ Und dann z.B.: `Sack<int, std::list> listSack{1,2,3,4,5};
 
 ### Templates als Adapter
 Wenn man zum Beispiel einen SafeVector bauen will, der den Vektor implementiert, aber ``operator[]`` so implementiert dass ein Index Bounday Check stattfindet.
+
 
 
 ```C++

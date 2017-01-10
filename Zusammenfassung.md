@@ -2538,6 +2538,10 @@ Es gibt kein this-Objekt, können **nicht** const sein. Kein static Keyword.
 
 Aufruf: ``<classname>::<member>(): Date::isLeapYear(2016);``
 
+### Implementation Header oder CPP File
+Wenn die Methoden keine zusätzlichen Dependencies hat und die implementation klein und offensichtlich ist, können diese im Header implementiert werden.
+
+
 ## Member(Function)-Pointers
 Man kann auf Member(Funktionen) referenzieren.
 

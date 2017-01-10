@@ -2538,6 +2538,37 @@ Es gibt kein this-Objekt, können **nicht** const sein. Kein static Keyword.
 
 Aufruf: ``<classname>::<member>(): Date::isLeapYear(2016);``
 
+## Member(Function)-Pointers
+Man kann auf Member(Funktionen) referenzieren.
+
+**Beispiel**
+```C++
+struct x {
+	void foo() const;
+	void bar() const;
+	int a;
+	int b;
+}
+/**Funktion objekt und Funktion mitgeben, welche aufgerufen werden soll.**/
+void doit(void(X::*mfunc)() const, X const &x) {
+	()x.*mfunc)(); //Klammern nötig
+}
+
+/**Funktion objekt und variable mitgeben, welche den Wert ändern soll.**/
+void change(int X::*var, X& x, int val) {
+	x.*var = val;
+}
+
+int main() {
+	X x{1,2};
+	//Referenzen sind auf die Klasse für MemmberPointers!
+	doit(&X::foo,x);
+	change(&X::a,x,3);
+}
+
+```
+
+
 ## Operator-Overloading
 > When in doubt, do as the ints do
 

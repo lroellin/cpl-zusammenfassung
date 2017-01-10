@@ -3214,9 +3214,9 @@ Bei der Implementierung verwendet man die Rekursion
 * Rekursiver Fall ist 1 explizites Argument mit einem Schwanz als variadische Liste von Argumenten
 
 ```C++
-template<typename...ARGS>
-void variadic(ARGS...args) {
-	println(std::cout, args...);
+template<typename...ARGS> //any number of types
+void variadic(ARGS...args) { //any number of argumenets
+	println(std::cout, args...); //expand parametes as arguments 
 }
 
 template<typename Head, typename... Tail>

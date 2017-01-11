@@ -7,7 +7,6 @@
 * Templates-Erweiterungen (V12)
 * Ausgaben-Formatierung (Oct, dec usw.)
 * Beispiele
-	* Lexicographic Compare mit Algorithms
 	* Ring5 (V6, S31, auch Übung)
 * const Beschreiben, unterschied const Methoden und const Variabeln
 * Function Interface (C++11)
@@ -1714,6 +1713,20 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 * Die Iteratoren müssen natürlich zum selben Range gehören, sonst brennt die HSR ab.
 * Bei den copy-Algorithmen muss genügend Platz im Ziel sein, sonst brennt die HSR ab. Wenn man sich nicht darum kümmern will: ``back_inserter``, ``front_inserter`` oder ``inserter``.
 * Manche Operationen machen die Iteratoren ungültig, zum Beispiel ein Push-Back auf einem Vector. Der end-Iterator zeigt dann nicht mehr auf den richtigen Ort.
+
+## std::lexicographical_compare
+
+```C++
+struct caselessCompare {
+	bool operator()(std::string const &left, std::string const &right) {
+		return std::lexicographical_compare(left.begin(),left.end(),
+				right.begin(), right.end(),
+				[](char l, char r) {
+					return std::tolower(l) < std::tolower(r);
+		});
+	}
+};
+``` 
 
 ## Tabelle
 <table>

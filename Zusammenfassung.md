@@ -656,13 +656,6 @@ Wenn man sie nun aus der Datenstruktur der lebenden Objekte entfernt, werden die
 
 ==> [Biblische Familie](BiblischeFamilie.pdf)
 
-
-# Move
-Streams können nicht kopiert werden, aber "gemovet". Dabei werden sie wie kopiert, aber die Innereien werden rausgerissen". Die alte Variable ist dann unbrauchbar.
-
-Move-Constructor: ``std::ofstream(std::ofstream &&)``
-
-
 # Namespaces
 
 Es gibt den globalen Namespaces, ``::``, zum Beispiel ``::read``. Sub-Namespaces sind erlaubt.

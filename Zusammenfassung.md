@@ -2549,7 +2549,7 @@ struct x {
 }
 /**Funktion objekt und Funktion mitgeben, welche aufgerufen werden soll.**/
 void doit(void(X::*mfunc)() const, X const &x) {
-	()x.*mfunc)(); //Klammern nötig
+	(x.*mfunc)(); //Klammern nötig
 }
 
 /**Funktion objekt und variable mitgeben, welche den Wert ändern soll.**/

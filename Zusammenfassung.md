@@ -9,8 +9,6 @@
 * Beispiele
 	* Ring5 (V6, S31, auch Übung)
 * const Beschreiben, unterschied const Methoden und const Variabeln
-* Function Interface (C++11)
-	* V9 S.19-28 anschauen (übersprungen)
 * Initialisierung mit () vs {}
 * Cute
 * Klassen

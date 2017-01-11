@@ -600,7 +600,7 @@ auto answer = aFactory(42);
 auto answer2=std::move(answer)
 ```
 
-Die Pointer haben immer nur einen Owner und können nicht kopiert werden (nur by value zurückgegeben werden)
+Die Pointer haben immer nur einen Owner und können nicht kopiert werden (nur by value zurückgegeben werden).
 
 
 Wenn man C-Pointer (z.B. von gewissen Funktionen) als unique_ptr verpackt, werden sie beim ``}`` automatisch ge-free-d.
@@ -654,7 +654,7 @@ struct Person : public std::enable_shared_from_this<Person> {
 
 Eine Personenklasse soll erstellt werden:
 
-* jede Person kennt ihre Eltern (Vater, Mutter) wenn noch am Leben
+* Jede Person kennt ihre Eltern (Vater, Mutter) wenn noch am Leben
 * Jede Person kann verheiratet werden
 * Jede Person kennt ihre Kinder
 	* Mutter und Vater kennen beide ihre Kinder

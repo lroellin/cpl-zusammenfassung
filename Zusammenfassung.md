@@ -1223,7 +1223,7 @@ for(auto const i:v) {
 Um auch ändern zu können, braucht man eine Referenz als Loop-Variable
 
 ```C++
-for(auto const &j:v) {
+for(auto &j:v) {
 	j *= 2;
 }
 ```

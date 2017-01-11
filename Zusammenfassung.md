@@ -410,8 +410,8 @@ Achtung: in Funktionen können Variablen Shadowing machen, dies ist nicht verbot
 * Return by value: ``type f()``
 * return by reference: ``type & f(); type const &g``
 
-Achtung return by reference nur wenn die Referenzen als Parameter bereits herein gekommen sind, sonst führt es zu dangling references
-Achtung mit Referenzen. Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Stack abräumen geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
+**Achtung:** return by reference nur wenn die Referenzen als Parameter bereits herein gekommen sind, sonst führt es zu dangling references.
+**Aufpasssen mit Referenzen:** Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Abräumen des Stack geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
 
 <table>
 	<tr>
@@ -1433,7 +1433,7 @@ std::string s;
 
 while (std::cin >> s)
   ++words[s]; //erstellt automatisch einen Eintrag
-``` 
+```
 
 **Delete**:
 
@@ -1730,7 +1730,7 @@ struct caselessCompare {
 		});
 	}
 };
-``` 
+```
 
 ## Tabelle
 <table>
@@ -2389,7 +2389,7 @@ Haben einen Typ und einen Namen. So const wie möglich.
 
 ``<type> <name>``
 
-Sie sind im Header File, damit das Speicherlayout bekannt ist. 
+Sie sind im Header File, damit das Speicherlayout bekannt ist.
 
 ## Static Member-Variablen
 **Im Header**: als ``static`` oder als ``static const`` deklarieren. ``static const`` dürfen auch gleich initialisiert werden:
@@ -2795,7 +2795,7 @@ class DerivedWithCtor : public Base {
 ## Member Hiding Problem
 Überladene Memberfunktionen in abgeleiteten Klassen verstecken alle Funktionen mit selben Namen der Basis Klassen
 
-```C++ 
+```C++
 struct Base {
 	void foo(int i) const;
 };
@@ -2807,16 +2807,16 @@ int main() {
 	Derviced d{};
 	//d.foo(31); //is hidden
 }
-``` 
+```
 
 **Lösung**
-```C++ 
+```C++
 struct Derived:Base {
 	using Base::foo; //zuerst using damit die Funktionen verfügbar sind
 	void foo();
 };
 
-``` 
+```
 
 ## Sichtbarkeit
 Die Vererbung kann sogar eine Visibility haben. Dies beschränkt die **maximale** Visibility der geerbten Member.
@@ -3060,10 +3060,10 @@ void work_only_with_shift_in_ns_std(std::ostream &os) {
 	std::vector<vec> vv {{1,2,3},{4,5,6}};
 	//copy findet den shift operator für std::vector<int> nicht in std.
 	copy(begin(vv), end(vv), outv{os, "\n"});
-} 
+}
 ```
 
-Der Namespace std darf nicht verändert werden. 
+Der Namespace std darf nicht verändert werden.
 
 **Lösung**
 ```C++
@@ -3076,7 +3076,7 @@ namespace X {
 
 // use vector<X::vec> vv {{1,2,3},{4,5,6}};
 
-``` 
+```
 
 # Enums
 
@@ -3289,7 +3289,7 @@ Wenn man z.B. Funktionen wie printf implementieren will, kennt man die Anzahl Pa
 ```C++
 template<typename...ARGS> //any number of types
 void variadic(ARGS...args) { //any number of argumenets
-	println(std::cout, args...); //expand parametes as arguments 
+	println(std::cout, args...); //expand parametes as arguments
 }
 ```
 

@@ -893,7 +893,7 @@ public:
 			//set failbit
 			is.setstate(std::ios::failbit | is.rdstate());
 		}
-		return is; }
+		return is;
 	}
 };
 

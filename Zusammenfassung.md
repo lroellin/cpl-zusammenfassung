@@ -638,6 +638,7 @@ Wenn Instanzen einer Klassenhierarchie durch ``shared_ptr<base>`` repräsentiert
 Man kann in ein zirkuläres Dependency-Problem rennen. Um das zu umgehen, braucht man ``weak_ptr`` um diese zu brechen.
 
 **``enable_shared_from_this<T>`` && ``shared_from_this()``**
+
 Problem: Will ein Objekt von sich selbst ein shared_ptr erstellen, muss die Klasse von ``enable_shared_from_this<T>` erben.
 
 ```C++

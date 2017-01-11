@@ -2541,27 +2541,27 @@ Man kann auf Member(Funktionen) referenzieren.
 
 **Beispiel**
 ```C++
-struct x {
+struct Klasse {
 	void foo() const;
 	void bar() const;
 	int a;
 	int b;
 };
 /**Funktion objekt und Funktion mitgeben, welche aufgerufen werden soll.**/
-void doit(void(X::*mfunc)() const, X const &x) {
-	(x.*mfunc)(); //Klammern nötig
+void doit(void(Klasse::*mfunc)() const, Klasse const &instanz) {
+	(instanz.*mfunc)(); //Klammern nötig
 }
 
 /**Funktion objekt und variable mitgeben, welche den Wert ändern soll.**/
-void change(int X::*var, X& x, int val) {
-	x.*var = val;
+void change(int Klasse::*var, Klasse& instanz, int val) {
+	instanz.*var = val;
 }
 
 int main() {
-	X x{1,2};
+	Klasse x{1,2};
 	//Referenzen sind auf die Klasse für MemmberPointers!
-	doit(&X::foo,x);
-	change(&X::a,x,3);
+	doit(&Klasse::foo,x);
+	change(&Klasse::a,x,3);
 }
 
 ```

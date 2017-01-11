@@ -3053,7 +3053,7 @@ Der Namespace std darf nicht verändert werden.
 namespace X {
 	struct vec : std::vector<int> {
 		using vector<int>::vector; //ctors
-	}
+	};
 	//OPERATOR here
 }
 

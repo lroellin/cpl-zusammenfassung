@@ -1824,7 +1824,7 @@ struct caselessCompare {
 <tr>
 <td><div><div> search_n </div></div>
 </td>
-<td>searches for a number consecutive copies of an element in a range
+<td>searches for a number of consecutive copies of an element in a range
 </td></tr>
 
 

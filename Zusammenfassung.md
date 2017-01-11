@@ -574,13 +574,12 @@ int main() {
 ```
 
 # Kommandozeilenargumente übergeben
-Main ist folgendermassen definiert:
-``int main(int argc, char * argv[])``
-``int main()``
-
-``argc`` hat die Anzahl Argumente drin. ``argv[]`` ist ein Array von Char-Pointern (ein Array von "Strings"), also die einzelnen Argumente.
-
-Die eigentlichen Argumente beginnen erst bei ``argv+1``, im ersten Element steht der Programmname. Es endet bei ``argv+argv``.
+Main kennt folgende zwei Definitionen:
+- ``int main()``
+- ``int main(int argc, char * argv[])``
+  - ``argc`` hat die Anzahl Argumente drin.
+  - ``argv[]`` ist ein Array von Char-Pointern (ein Array von "Strings"), also die einzelnen Argumente.
+    - Die eigentlichen Argumente beginnen erst bei ``argv+1``, im ersten Element steht der Programmname. Es endet bei ``argv+argc``.
 
 # Memory (Heap)
 Man könnte das Memory selber mit ``new`` allozieren. Das ist aber böse.

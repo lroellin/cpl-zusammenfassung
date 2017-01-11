@@ -1009,21 +1009,25 @@ Grund für verschiedene Kategorien: Verschiedene Algorithmen brauchen speziele I
 * Das aktuelle Element kann mehrmals ausgelesen werden
 * Kann Iteratoren vergleichen
 * Ein Zugriff der Art `*it++` führt dazu, dass alle bisherigen Kopien von `it` obsoletiert werden (siehe auch [CPPReference - InputIterator](http://en.cppreference.com/w/cpp/concept/InputIterator)).
+* single-pass
 
 **Forward Iterator**
 
 * Das Element kann gelesen und verändert werden (ausser der Container oder die Elemente sind const)
 * Kann nicht rückwärts lesen
 * Der Iterator kann aber kopiert werden für spätere Referenz
+* multi-pass
 
 **Bidirectional Iterator**
 * Das Element kann gelesen und verändert werden (ausser...)
 * Kann vorwärts und rückwärts gehen
 * Random Access sind bidirectional, aber können auch indexen
+* multi-pass
 
 **Output Iterator**
 
 * Kann einen Wert schreiben, aber nur einmal und muss danach inkrementiert werden
+* sinlge-pass
 
 ## Spezialfunktionen
 Mit ``distance`` kann man die Anzahl Hops zählen, bis man zum anderen Iterator kommt. Mit ``advance`` kann man n Male hüpfen.

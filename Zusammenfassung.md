@@ -1701,7 +1701,7 @@ Kann auch so gewürgt werden dass es nicht-numerisches unterstützt, z.B. Listen
 Wenn man Elemente löschen will, so macht man das immer in zwei Teilen
 
 1. Finden, was zu löschen ist. Technisch: alles zu Löschende ans Ende verscbieben und Iterator auf erstes zu löschendes Element zurückgeben: ``remove``
-2. Danach löscht man von diesem gegebenen Iterator bis zum ``end``: ``erase`
+2. Danach löscht man von diesem gegebenen Iterator bis zum ``end``: ``erase``
 
 ```C++
 // removes all elements with the value 5

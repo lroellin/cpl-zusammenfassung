@@ -2997,19 +2997,19 @@ animal died
 ```
 
 ### Erklärungen
-A) 
+A)
 *Konstrutoren werden Basis vor Derived ausgeführt
 *Copy führt nur Copy Konstruktor aus (Hier keine Ausgabe)
 *Referenz keine Ausgabe
 
 B)
-*Da nicht virtual werden eigene Aufgerufen 
+*Da nicht virtual werden eigene Aufgerufen
 *Object Slicing von Hummingbird zu bird. (Bird kennt nur noch eigene Methoden)
 
 C)
 *move ist virtual darum führt Animal Pointer die von Hummingbird aus
 
-D) 
+D)
 *Objekte welche später instanziert wurden, werden zu erst abgeräumt
 *Derived Deconstruktor vor Base
 *Referenzen rufen Deconsturktoren nicht auf

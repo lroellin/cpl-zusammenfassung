@@ -1594,7 +1594,7 @@ struct Accumulator {
 	}
 	int average() const;
 	int sum() const;
-}
+};
 
 // Achtung nicht Implementation von oberem
 int average(std::vector<int> values) {

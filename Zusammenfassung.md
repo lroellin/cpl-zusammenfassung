@@ -1006,8 +1006,9 @@ Grund für verschiedene Kategorien: Verschiedene Algorithmen brauchen speziele I
 
 **Input Iteratoren**
 
-* Das aktuelle Element kann nur einmal ausgelesen werden, der Iterator muss danach inkrementiert werden -- TODO strikethrough, das war anscheinend falsch (Errata in Vorlesung 11)
+* Das aktuelle Element kann mehrmals ausgelesen werden
 * Kann Iteratoren vergleichen
+* Ein Zugriff der Art `*it++` führt dazu, dass alle bisherigen Kopien von `it` obsoletiert werden (siehe auch [CPPReference - InputIterator](http://en.cppreference.com/w/cpp/concept/InputIterator)).
 
 **Forward Iterator**
 

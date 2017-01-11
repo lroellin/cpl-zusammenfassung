@@ -2546,7 +2546,7 @@ struct x {
 	void bar() const;
 	int a;
 	int b;
-}
+};
 /**Funktion objekt und Funktion mitgeben, welche aufgerufen werden soll.**/
 void doit(void(X::*mfunc)() const, X const &x) {
 	(x.*mfunc)(); //Klammern nötig

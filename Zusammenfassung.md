@@ -561,8 +561,7 @@ int main() {
 #include <functional>
 #include <iterator>
 #include <numeric>
-#include <exception> // für Standard Exceptions TODO Beispiel
-#include <stdexcept> // TODO was ist der Unterschied zu exception?
+#include <stdexcept> // exception
 #include <string> // std::string
 // IO
 #include <iosfwd> // Vorwärtsdeklaration von istream und ostream (nur typedefs ohne Methoden usw.), nur in Headers verwenden

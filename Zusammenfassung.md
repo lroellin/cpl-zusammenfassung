@@ -569,7 +569,9 @@ int main() {
 #include <istream> // istream definition und implementation
 #include <ostream> // ostream definition und implementation
 #include <iostream> // istream, ostream und cin, cout
-#include <sstream>> // string stream
+#include <sstream> // string stream
+// Pointers
+#include <memory>> // pointers
 ```
 
 # Kommandozeilenargumente übergeben
@@ -642,7 +644,9 @@ Man kann in ein zirkuläres Dependency-Problem rennen. Um das zu umgehen, brauch
 Problem: Will ein Objekt von sich selbst ein shared_ptr erstellen, muss die Klasse von ``enable_shared_from_this<T>` erben.
 
 ```C++
-class Person : public std::enable_shared_from_this<Person> {
+#include <memory>
+
+struct Person : public std::enable_shared_from_this<Person> {
 	std::shared_ptr<Person> getMe() { return shared_from_this(); }
 };
 ```

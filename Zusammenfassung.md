@@ -565,8 +565,8 @@ int main() {
 #include <string> // std::string
 // IO
 #include <iosfwd> // Vorwärtsdeklaration von istream und ostream (nur typedefs ohne Methoden usw.), nur in Headers verwenden
-#include <istream> // istream definition und implementation
-#include <ostream> // ostream definition und implementation
+#include <istream> // istream Definition und Implementation
+#include <ostream> // ostream Definition und Implementation
 #include <iostream> // istream, ostream und cin, cout
 #include <sstream> // string stream
 // Pointers

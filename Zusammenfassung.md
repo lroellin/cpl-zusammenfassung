@@ -1027,7 +1027,7 @@ Grund für verschiedene Kategorien: Verschiedene Algorithmen brauchen speziele I
 **Output Iterator**
 
 * Kann einen Wert schreiben, aber nur einmal und muss danach inkrementiert werden
-* sinlge-pass
+* single-pass
 
 ## Spezialfunktionen
 Mit ``distance`` kann man die Anzahl Hops zählen, bis man zum anderen Iterator kommt. Mit ``advance`` kann man n Male hüpfen.

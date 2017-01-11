@@ -915,7 +915,16 @@ Include für alle Iterators: ``#include <iterator>``
 
 Achtung, das Ende ist **vor** ``end``.
 
-Um read-only zu garantieren sollte ``cbegin()/cend()`` verwendet werden. Wenn man von "hinten" beginnen möchte gibts ``rbegin()/rend()``.
+Um read-only zu garantieren sollte ``cbegin()/cend()`` verwendet werden. Wenn man von "hinten" beginnen möchte, gibt's ``rbegin()/rend()``.
+
+```ASCII-Art
+begin()/rend()                       end()/rbegin()
+       |                                  |
+       v                                  v
+       +------+------+------+------+------+
+       |      |      |      |      |      |
+       +------+------+------+------+------+
+```
 
 Wenn man Iteratoren speichern will, am besten Typ ``auto``.
 

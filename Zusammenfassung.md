@@ -2,7 +2,6 @@
 
 # C++ Spick
 ##TODO
-* Foliesatz 6 Folie 19-20 verstehen
 * Demo verstehen (V12, S. 11)
 * V12, S.21
 * Templates-Erweiterungen (V12)
@@ -3025,6 +3024,42 @@ int main() {
 }
 
 ```
+
+## Pitfall
+Ein Alias wie ``using vec = std::vector<int>`` führt nicht dazu, dass ADL im Globalnamespace sucht.
+
+```C++
+using vec = std::vector<int>; //is still in std namespace
+using outv = std::ostream_iterator<vec>;
+using out = std::ostream_iterator<int>;
+
+//This shift operator is in the global namespace
+std::ostream& operator<<(std::ostream & os, vec const & v) {
+		copy(begin(v), end(v), out {os, ","});
+		return os;
+	}
+
+void work_only_with_shift_in_ns_std(std::ostream &os) {
+	std::vector<vec> vv {{1,2,3},{4,5,6}};
+	//copy findet den shift operator für std::vector<int> nicht in std.
+	copy(begin(vv), end(vv), outv{os, "\n"});
+} 
+```
+
+Der Namespace std darf nicht verändert werden. 
+
+**Lösung**
+```C++
+namespace X {
+	struct vec : std::vector<int> {
+		using vector<int>::vector; //ctors
+	}
+	//OPERATOR here
+}
+
+// use vector<X::vec> vv {{1,2,3},{4,5,6}};
+
+``` 
 
 # Enums
 

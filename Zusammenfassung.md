@@ -2792,6 +2792,8 @@ class DerivedWithCtor : public Base {
 };
 ```
 
+Der Sub-Defaultkonstruktor versucht immer den Super-Defaultkonstruktor (ohne Argumente) aufzurufen. Dem kann man zuvorkommen, indem der aufzurufende Konstruktur direkt definiert wird: `sub(std::ostream &out) : super{out}`. Aufpassen: `using` importiert alles ausser den Konstruktor ohne Argumente
+
 ## Member Hiding Problem
 Überladene Memberfunktionen in abgeleiteten Klassen verstecken alle Funktionen mit selben Namen der Basis Klassen
 

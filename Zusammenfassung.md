@@ -3541,7 +3541,7 @@ struct searchablevector : std::vector<T> {
 		return std::count(this->begin(), this->end(), entry);
 	}
 
-	std::multiset<T, COMPARE> asMultiset() const {
+	std::multiset<T, COMPARE> convertToMultiset() const {
 		return std::multiset<T, COMPARE>{this->begin(), this->end()};
 	}
 };

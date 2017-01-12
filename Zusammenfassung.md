@@ -2872,7 +2872,7 @@ class B: protected Base {
 class C: public Base { // public ist default
 	// C kann auf a und b zugreifen
 	// Subklassen von C können a und b verwenden
-	// Ausserhalb der Klassenhyrarchie kann a aber nicht b verwendet werden
+	// Ausserhalb der Klassenhyrarchie kann b aber nicht a verwendet werden
 }
 
 ```

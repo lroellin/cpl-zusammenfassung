@@ -3512,3 +3512,35 @@ public:
 	// dann noch front/base
 };
 ```
+
+### Vector erweitern mit Templates
+Vektor um ``find()``, ``count()`` und ``asMultiset()`` Methoden erweitert.
+``asMultiset()`` verwendet den Comparator, der als Template übergeben wurde.
+
+```C++
+#include <functional> // für std::less
+#include <vector>
+#include <algorithm>
+#include <set>
+
+template <typename T, typename COMPARE = std::less<T>>
+struct vectorset : std::vector<T> {
+	
+	using std::vector<T>::vector; // Parent constructors
+	
+	// iterator von vector (funktioniert auch bei allen anderen container)
+	using iterator = typename std::vector<T>::iterator; 
+
+	iterator find(T const & entry) const{
+		return std::find(this->begin(), this->end(), entry);
+	}
+
+	int count(T const & entry) const {
+		return std::count(this->begin(), this->end(), entry);
+	}
+
+	std::multiset<T, COMPARE> asMultiset() const {
+		return std::multiset<T, COMPARE>{this->begin(), this->end()};
+	}
+};
+```

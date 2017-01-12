@@ -3524,7 +3524,7 @@ Vektor um ``find()``, ``count()`` und ``asMultiset()`` Methoden erweitert.
 #include <set>
 
 template <typename T, typename COMPARE = std::less<T>>
-struct vectorset : std::vector<T> {
+struct searchablevector : std::vector<T> {
 	
 	using std::vector<T>::vector; // Parent constructors
 	

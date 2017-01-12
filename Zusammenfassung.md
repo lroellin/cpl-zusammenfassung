@@ -1,5 +1,3 @@
-
-
 # C++ Spick
 ##TODO
 * Demo verstehen (V12, S. 11)
@@ -22,12 +20,16 @@
 * Dekonstruktor ist nicht virtual
 * Testat indexable einfügen
 
+# Inhaltsverzeichnis
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [C++ Spick](#c-spick)
+- [Inhaltsverzeichnis](#inhaltsverzeichnis)
 - [Variablen](#variablen)
 - [Typen](#typen)
+  - [bool](#bool)
   - [Literale](#literale)
 - [Operatoren](#operatoren)
   - [Reihenfolge](#reihenfolge)
@@ -37,15 +39,14 @@
   - [Function Overloading](#function-overloading)
   - [Default Arguments](#default-arguments)
   - [Funktionen als Parameter](#funktionen-als-parameter)
+  - [Aufruf Sequenz von Funktionen](#aufruf-sequenz-von-funktionen)
 - [Include Files](#include-files)
   - [Include Guard](#include-guard)
     - [Beispiel mit 3 Files](#beispiel-mit-3-files)
   - [Wichtige includes](#wichtige-includes)
-- [Const/non-const und Value/Reference](#constnon-const-und-valuereference)
 - [Kommandozeilenargumente übergeben](#kommandozeilenargumente-%C3%BCbergeben)
 - [Memory (Heap)](#memory-heap)
   - [Beispiel: Eltern und Kinder](#beispiel-eltern-und-kinder)
-- [Move](#move)
 - [Namespaces](#namespaces)
 - [CUTE TODO ist das nötig?](#cute-todo-ist-das-n%C3%B6tig)
 - [Using](#using)
@@ -89,6 +90,7 @@
   - [Suffix-Versionen](#suffix-versionen)
   - [Heap-Algorithmen](#heap-algorithmen)
   - [Fallen](#fallen)
+  - [std::lexicographical_compare](#stdlexicographical_compare)
   - [Tabelle](#tabelle)
 - [Klassen](#klassen)
   - [Beispielklasse Date](#beispielklasse-date)
@@ -101,24 +103,29 @@
     - [Konstruktor mit std::istream &](#konstruktor-mit-stdistream-)
     - [Konstruktoren wieder default machen/löschen](#konstruktoren-wieder-default-machenl%C3%B6schen)
   - [Destruktoren](#destruktoren)
-  - [Vererbung](#vererbung)
   - [Implementation](#implementation-1)
   - [Benutzung](#benutzung)
   - [Member-Funktionen](#member-funktionen)
     - [Static Member-Funktionen](#static-member-funktionen)
+    - [Implementation Header oder CPP File](#implementation-header-oder-cpp-file)
+  - [Member(Function)-Pointers](#memberfunction-pointers)
   - [Operator-Overloading](#operator-overloading)
     - [Beispiel: Date vergleichbar machen](#beispiel-date-vergleichbar-machen)
     - [Beispiel: Date an std::cout senden](#beispiel-date-an-stdcout-senden)
-- [Vererbung](#vererbung-1)
+- [Vererbung](#vererbung)
   - [Mehrfachvererbung](#mehrfachvererbung)
   - [Initialisierung](#initialisierung)
+  - [Member Hiding Problem](#member-hiding-problem)
   - [Sichtbarkeit](#sichtbarkeit)
   - [Object Slicing](#object-slicing)
   - [Probleme mit Vererbung und pass-by-value](#probleme-mit-vererbung-und-pass-by-value)
   - [Virtual](#virtual)
+    - [Erklärungen](#erkl%C3%A4rungen)
   - [Abstrakte Klassen](#abstrakte-klassen)
 - [Argument Dependent Lookup (ADL)](#argument-dependent-lookup-adl)
+  - [Pitfall](#pitfall)
 - [Enums](#enums)
+  - [Enum Conversion](#enum-conversion)
   - [Wert festlegen](#wert-festlegen)
   - [Typ festlegen](#typ-festlegen)
 - [Contract/Exceptions](#contractexceptions)
@@ -134,10 +141,12 @@
     - [Spezialisierung](#spezialisierung)
     - [Template Terminologie](#template-terminologie)
     - [Sack mit Initializer List füllen](#sack-mit-initializer-list-f%C3%BCllen)
+    - [Sack mit Iteratoren füllen](#sack-mit-iteratoren-f%C3%BCllen)
     - [Container variieren](#container-variieren)
     - [Templates als Adapter](#templates-als-adapter)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 # Variablen
 
@@ -410,8 +419,8 @@ Achtung: in Funktionen können Variablen Shadowing machen, dies ist nicht verbot
 * Return by value: ``type f()``
 * return by reference: ``type & f(); type const &g``
 
-Achtung return by reference nur wenn die Referenzen als Parameter bereits herein gekommen sind, sonst führt es zu dangling references
-Achtung mit Referenzen. Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Stack abräumen geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
+**Achtung:** return by reference nur wenn die Referenzen als Parameter bereits herein gekommen sind, sonst führt es zu dangling references.
+**Aufpasssen mit Referenzen:** Wenn Parameter als Referenzen reinkommen, haben Änderungen darauf natürlich auch Einfluss auf die Originalvariable. Ebenso **NIE** eine lokale Variable als Referenz zurückgeben. Beim Abräumen des Stack geht diese flöten und die HSR brennt ab. Es sind **einzig** die eigenen Parameter wieder als Referenz zurückzugeben.
 
 <table>
 	<tr>
@@ -506,8 +515,8 @@ Zu Beachten:
 
 ## Include Guard
 
-Um die ODR (One Definition Rule) nicht zu verletzen, verwendet man Guard Statements
-Include Guards werden vom Prepocesser bearbeitet. Dies bedeutet, dass man für Klassen/Methoden in verschiedenen Namespaces und Files, auch das Include Guard verschieden sein.
+Um die ODR (One Definition Rule) nicht zu verletzen, verwendet man Guard Statements.
+Include Guards werden vom Prepocesser bearbeitet. Dies bedeutet, dass man für Klassen/Methoden in verschiedenen Namespaces und Files, auch verschiedene Include Guards verwenden sollte (Faustregel: Ein disjunkter Include Guard pro Header).
 
 ```C++
 #ifndef SAYHELLO_H_
@@ -558,15 +567,15 @@ int main() {
 ## Wichtige includes
 ```C++
 #include <algorithm> // für alle Algorithms ausser die in <numeric>
-#include <functional>
+#include <functional> // für default comparators (std::less, std::greater, usw.)
 #include <iterator>
 #include <numeric>
 #include <stdexcept> // exception
 #include <string> // std::string
 // IO
 #include <iosfwd> // Vorwärtsdeklaration von istream und ostream (nur typedefs ohne Methoden usw.), nur in Headers verwenden
-#include <istream> // istream definition und implementation
-#include <ostream> // ostream definition und implementation
+#include <istream> // istream Definition und Implementation
+#include <ostream> // ostream Definition und Implementation
 #include <iostream> // istream, ostream und cin, cout
 #include <sstream> // string stream
 // Pointers
@@ -574,13 +583,12 @@ int main() {
 ```
 
 # Kommandozeilenargumente übergeben
-Main ist folgendermassen definiert:
-``int main(int argc, char * argv[])``
-``int main()``
-
-``argc`` hat die Anzahl Argumente drin. ``argv[]`` ist ein Array von Char-Pointern (ein Array von "Strings"), also die einzelnen Argumente.
-
-Die eigentlichen Argumente beginnen erst bei ``argv+1``, im ersten Element steht der Programmname. Es endet bei ``argv+argv``.
+Main kennt folgende zwei Definitionen:
+- ``int main()``
+- ``int main(int argc, char * argv[])``
+  - ``argc`` hat die Anzahl Argumente drin.
+  - ``argv[]`` ist ein Array von Char-Pointern (ein Array von "Strings"), also die einzelnen Argumente.
+    - Die eigentlichen Argumente beginnen erst bei ``argv+1``, im ersten Element steht der Programmname. Es endet bei ``argv+argc``.
 
 # Memory (Heap)
 Man könnte das Memory selber mit ``new`` allozieren. Das ist aber böse.
@@ -601,7 +609,7 @@ auto answer = aFactory(42);
 auto answer2=std::move(answer)
 ```
 
-Die Pointer haben immer nur einen Owner und können nicht kopiert werden (nur by value zurückgegeben werden)
+Die Pointer haben immer nur einen Owner und können nicht kopiert werden (nur by value zurückgegeben werden).
 
 
 Wenn man C-Pointer (z.B. von gewissen Funktionen) als unique_ptr verpackt, werden sie beim ``}`` automatisch ge-free-d.
@@ -655,7 +663,7 @@ struct Person : public std::enable_shared_from_this<Person> {
 
 Eine Personenklasse soll erstellt werden:
 
-* jede Person kennt ihre Eltern (Vater, Mutter) wenn noch am Leben
+* Jede Person kennt ihre Eltern (Vater, Mutter) wenn noch am Leben
 * Jede Person kann verheiratet werden
 * Jede Person kennt ihre Kinder
 	* Mutter und Vater kennen beide ihre Kinder
@@ -894,7 +902,7 @@ public:
 			//set failbit
 			is.setstate(std::ios::failbit | is.rdstate());
 		}
-		return is; }
+		return is;
 	}
 };
 
@@ -916,7 +924,16 @@ Include für alle Iterators: ``#include <iterator>``
 
 Achtung, das Ende ist **vor** ``end``.
 
-Um read-only zu garantieren sollte ``cbegin()/cend()`` verwendet werden. Wenn man von "hinten" beginnen möchte gibts ``rbegin()/rend()``.
+Um read-only zu garantieren sollte ``cbegin()/cend()`` verwendet werden. Wenn man von "hinten" beginnen möchte, gibt's ``rbegin()/rend()``.
+
+```ASCII-Art
+begin()/rend()                       end()/rbegin()
+       |                                  |
+       v                                  v
+       +------+------+------+------+------+
+       |      |      |      |      |      |
+       +------+------+------+------+------+
+```
 
 Wenn man Iteratoren speichern will, am besten Typ ``auto``.
 
@@ -998,23 +1015,28 @@ Grund für verschiedene Kategorien: Verschiedene Algorithmen brauchen speziele I
 
 **Input Iteratoren**
 
-* Das aktuelle Element kann nur einmal ausgelesen werden, der Iterator muss danach inkrementiert werden -- TODO strikethrough, das war anscheinend falsch (Errata in Vorlesung 11)
+* Das aktuelle Element kann mehrmals ausgelesen werden
 * Kann Iteratoren vergleichen
+* Ein Zugriff der Art `*it++` führt dazu, dass alle bisherigen Kopien von `it` obsoletiert werden (siehe auch [CPPReference - InputIterator](http://en.cppreference.com/w/cpp/concept/InputIterator)).
+* single-pass
 
 **Forward Iterator**
 
 * Das Element kann gelesen und verändert werden (ausser der Container oder die Elemente sind const)
 * Kann nicht rückwärts lesen
 * Der Iterator kann aber kopiert werden für spätere Referenz
+* multi-pass
 
 **Bidirectional Iterator**
 * Das Element kann gelesen und verändert werden (ausser...)
 * Kann vorwärts und rückwärts gehen
 * Random Access sind bidirectional, aber können auch indexen
+* multi-pass
 
 **Output Iterator**
 
 * Kann einen Wert schreiben, aber nur einmal und muss danach inkrementiert werden
+* single-pass
 
 ## Spezialfunktionen
 Mit ``distance`` kann man die Anzahl Hops zählen, bis man zum anderen Iterator kommt. Mit ``advance`` kann man n Male hüpfen.
@@ -1210,7 +1232,7 @@ for(auto const i:v) {
 Um auch ändern zu können, braucht man eine Referenz als Loop-Variable
 
 ```C++
-for(auto const &j:v) {
+for(auto &j:v) {
 	j *= 2;
 }
 ```
@@ -1433,7 +1455,7 @@ std::string s;
 
 while (std::cin >> s)
   ++words[s]; //erstellt automatisch einen Eintrag
-``` 
+```
 
 **Delete**:
 
@@ -1581,7 +1603,7 @@ struct Accumulator {
 	}
 	int average() const;
 	int sum() const;
-}
+};
 
 // Achtung nicht Implementation von oberem
 int average(std::vector<int> values) {
@@ -1688,7 +1710,7 @@ Kann auch so gewürgt werden dass es nicht-numerisches unterstützt, z.B. Listen
 Wenn man Elemente löschen will, so macht man das immer in zwei Teilen
 
 1. Finden, was zu löschen ist. Technisch: alles zu Löschende ans Ende verscbieben und Iterator auf erstes zu löschendes Element zurückgeben: ``remove``
-2. Danach löscht man von diesem gegebenen Iterator bis zum ``end``: ``erase`
+2. Danach löscht man von diesem gegebenen Iterator bis zum ``end``: ``erase``
 
 ```C++
 // removes all elements with the value 5
@@ -1730,7 +1752,7 @@ struct caselessCompare {
 		});
 	}
 };
-``` 
+```
 
 ## Tabelle
 <table>
@@ -1811,7 +1833,7 @@ struct caselessCompare {
 <tr>
 <td><div><div> search_n </div></div>
 </td>
-<td>searches for a number consecutive copies of an element in a range
+<td>searches for a number of consecutive copies of an element in a range
 </td></tr>
 
 
@@ -2389,7 +2411,7 @@ Haben einen Typ und einen Namen. So const wie möglich.
 
 ``<type> <name>``
 
-Sie sind im Header File, damit das Speicherlayout bekannt ist. 
+Sie sind im Header File, damit das Speicherlayout bekannt ist.
 
 ## Static Member-Variablen
 **Im Header**: als ``static`` oder als ``static const`` deklarieren. ``static const`` dürfen auch gleich initialisiert werden:
@@ -2797,7 +2819,7 @@ Der Sub-Defaultkonstruktor versucht immer den Super-Defaultkonstruktor (ohne Arg
 ## Member Hiding Problem
 Überladene Memberfunktionen in abgeleiteten Klassen verstecken alle Funktionen mit selben Namen der Basis Klassen
 
-```C++ 
+```C++
 struct Base {
 	void foo(int i) const;
 };
@@ -2809,16 +2831,16 @@ int main() {
 	Derviced d{};
 	//d.foo(31); //is hidden
 }
-``` 
+```
 
 **Lösung**
-```C++ 
+```C++
 struct Derived:Base {
 	using Base::foo; //zuerst using damit die Funktionen verfügbar sind
 	void foo();
 };
 
-``` 
+```
 
 ## Sichtbarkeit
 Die Vererbung kann sogar eine Visibility haben. Dies beschränkt die **maximale** Visibility der geerbten Member.
@@ -2998,6 +3020,24 @@ bird crashed
 animal died
 ```
 
+### Erklärungen
+A)
+*Konstrutoren werden Basis vor Derived ausgeführt
+*Copy führt nur Copy Konstruktor aus (Hier keine Ausgabe)
+*Referenz keine Ausgabe
+
+B)
+*Da nicht virtual werden eigene Aufgerufen
+*Object Slicing von Hummingbird zu bird. (Bird kennt nur noch eigene Methoden)
+
+C)
+*move ist virtual darum führt Animal Pointer die von Hummingbird aus
+
+D)
+*Objekte welche später instanziert wurden, werden zu erst abgeräumt
+*Derived Deconstruktor vor Base
+*Referenzen rufen Deconsturktoren nicht auf
+
 ## Abstrakte Klassen
 ```C++
 struct AbstractBase {
@@ -3062,10 +3102,10 @@ void work_only_with_shift_in_ns_std(std::ostream &os) {
 	std::vector<vec> vv {{1,2,3},{4,5,6}};
 	//copy findet den shift operator für std::vector<int> nicht in std.
 	copy(begin(vv), end(vv), outv{os, "\n"});
-} 
+}
 ```
 
-Der Namespace std darf nicht verändert werden. 
+Der Namespace std darf nicht verändert werden.
 
 **Lösung**
 ```C++
@@ -3078,7 +3118,7 @@ namespace X {
 
 // use vector<X::vec> vv {{1,2,3},{4,5,6}};
 
-``` 
+```
 
 # Enums
 
@@ -3291,7 +3331,7 @@ Wenn man z.B. Funktionen wie printf implementieren will, kennt man die Anzahl Pa
 ```C++
 template<typename...ARGS> //any number of types
 void variadic(ARGS...args) { //any number of argumenets
-	println(std::cout, args...); //expand parametes as arguments 
+	println(std::cout, args...); //expand parametes as arguments
 }
 ```
 
@@ -3472,5 +3512,37 @@ public:
 	}
 
 	// dann noch front/base
+};
+```
+
+### Vector erweitern mit Templates
+Vektor um ``find()``, ``count()`` und ``asMultiset()`` Methoden erweitert.
+``asMultiset()`` verwendet den Comparator, der als Template übergeben wurde.
+
+```C++
+#include <functional> // für std::less
+#include <vector>
+#include <algorithm>
+#include <set>
+
+template <typename T, typename COMPARE = std::less<T>>
+struct searchablevector : std::vector<T> {
+	
+	using std::vector<T>::vector; // Parent constructors
+	
+	// iterator von vector (funktioniert auch bei allen anderen container)
+	using iterator = typename std::vector<T>::iterator; 
+
+	iterator find(T const & entry) const{
+		return std::find(this->begin(), this->end(), entry);
+	}
+
+	int count(T const & entry) const {
+		return std::count(this->begin(), this->end(), entry);
+	}
+
+	std::multiset<T, COMPARE> asMultiset() const {
+		return std::multiset<T, COMPARE>{this->begin(), this->end()};
+	}
 };
 ```

@@ -1,5 +1,3 @@
-
-
 # C++ Spick
 ##TODO
 * Demo verstehen (V12, S. 11)
@@ -22,12 +20,16 @@
 * Dekonstruktor ist nicht virtual
 * Testat indexable einfügen
 
+# Inhaltsverzeichnis
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [C++ Spick](#c-spick)
+- [Inhaltsverzeichnis](#inhaltsverzeichnis)
 - [Variablen](#variablen)
 - [Typen](#typen)
+  - [bool](#bool)
   - [Literale](#literale)
 - [Operatoren](#operatoren)
   - [Reihenfolge](#reihenfolge)
@@ -37,15 +39,14 @@
   - [Function Overloading](#function-overloading)
   - [Default Arguments](#default-arguments)
   - [Funktionen als Parameter](#funktionen-als-parameter)
+  - [Aufruf Sequenz von Funktionen](#aufruf-sequenz-von-funktionen)
 - [Include Files](#include-files)
   - [Include Guard](#include-guard)
     - [Beispiel mit 3 Files](#beispiel-mit-3-files)
   - [Wichtige includes](#wichtige-includes)
-- [Const/non-const und Value/Reference](#constnon-const-und-valuereference)
 - [Kommandozeilenargumente übergeben](#kommandozeilenargumente-%C3%BCbergeben)
 - [Memory (Heap)](#memory-heap)
   - [Beispiel: Eltern und Kinder](#beispiel-eltern-und-kinder)
-- [Move](#move)
 - [Namespaces](#namespaces)
 - [CUTE TODO ist das nötig?](#cute-todo-ist-das-n%C3%B6tig)
 - [Using](#using)
@@ -89,6 +90,7 @@
   - [Suffix-Versionen](#suffix-versionen)
   - [Heap-Algorithmen](#heap-algorithmen)
   - [Fallen](#fallen)
+  - [std::lexicographical_compare](#stdlexicographical_compare)
   - [Tabelle](#tabelle)
 - [Klassen](#klassen)
   - [Beispielklasse Date](#beispielklasse-date)
@@ -101,24 +103,29 @@
     - [Konstruktor mit std::istream &](#konstruktor-mit-stdistream-)
     - [Konstruktoren wieder default machen/löschen](#konstruktoren-wieder-default-machenl%C3%B6schen)
   - [Destruktoren](#destruktoren)
-  - [Vererbung](#vererbung)
   - [Implementation](#implementation-1)
   - [Benutzung](#benutzung)
   - [Member-Funktionen](#member-funktionen)
     - [Static Member-Funktionen](#static-member-funktionen)
+    - [Implementation Header oder CPP File](#implementation-header-oder-cpp-file)
+  - [Member(Function)-Pointers](#memberfunction-pointers)
   - [Operator-Overloading](#operator-overloading)
     - [Beispiel: Date vergleichbar machen](#beispiel-date-vergleichbar-machen)
     - [Beispiel: Date an std::cout senden](#beispiel-date-an-stdcout-senden)
-- [Vererbung](#vererbung-1)
+- [Vererbung](#vererbung)
   - [Mehrfachvererbung](#mehrfachvererbung)
   - [Initialisierung](#initialisierung)
+  - [Member Hiding Problem](#member-hiding-problem)
   - [Sichtbarkeit](#sichtbarkeit)
   - [Object Slicing](#object-slicing)
   - [Probleme mit Vererbung und pass-by-value](#probleme-mit-vererbung-und-pass-by-value)
   - [Virtual](#virtual)
+    - [Erklärungen](#erkl%C3%A4rungen)
   - [Abstrakte Klassen](#abstrakte-klassen)
 - [Argument Dependent Lookup (ADL)](#argument-dependent-lookup-adl)
+  - [Pitfall](#pitfall)
 - [Enums](#enums)
+  - [Enum Conversion](#enum-conversion)
   - [Wert festlegen](#wert-festlegen)
   - [Typ festlegen](#typ-festlegen)
 - [Contract/Exceptions](#contractexceptions)
@@ -134,10 +141,12 @@
     - [Spezialisierung](#spezialisierung)
     - [Template Terminologie](#template-terminologie)
     - [Sack mit Initializer List füllen](#sack-mit-initializer-list-f%C3%BCllen)
+    - [Sack mit Iteratoren füllen](#sack-mit-iteratoren-f%C3%BCllen)
     - [Container variieren](#container-variieren)
     - [Templates als Adapter](#templates-als-adapter)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 # Variablen
 
@@ -558,7 +567,7 @@ int main() {
 ## Wichtige includes
 ```C++
 #include <algorithm> // für alle Algorithms ausser die in <numeric>
-#include <functional>
+#include <functional> // für default comparators (std::less, std::greater, usw.)
 #include <iterator>
 #include <numeric>
 #include <stdexcept> // exception
@@ -2805,6 +2814,8 @@ class DerivedWithCtor : public Base {
 };
 ```
 
+Der Sub-Defaultkonstruktor versucht immer den Super-Defaultkonstruktor (ohne Argumente) aufzurufen. Dem kann man zuvorkommen, indem der aufzurufende Konstruktur direkt definiert wird: `sub(std::ostream &out) : super{out}`. Aufpassen: `using` importiert alles ausser den Konstruktor ohne Argumente
+
 ## Member Hiding Problem
 Überladene Memberfunktionen in abgeleiteten Klassen verstecken alle Funktionen mit selben Namen der Basis Klassen
 
@@ -3501,5 +3512,37 @@ public:
 	}
 
 	// dann noch front/base
+};
+```
+
+### Vector erweitern mit Templates
+Vektor um ``find()``, ``count()`` und ``asMultiset()`` Methoden erweitert.
+``asMultiset()`` verwendet den Comparator, der als Template übergeben wurde.
+
+```C++
+#include <functional> // für std::less
+#include <vector>
+#include <algorithm>
+#include <set>
+
+template <typename T, typename COMPARE = std::less<T>>
+struct searchablevector : std::vector<T> {
+	
+	using std::vector<T>::vector; // Parent constructors
+	
+	// iterator von vector (funktioniert auch bei allen anderen container)
+	using iterator = typename std::vector<T>::iterator; 
+
+	iterator find(T const & entry) const{
+		return std::find(this->begin(), this->end(), entry);
+	}
+
+	int count(T const & entry) const {
+		return std::count(this->begin(), this->end(), entry);
+	}
+
+	std::multiset<T, COMPARE> asMultiset() const {
+		return std::multiset<T, COMPARE>{this->begin(), this->end()};
+	}
 };
 ```

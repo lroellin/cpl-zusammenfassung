@@ -2861,19 +2861,19 @@ private:
 class A: private Base {
 	// A kann auf a und b zugreifen
 	// Subklassen von A können a und b nicht verwenden
-	// Ausserhalb der Klassenhyrarchie kann a und b nicht verwendet werden
+	// Ausserhalb der Klassenhierarchie kann a und b nicht verwendet werden
 }
 
 class B: protected Base {
 	// B kann auf a und b zugreifen
 	// Subklassen von B können a und b verwenden
-	// Ausserhalb der Klassenhyrarchie kann a und b nicht verwendet werden
+	// Ausserhalb der Klassenhierarchie kann a und b nicht verwendet werden
 }
 
 class C: public Base { // public ist default
 	// C kann auf a und b zugreifen
 	// Subklassen von C können a und b verwenden
-	// Ausserhalb der Klassenhyrarchie kann b aber nicht a verwendet werden
+	// Ausserhalb der Klassenhierarchie kann b aber nicht a verwendet werden
 }
 
 ```

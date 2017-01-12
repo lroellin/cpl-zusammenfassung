@@ -3509,7 +3509,7 @@ public:
 	}
 
 	T & operator[](size_type index) {
-		return Base::at(index); // ginge auch this->
+		return Base::at(index); // es ginge auch this->
 	}
 
 	// dann noch front/back
@@ -3517,33 +3517,50 @@ public:
 ```
 
 ### Vector erweitern mit Templates
-Vektor um ``find()``, ``count()`` und ``asMultiset()`` Methoden erweitert.
-``asMultiset()`` verwendet den Comparator, der als Template übergeben wurde.
 
 ```C++
-#include <functional> // für std::less
-#include <vector>
-#include <algorithm>
+#include <functional>
 #include <set>
+#include <iterator>
+#include <stdexcept>
 
-template <typename T, typename COMPARE = std::less<T>>
-struct searchablevector : std::vector<T> {
+namespace IndexableSet {
+template<typename T, typename COMPARE = std::less<T>>
+class IndexableSet: public std::set<T, COMPARE> {
+	using Base=std::set<T, COMPARE>;
+public:
+	using size_type=typename Base::size_type;
+	using std::set<T, COMPARE>::set;
 
-	using std::vector<T>::vector; // Parent constructors
-
-	// iterator von vector (funktioniert auch bei allen anderen container)
-	using iterator = typename std::vector<T>::iterator;
-
-	iterator find(T const & entry) const{
-		return std::find(this->begin(), this->end(), entry);
+	T const & operator[](int index) const {
+		return at(index);
 	}
 
-	int count(T const & entry) const {
-		return std::count(this->begin(), this->end(), entry);
+	T const & at(int index) const {
+		iterator it = Base::begin();
+		const size_type setIndex = getIndex(index);
+		std::advance(it, setIndex);
+		return *it;
 	}
 
-	std::multiset<T, COMPARE> convertToMultiset() const {
-		return std::multiset<T, COMPARE>{this->begin(), this->end()};
+	T const & front() const {
+		return at(0);
+	}
+	T const & back() const {
+		return at(-1);
+	}
+private:
+	using iterator=typename Base::iterator;
+	size_type const getIndex(int index) const {
+		int const size = this->size();
+		if (index >= size || index <= -size - 1) {
+			throw std::out_of_range("Index out of range");
+		} else if (index < 0) {
+			index += size;
+		}
+		return static_cast<size_type>(index);
 	}
 };
+
+}
 ```

@@ -2672,7 +2672,8 @@ class Date {
 	bool operator<(Date const & rhs) const {
 		return year < rhs.year ||
 			(year == rhs.year && (month < rhs.month ||
-				(month == rhs.month &&  day == rhs.day )))
+				(month == rhs.month &&  day == rhs.day )));
+	}
 };
 ```
 
@@ -2686,7 +2687,7 @@ std::cout << "is d older? " << (d < Date::myBirthday);
 ``std::tie``kreiert ein Tupel. (``<tuple>``)
 
 ```C++
-	return std::tie(year, month,day) < std::tie(rhs.year, rhs.month, rhs.day);
+return std::tie(year, month,day) < std::tie(rhs.year, rhs.month, rhs.day);
 ```
 
 ``std::tuple`` (Header) bietet die folgenden Operatoren
@@ -2768,8 +2769,8 @@ class Date {
 	int year, month, day;
 public:
 	std::ostream & print(std::ostream & os) const {
-		os << year << "/" << month << "/"
-
+		os << year << "/" << month << "/";
+	}
 };
 
 inline std::ostream & operator<<(std::ostream & os, Date const & date) {
@@ -2860,19 +2861,19 @@ private:
 class A: private Base {
 	// A kann auf a und b zugreifen
 	// Subklassen von A können a und b nicht verwenden
-	// Ausserhalb der Klassenhyrarchie kann a und b nicht verwendet werden
+	// Ausserhalb der Klassenhierarchie kann a und b nicht verwendet werden
 }
 
 class B: protected Base {
 	// B kann auf a und b zugreifen
 	// Subklassen von B können a und b verwenden
-	// Ausserhalb der Klassenhyrarchie kann a und b nicht verwendet werden
+	// Ausserhalb der Klassenhierarchie kann a und b nicht verwendet werden
 }
 
 class C: public Base { // public ist default
 	// C kann auf a und b zugreifen
 	// Subklassen von C können a und b verwenden
-	// Ausserhalb der Klassenhyrarchie kann a aber nicht b verwendet werden
+	// Ausserhalb der Klassenhierarchie kann b aber nicht a verwendet werden
 }
 
 ```
@@ -2905,7 +2906,7 @@ TODO Beispiel
 ## Virtual
 Wenn eine Funktion mit dynamischem Polymorphismus aufgerufen werden soll, muss sie in der Base-Klasse als ``virtual``deklariert werden. Sie bleibt dann virtual in allen abgeleiteten Klassen, bis eine sie als ``final`` deklariert.
 
-**Sobald Funktionen ``virtual`` deklariert wurden, muss der Destruktur auch ``virtual`` sein!**
+**Sobald Funktionen ``virtual`` deklariert wurden, muss der Destruktor auch ``virtual`` sein!**
 
 ```C++
 class PolymorphicBase {
@@ -3132,7 +3133,7 @@ enum day_of_week {
 Alternativ noch mit class
 
 ```C++
-enum class day of week (usw.)
+enum class day_of_week (usw.)
 ```
 
 Unterschied: ohne ``class`` leaken sie in den umgebenden Scope (``day = date::Sat``), am besten als Member einer Klasse genutzt. Mit ``class`` leaken sie nicht (``day == date::day_of_week::Sat``), und der darunterliegende Typ kann spezifiziert werden.
@@ -3232,7 +3233,7 @@ Mit CUTE kann man die Exception mit ``ASSERT_THROWS(square_root(-1.0), std::inva
 
 # Templates
 
-Templates erlauben es, den eigenen Code an Code zu adaptieren, den es beim Erstellen des eigenen Code noch garnicht gibt.
+Templates erlauben es, den eigenen Code an Code zu adaptieren, den es beim Erstellen des eigenen Code noch gar nicht gibt.
 
 
 ## Function Templates
@@ -3368,7 +3369,7 @@ Beispiel Sack:
 template <typename T>
 class Sack
 {
-	using SackType=std::vector<T>
+	using SackType=std::vector<T>;
 	// dependent name: wir verwenden einen Typ gegen aussen, der vom Template Parameter abhängt
 	using size_type=typename SackType:size_type;
 	SackType theSack{};
@@ -3489,7 +3490,7 @@ class Sack {
 }
 ```
 
-Und dann z.B.: `Sack<int, std::list> listSack{1,2,3,4,5};
+Und dann z.B.: `Sack<int, std::list> listSack{1,2,3,4,5};`
 
 ### Templates als Adapter
 Wenn man zum Beispiel einen SafeVector bauen will, der den Vektor implementiert, aber ``operator[]`` so implementiert dass ein Index Bounday Check stattfindet.
@@ -3527,11 +3528,11 @@ Vektor um ``find()``, ``count()`` und ``asMultiset()`` Methoden erweitert.
 
 template <typename T, typename COMPARE = std::less<T>>
 struct searchablevector : std::vector<T> {
-	
+
 	using std::vector<T>::vector; // Parent constructors
-	
+
 	// iterator von vector (funktioniert auch bei allen anderen container)
-	using iterator = typename std::vector<T>::iterator; 
+	using iterator = typename std::vector<T>::iterator;
 
 	iterator find(T const & entry) const{
 		return std::find(this->begin(), this->end(), entry);

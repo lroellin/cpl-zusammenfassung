@@ -541,7 +541,7 @@ int main() {
 ## Wichtige includes
 ```C++
 #include <algorithm> // für alle Algorithms ausser die in <numeric>
-#include <functional>
+#include <functional> // für default comparators (std::less, std::greater, usw.)
 #include <iterator>
 #include <numeric>
 #include <exception> // für Standard Exceptions TODO Beispiel
@@ -2257,6 +2257,7 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 <td>applies a functor, then calculates inclusive scan
 </td></tr>
 </table>
+
 # Klassen
 
 Es gibt zwei Keywords, ``struct``und ``class``. Die sind äquivalent, ausser

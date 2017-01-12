@@ -2672,7 +2672,8 @@ class Date {
 	bool operator<(Date const & rhs) const {
 		return year < rhs.year ||
 			(year == rhs.year && (month < rhs.month ||
-				(month == rhs.month &&  day == rhs.day )))
+				(month == rhs.month &&  day == rhs.day )));
+	}
 };
 ```
 
@@ -2686,7 +2687,7 @@ std::cout << "is d older? " << (d < Date::myBirthday);
 ``std::tie``kreiert ein Tupel. (``<tuple>``)
 
 ```C++
-	return std::tie(year, month,day) < std::tie(rhs.year, rhs.month, rhs.day);
+return std::tie(year, month,day) < std::tie(rhs.year, rhs.month, rhs.day);
 ```
 
 ``std::tuple`` (Header) bietet die folgenden Operatoren
@@ -2768,8 +2769,8 @@ class Date {
 	int year, month, day;
 public:
 	std::ostream & print(std::ostream & os) const {
-		os << year << "/" << month << "/"
-
+		os << year << "/" << month << "/";
+	}
 };
 
 inline std::ostream & operator<<(std::ostream & os, Date const & date) {
@@ -3527,11 +3528,11 @@ Vektor um ``find()``, ``count()`` und ``asMultiset()`` Methoden erweitert.
 
 template <typename T, typename COMPARE = std::less<T>>
 struct searchablevector : std::vector<T> {
-	
+
 	using std::vector<T>::vector; // Parent constructors
-	
+
 	// iterator von vector (funktioniert auch bei allen anderen container)
-	using iterator = typename std::vector<T>::iterator; 
+	using iterator = typename std::vector<T>::iterator;
 
 	iterator find(T const & entry) const{
 		return std::find(this->begin(), this->end(), entry);

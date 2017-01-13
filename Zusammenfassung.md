@@ -3516,7 +3516,7 @@ public:
 };
 ```
 
-### Vector erweitern mit Templates
+### Set erweitern mit Templates
 
 ```C++
 #include <functional>

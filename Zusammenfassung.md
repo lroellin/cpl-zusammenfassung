@@ -3562,5 +3562,18 @@ private:
 	}
 };
 
+struct caselessCompare {
+	bool operator() (std::string const & lhs, std::string const & rhs) {
+		std::string s1{lhs};
+		std::string s2{rhs};
+
+		std::transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
+		std::transform(s2.begin(), s2.end(), s2.begin(), ::tolower);
+
+		return s1 < s2;
+	}
+};
+
+
 }
 ```

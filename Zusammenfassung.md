@@ -2897,7 +2897,7 @@ Base base{sub}; // ACHTUNG, Nur der Base Teil wird kopiert!
 
 ## Probleme mit Vererbung und pass-by-value
 
-Wenn eine abgeleitete Klasse Funktionen definiert, werden die Base-Funktionen versteckt. Kann problematisch sein, vorallem mit const/non-const. **Achtung: dies gilt nicht wenn die Funktion einmal const (z.B. in Base) und einmal non-const (z.B. in Derived) gemacht wird.**
+Wenn eine abgeleitete Klasse Funktionen definiert, werden die Base-Funktionen versteckt. Kann problematisch sein, vorallem mit const/non-const. **Achtung: dies gilt auch wenn die Funktion einmal const (z.B. in Base) und einmal non-const (z.B. in Derived) gemacht wird.**
 
 Um das zu umgehen macht man ein ``using`` auf die Base Class Funktionen, dann wird die Base-Funktion so behandelt als wär sie in der abgeleiteten Klasse und nimmt am Overloading teil.
 

@@ -1163,7 +1163,7 @@ int main () {
   std::cout << "Your name is " << mystring << ".\n";
 }
 ```
-TODO: Syntax-Highlighting stolpert über zweitletzte Zeile. Fix mit **
+
 
 ## std::ostream_iterator
 
@@ -1193,7 +1193,7 @@ int main () {
 
 ## std::reverse_iterator
 
-Iterator in umgekehrter Reihenfolge. Funktioniert nur bei Birirectional oder Random Access.  Benutzung entweder mit rbegin(), rend() auf einem Container oder wie folgt:
+Iterator in umgekehrter Reihenfolge. Funktioniert nur bei Bidirectional oder Random Access.  Benutzung entweder mit rbegin(), rend() auf einem Container oder wie folgt:
 
 ```C++
 int main () {
@@ -1531,7 +1531,7 @@ Wenn es alle möglichen Klammern hat, ist es wahrscheinlich ein Lambda.
 
 Beispiel:
 ```C++
-auto const g=[](char c){return std::toupper(c);}; // beide Semikolon nicht vergessen!``
+auto const g=[](char c){return std::toupper(c);}; // beide Semikolon nicht vergessen!
 g('a');
 ```
 
@@ -1704,7 +1704,7 @@ Kann auch so gewürgt werden dass es nicht-numerisches unterstützt, z.B. Listen
 **Erase/Remove**
 Wenn man Elemente löschen will, so macht man das immer in zwei Teilen
 
-1. Finden, was zu löschen ist. Technisch: alles zu Löschende ans Ende verscbieben und Iterator auf erstes zu löschendes Element zurückgeben: ``remove``
+1. Finden, was zu löschen ist. Technisch: alles zu Löschende ans Ende verschieben und Iterator auf erstes zu löschendes Element zurückgeben: ``remove``
 2. Danach löscht man von diesem gegebenen Iterator bis zum ``end``: ``erase``
 
 ```C++

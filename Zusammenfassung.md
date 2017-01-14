@@ -1023,7 +1023,7 @@ Grund für verschiedene Kategorien: Verschiedene Algorithmen brauchen spezielle 
 * multi-pass
 
 **Bidirectional Iterator**
-* Das Element kann gelesen und verändert werden (ausser...)
+* Das Element kann gelesen und verändert werden (ausser der Container oder die Elemente sind const)
 * Kann vorwärts und rückwärts gehen
 * Random Access sind bidirectional, aber können auch indexen
 * multi-pass

@@ -890,7 +890,7 @@ public:
 		try {
 			//overwrite content of this object (copy-ctor)		
 			Date input{year, month, day};
-						(*this) = input;
+			(*this) = input;
 			//clear stream if read was ok
 			is.clear();
 		} catch (std::out_of_range & e) {
@@ -1006,7 +1006,7 @@ int main() {
 
 ## Kategorien
 
-Grund für verschiedene Kategorien: Verschiedene Algorithmen brauchen speziele Iterator z.B. random access
+Grund für verschiedene Kategorien: Verschiedene Algorithmen brauchen spezielle Iteratoren z.B. random access
 
 **Input Iteratoren**
 

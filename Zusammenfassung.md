@@ -2445,7 +2445,7 @@ Hat einen ``<own type> const &`` Parameter. Implizit verfügbar (ausser es gibt 
 **Move Constructor**
 ``Date(date &&); / date d2{std::move(d)}``
 
-Hat einen ``<own type> &&`` Parameter. Implizit verfügbar (ausser es gibt einen expliziten Copy-Konstruktor oder Assignment-Operator). Verschiebt alle Member (d ist dann tot). Impemenetiert man normalerweise nicht selber.
+Hat einen ``<own type> &&`` Parameter. Implizit verfügbar (ausser es gibt einen expliziten Copy-Konstruktor oder Assignment-Operator). Verschiebt alle Member (d ist dann tot). Implementiert man normalerweise nicht selber.
 
 **Typeconversion Constructor**
 ``explicit Date(std::string const &); / Date d{"19/10/2016"s}``

@@ -1735,20 +1735,6 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 * Bei den copy-Algorithmen muss genügend Platz im Ziel sein, sonst brennt die HSR ab. Wenn man sich nicht darum kümmern will: ``back_inserter``, ``front_inserter`` oder ``inserter``.
 * Manche Operationen machen die Iteratoren ungültig, zum Beispiel ein Push-Back auf einem Vector. Der end-Iterator zeigt dann nicht mehr auf den richtigen Ort.
 
-## std::lexicographical_compare
-
-```C++
-struct caselessCompare {
-	bool operator()(std::string const &left, std::string const &right) {
-		return std::lexicographical_compare(left.begin(),left.end(),
-				right.begin(), right.end(),
-				[](char l, char r) {
-					return std::tolower(l) < std::tolower(r);
-		});
-	}
-};
-```
-
 ## Tabelle
 <table>
 <tr>
@@ -2452,7 +2438,7 @@ Der Konstruktor ist eine spezielle Member Funktion. Er hat **keinen** Rückgabew
 Keine Parameter, implizit verfügbar wenn es keine anderen Konstruktoren gibt. Initialisiert die Member-Variablen mit Default-Werten
 
 **Copy Constructor**
-``Date(Date const &); / Date d2{d};``
+``Date(Date const &); / Date d2{d}; or Date d3(d) / Date d4 = d aber nicht d4 = d ``
 
 Hat einen ``<own type> const &`` Parameter. Implizit verfügbar (ausser es gibt einen expliziten Move-Konstruktor oder Assignment-Operator). Kopiert alle Member-Variablen. Implementiert man normalerweise nicht selber.
 
@@ -2892,7 +2878,7 @@ Base base{sub}; // ACHTUNG, Nur der Base Teil wird kopiert!
 
 ## Probleme mit Vererbung und pass-by-value
 
-Wenn eine abgeleitete Klasse Funktionen definiert, werden die Base-Funktionen versteckt. Kann problematisch sein, vorallem mit const/non-const. **Achtung: dies gilt nicht wenn die Funktion einmal const (z.B. in Base) und einmal non-const (z.B. in Derived) gemacht wird.**
+Wenn eine abgeleitete Klasse Funktionen definiert, werden die Base-Funktionen versteckt. Kann problematisch sein, vorallem mit const/non-const. **Achtung: dies gilt auch wenn die Funktion einmal const (z.B. in Base) und einmal non-const (z.B. in Derived) gemacht wird.**
 
 Um das zu umgehen macht man ein ``using`` auf die Base Class Funktionen, dann wird die Base-Funktion so behandelt als wär sie in der abgeleiteten Klasse und nimmt am Overloading teil.
 
@@ -3033,6 +3019,9 @@ D)
 *Objekte welche später instanziert wurden, werden zu erst abgeräumt
 *Derived Deconstruktor vor Base
 *Referenzen rufen Deconsturktoren nicht auf
+
+-)
+Member variables are initialized before the constructor is called. The destructor is called before member variables are destroyed.
 
 ## Abstrakte Klassen
 ```C++
@@ -3511,7 +3500,7 @@ public:
 };
 ```
 
-### Vector erweitern mit Templates
+### Set erweitern mit Templates
 
 ```C++
 #include <functional>
@@ -3556,6 +3545,17 @@ private:
 		return static_cast<size_type>(index);
 	}
 };
+
+struct caselessCompare {
+	bool operator()(std::string const &left, std::string const &right) {
+		return std::lexicographical_compare(left.begin(),left.end(),
+				right.begin(), right.end(),
+				[](char l, char r) {
+					return std::tolower(l) < std::tolower(r);
+		});
+	}
+};
+
 
 }
 ```

@@ -2509,6 +2509,12 @@ Muss alle Ressourcen freigeben. Implizit verfügbar. Darf keine Exception werfen
 
 **Faustregel:**: Wenn man ``virtual``-Funktionen verwendet, muss der Destruktur auch ``virtual`` sein. Sonst weint jemand.
 
+Man kann den Destruktur auch löschen, dann kann die Klasse nicht mehr instanziert werden. Grund: der Compiler baut zu jedem Konstruktor-Aufruf auch den Destruktor-Aufruf ans Ende des Scopes. Wenns den nicht gibt, weint er in der Ecke und bricht das Kompilieren ab.
+
+```C++
+~Date() = delete;
+```
+
 
 ## Implementation
 Die eigentliche Implementierung sollte die Klasse im Header-File inkludieren und dann die Methoden implementieren. Wichtig: die Scope Specifier beachten
@@ -2542,7 +2548,7 @@ void foo() {
 ```
 
 ## Member-Funktionen
-Dürfen die Invariance nicht verletzen.
+Dürfen die Invariante nicht verletzen.
 
 Es gibt das implizite ``this``-Objekt. ``this`` ist ein Pointer und muss darum vor dem Zugriff dereferenziert werden. Entweder mit ``(*this).day`` oder mit ``this->day``. Wenn es im Scope der Methode nicht noch eine andere Variable "day" gibt kann auch einfach mit ``day`` darauf zugegriffen werden..
 
@@ -2568,12 +2574,12 @@ struct Klasse {
 	int a;
 	int b;
 };
-/**Funktion objekt und Funktion mitgeben, welche aufgerufen werden soll.**/
+/** Funktionsobjekt und Funktion mitgeben, welche aufgerufen werden soll. **/
 void doit(void(Klasse::*mfunc)() const, Klasse const &instanz) {
 	(instanz.*mfunc)(); //Klammern nötig
 }
 
-/**Funktion objekt und variable mitgeben, welche den Wert ändern soll.**/
+/** Funktionsobjekt und Variable mitgeben, welche den Wert ändern soll. **/
 void change(int Klasse::*var, Klasse& instanz, int val) {
 	instanz.*var = val;
 }
@@ -2591,7 +2597,7 @@ int main() {
 ## Operator-Overloading
 > When in doubt, do as the ints do
 
-Wie eine Funktion deklariert, allerdings als mit speziellem Namen: ``<returntype> operator<op>(<parameters>);
+Wie eine Funktion deklariert, allerdings mit speziellem Namen: ``<returntype> operator<op>(<parameters>);`
 
 Unäre/binäre Parameter haben einen bzw. zwei Parameter.
 
@@ -2797,7 +2803,7 @@ class DerivedWithCtor : public Base {
 };
 ```
 
-Der Sub-Defaultkonstruktor versucht immer den Super-Defaultkonstruktor (ohne Argumente) aufzurufen. Dem kann man zuvorkommen, indem der aufzurufende Konstruktur direkt definiert wird: `sub(std::ostream &out) : super{out}`. Aufpassen: `using` importiert alles ausser den Konstruktor ohne Argumente
+Der Sub-Defaultkonstruktor versucht immer den Super-Defaultkonstruktor (ohne Argumente) aufzurufen. Dem kann man zuvorkommen, indem der aufzurufende Konstruktur direkt aufgerufen wird: `sub(std::ostream &out) : super{out}`. Aufpassen: `using` importiert alles ausser den Konstruktor ohne Argumente
 
 ## Member Hiding Problem
 Überladene Memberfunktionen in abgeleiteten Klassen verstecken alle Funktionen mit selben Namen der Basis Klassen
@@ -2811,7 +2817,7 @@ struct Derived:Base {
 };
 
 int main() {
-	Derviced d{};
+	Derived d{};
 	//d.foo(31); //is hidden
 }
 ```
@@ -3005,26 +3011,30 @@ animal died
 
 ### Erklärungen
 A)
-*Konstrutoren werden Basis vor Derived ausgeführt
-*Copy führt nur Copy Konstruktor aus (Hier keine Ausgabe)
+
+* Konstrutoren werden Basis vor Derived ausgeführt
+* Copy führt nur Copy Konstruktor aus (Hier keine Ausgabe)
 *Referenz keine Ausgabe
 
 B)
-*Da nicht virtual werden eigene Aufgerufen
-*Object Slicing von Hummingbird zu bird. (Bird kennt nur noch eigene Methoden)
+
+* Da nicht virtual werden eigene Aufgerufen
+* Object Slicing von Hummingbird zu bird. (Bird kennt nur noch eigene Methoden)
 
 C)
-*move ist virtual darum führt Animal Pointer die von Hummingbird aus
+
+* move ist virtual darum führt Animal Pointer die von Hummingbird aus
 
 D)
-*Objekte welche später instanziert wurden, werden zu erst abgeräumt
-*Derived Deconstruktor vor Base
-*Referenzen rufen Deconsturktoren nicht auf
+
+* Objekte welche später instanziert wurden, werden zu erst abgeräumt (wenn man sich nicht mehr sicher ist: spätere Objekte sind oben auf dem Stack)
+* Derived Deconstruktor vor Base
+* Referenzen rufen Destruktoren nicht auf
 
 -)
 Member variables are initialized before the constructor is called. The destructor is called before member variables are destroyed.
 
-## Abstrakte Klassen
+## Abstrakte Klassen (Pure Virtual)
 ```C++
 struct AbstractBase {
 	virtual ~AbstractBase(){}

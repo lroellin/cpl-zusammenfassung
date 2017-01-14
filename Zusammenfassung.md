@@ -2457,7 +2457,7 @@ Der Konstruktor ist eine spezielle Member Funktion. Er hat **keinen** Rückgabew
 Keine Parameter, implizit verfügbar wenn es keine anderen Konstruktoren gibt. Initialisiert die Member-Variablen mit Default-Werten
 
 **Copy Constructor**
-``Date(Date const &); / Date d2{d};``
+``Date(Date const &); / Date d2{d}; or Date d3(d) / Date d4 = d aber nicht d4 = d ``
 
 Hat einen ``<own type> const &`` Parameter. Implizit verfügbar (ausser es gibt einen expliziten Move-Konstruktor oder Assignment-Operator). Kopiert alle Member-Variablen. Implementiert man normalerweise nicht selber.
 

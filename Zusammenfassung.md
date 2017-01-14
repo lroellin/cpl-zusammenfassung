@@ -2507,7 +2507,8 @@ Genannt wie der Default-Konstruktor mit einem ~ zu Beginn:
 
 Muss alle Ressourcen freigeben. Implizit verfügbar. Darf keine Exception werfen! Wird automatisch am Ende des Blocks für alle lokalen Instanzen aufgerufen.
 
-TODO muss bei Klassen mit virtual Methoden immer virtual deklariert werden.
+**Faustregel:**: Wenn man ``virtual``-Funktionen verwendet, muss der Destruktur auch ``virtual`` sein. Sonst weint jemand.
+
 
 ## Implementation
 Die eigentliche Implementierung sollte die Klasse im Header-File inkludieren und dann die Methoden implementieren. Wichtig: die Scope Specifier beachten

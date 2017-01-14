@@ -2353,7 +2353,7 @@ Es gibt zwei Keywords, ``struct``und ``class``. Die sind äquivalent, ausser
 * struct ist standardmässig public
 * class ist standardmässig private
 
-Eine gute Klasse kennt eine Klasseninvariante, d.h. dass eine Instanz sich immer in einem guten Zustand befindet. Falls eine Änderung diese Invarianz verletzt, wird sie^ entweder zurückgerollt oder zerstört. Aber nicht im FUBAR-Zustand belassen.
+Eine gute Klasse kennt eine Klasseninvariante, d.h. dass eine Instanz sich immer in einem guten Zustand befindet. Falls eine Änderung diese Invarianz verletzt, wird sie entweder zurückgerollt oder zerstört. Aber nicht im FUBAR-Zustand belassen.
 
 ## Beispielklasse Date
 

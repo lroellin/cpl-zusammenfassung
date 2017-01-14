@@ -642,13 +642,13 @@ int main() {
 }
 ```
 
-Wenn Instanzen einer Klassenhierarchie durch ``shared_ptr<base>`` repräsentiert werden, aber durch ``make_shared<concrete>()`` erstellt werden, muss der Destruktor nicht mehr virtual sein. shared_ptr mekrt sich den konkreten Destruktor.
+Wenn Instanzen einer Klassenhierarchie durch ``shared_ptr<base>`` repräsentiert werden, aber durch ``make_shared<concrete>()`` erstellt werden, muss der Destruktor nicht mehr virtual sein. shared_ptr merkt sich den konkreten Destruktor.
 
 Man kann in ein zirkuläres Dependency-Problem rennen. Um das zu umgehen, braucht man ``weak_ptr`` um diese zu brechen.
 
 **``enable_shared_from_this<T>`` && ``shared_from_this()``**
 
-Problem: Will ein Objekt von sich selbst ein shared_ptr erstellen, muss die Klasse von ``enable_shared_from_this<T>` erben.
+Problem: Will ein Objekt von sich selbst ein shared_ptr erstellen, muss die Klasse von ``enable_shared_from_this<T>`` erben.
 
 ```C++
 #include <memory>
@@ -742,8 +742,8 @@ CUTE kennt viele Makros und man sollte sie auch nutzen. Will man zum Beispiel di
 # Streams
 Streams haben einen Status, der anzeigt ob I/O erfolgreich war oder nicht
 
-* Nur .good() Streams können noch I/O
-* Nach einem Fehler (.fail()) muss man den Zustand mit .clear() wieder löschen, die ungültigen Eingaben rausholen (.ignore())und weiterfahren
+* Nur ``.good()`` Streams können noch I/O
+* Nach einem Fehler (``.fail()``) muss man den Zustand mit ``.clear()`` wieder löschen, die ungültigen Eingaben rausholen (``.ignore()``) und weiterfahren
 
 istream Zustände:
 
@@ -753,11 +753,6 @@ failbit | ``is.fail()`` | formatted input failed
 eofbit | ``is.eof`` | end of input reached
 badbit | ``is.bad`` | unrecoverable I/O error
 
-<style>
-	.strong-border-left {
-		border-left: #202020 3px solid;
-	}
-</style>
 <table  style="font-size:85%; text-align:center;">
   <tr>
     <td colspan="3"> <tt>ios_base::iostate</tt> flags</td>
@@ -878,9 +873,9 @@ int inputAge(std::istream& in) {
 ## Beispiel: Date read() implementieren
 
 **``.read()`` implementieren**
-Precondition: std::istream ist im .good()-State. Wenn wir kein Datum extrahieren können, setzen wir std::istream in den fail-State.
+Precondition: std::istream ist im .good()-State. 
 
-Wenn der Input nicht verwendet werden kann, wird das Objekt nicht überschrieben.
+Wenn wir kein Datum extrahieren können, setzen wir std::istream in den fail-State. Wenn der Input nicht verwendet werden kann, wird das Objekt nicht überschrieben.
 
 **Header:**
 ```C++
@@ -893,9 +888,9 @@ public:
 		//read values
 		is >> year >> sep1 >> month >> sep2 >> day;
 		try {
+			//overwrite content of this object (copy-ctor)		
 			Date input{year, month, day};
-			//overwrite content of this object (copy-ctor)
-			(*this) = input;
+						(*this) = input;
 			//clear stream if read was ok
 			is.clear();
 		} catch (std::out_of_range & e) {

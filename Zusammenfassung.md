@@ -3279,7 +3279,7 @@ Ansonsten gingen auch String Literals, "Toni"s */
 cout << "min<std::string>(Pete,Toni) = " << min<std::string>("Pete","Toni") << '\n';
 ```
 
-Random Fact: C-Style-Strings degenerieren zu einem Pointer, (es sind ``char``-Arrays), wenn sie einer Funktion übergeben werden.
+Random Fact: C-Style-Strings degenerieren zu einem ``char *``-Pointer, (es sind ``char``-Arrays), wenn sie einer Funktion übergeben werden.
 
 ## Concepts
 Das Ausrechnen der Bedingungen an den Typ nennt sich **Concepts**. Anders als in Java kann man den Typ von T nicht genauer festlegen (z.B. ``implements Comparable<T>``). Wenn man sich unseren ``min``-Code anschaut erkennt man folgendes

@@ -3039,6 +3039,9 @@ D)
 *Derived Deconstruktor vor Base
 *Referenzen rufen Deconsturktoren nicht auf
 
+-)
+Member variables are initialized before the constructor is called. The destructor is called before member variables are destroyed.
+
 ## Abstrakte Klassen
 ```C++
 struct AbstractBase {

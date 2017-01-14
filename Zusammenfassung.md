@@ -3520,41 +3520,42 @@ public:
 #include <stdexcept>
 
 namespace IndexableSet {
-template<typename T, typename COMPARE = std::less<T>>
-class IndexableSet: public std::set<T, COMPARE> {
-	using Base=std::set<T, COMPARE>;
+template<typename T, typename COMPARE=std::less<T>>
+class IndexableSet : private std::set<T, COMPARE> {
+    using Base=std::set<T, COMPARE>;
 public:
-	using size_type=typename Base::size_type;
-	using std::set<T, COMPARE>::set;
+    using size_type=typename Base::size_type;
+    using std::set<T, COMPARE>::set;
+    using const_reference = typename Base::const_reference;
 
-	T const & operator[](int index) const {
-		return at(index);
-	}
+    const_reference operator[](int index) const {
+        return at(index);
+    }
 
-	T const & at(int index) const {
-		iterator it = Base::begin();
-		const size_type setIndex = getIndex(index);
-		std::advance(it, setIndex);
-		return *it;
-	}
+    const_reference at(int index) const {
+        iterator it = Base::begin();
+        const size_type setIndex = getIndex(index);
+        std::advance(it, setIndex);
+        return *it;
+    }
 
-	T const & front() const {
-		return at(0);
-	}
-	T const & back() const {
-		return at(-1);
-	}
+    const_reference front() const {
+        return at(0);
+    }
+    const_reference back() const {
+        return at(-1);
+    }
 private:
-	using iterator=typename Base::iterator;
-	size_type const getIndex(int index) const {
-		int const size = this->size();
-		if (index >= size || index <= -size - 1) {
-			throw std::out_of_range("Index out of range");
-		} else if (index < 0) {
-			index += size;
-		}
-		return static_cast<size_type>(index);
-	}
+    using iterator=typename Base::iterator;
+    size_type const getIndex(int index) const {
+        int const size = this->size();
+        if (index >= size || index <= -size - 1) {
+            throw std::out_of_range("Index out of range");
+        } else if (index < 0) {
+            index += size;
+        }
+        return static_cast<size_type>(index);
+    }
 };
 
 struct caselessCompare {

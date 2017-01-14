@@ -1740,20 +1740,6 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 * Bei den copy-Algorithmen muss genügend Platz im Ziel sein, sonst brennt die HSR ab. Wenn man sich nicht darum kümmern will: ``back_inserter``, ``front_inserter`` oder ``inserter``.
 * Manche Operationen machen die Iteratoren ungültig, zum Beispiel ein Push-Back auf einem Vector. Der end-Iterator zeigt dann nicht mehr auf den richtigen Ort.
 
-## std::lexicographical_compare
-
-```C++
-struct caselessCompare {
-	bool operator()(std::string const &left, std::string const &right) {
-		return std::lexicographical_compare(left.begin(),left.end(),
-				right.begin(), right.end(),
-				[](char l, char r) {
-					return std::tolower(l) < std::tolower(r);
-		});
-	}
-};
-```
-
 ## Tabelle
 <table>
 <tr>
@@ -3566,14 +3552,12 @@ private:
 };
 
 struct caselessCompare {
-	bool operator() (std::string const & lhs, std::string const & rhs) {
-		std::string s1{lhs};
-		std::string s2{rhs};
-
-		std::transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
-		std::transform(s2.begin(), s2.end(), s2.begin(), ::tolower);
-
-		return s1 < s2;
+	bool operator()(std::string const &left, std::string const &right) {
+		return std::lexicographical_compare(left.begin(),left.end(),
+				right.begin(), right.end(),
+				[](char l, char r) {
+					return std::tolower(l) < std::tolower(r);
+		});
 	}
 };
 

@@ -3521,13 +3521,13 @@ public:
 
 namespace IndexableSet {
 template<typename T, typename COMPARE=std::less<T>>
-class IndexableSet : private std::set<T, COMPARE> {
+class IndexableSet : public std::set<T, COMPARE> {
     using Base=std::set<T, COMPARE>;
 public:
     using size_type=typename Base::size_type;
-    using std::set<T, COMPARE>::set;
     using const_reference = typename Base::const_reference;
-
+    using std::set<T, COMPARE>::set;
+	
     const_reference operator[](int index) const {
         return at(index);
     }

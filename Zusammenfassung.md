@@ -2364,7 +2364,7 @@ class Date {
 	int year, month, day;
 public:
 	Date(int year, int month, int day)
-	: year{year}, month{month}, day{day} // initialzer list
+	: year{year}, month{month}, day{day} // initializer list
 	{
 		...
 	}
@@ -2413,7 +2413,7 @@ Date const Date::myBirthday{1964, 12, 24};
 Date Date::favoriteStudentsBirthday{1995, 5, 10};
 ```
 
-**Ausserhalb der Klasse**: mit ``<Classname>::<member>
+**Ausserhalb der Klasse**: mit ``<Classname>::<member>``
 
 ```C++
 #include "Date.h"

@@ -24,8 +24,6 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [C++ Spick](#c-spick)
-- [Inhaltsverzeichnis](#inhaltsverzeichnis)
 - [Variablen](#variablen)
 - [Typen](#typen)
   - [bool](#bool)
@@ -50,6 +48,7 @@
 - [CUTE TODO ist das nötig?](#cute-todo-ist-das-n%C3%B6tig)
 - [Using](#using)
 - [Streams](#streams)
+  - [Beispiel: getline() mehrere Zeilen](#beispiel-getline-mehrere-zeilen)
   - [Beispiel: Date read() implementieren](#beispiel-date-read-implementieren)
 - [Iterators](#iterators)
   - [Spezielle Iteratoren für I/O](#spezielle-iteratoren-f%C3%BCr-io)
@@ -89,7 +88,6 @@
   - [Suffix-Versionen](#suffix-versionen)
   - [Heap-Algorithmen](#heap-algorithmen)
   - [Fallen](#fallen)
-  - [std::lexicographical_compare](#stdlexicographical_compare)
   - [Tabelle](#tabelle)
 - [Klassen](#klassen)
   - [Beispielklasse Date](#beispielklasse-date)
@@ -120,7 +118,7 @@
   - [Probleme mit Vererbung und pass-by-value](#probleme-mit-vererbung-und-pass-by-value)
   - [Virtual](#virtual)
     - [Erklärungen](#erkl%C3%A4rungen)
-  - [Abstrakte Klassen](#abstrakte-klassen)
+  - [Abstrakte Klassen (Pure Virtual)](#abstrakte-klassen-pure-virtual)
 - [Argument Dependent Lookup (ADL)](#argument-dependent-lookup-adl)
   - [Pitfall](#pitfall)
 - [Enums](#enums)
@@ -143,6 +141,7 @@
     - [Sack mit Iteratoren füllen](#sack-mit-iteratoren-f%C3%BCllen)
     - [Container variieren](#container-variieren)
     - [Templates als Adapter](#templates-als-adapter)
+    - [Set erweitern mit Templates](#set-erweitern-mit-templates)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

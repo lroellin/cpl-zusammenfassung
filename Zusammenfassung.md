@@ -3011,7 +3011,7 @@ animal died
 ### Erklärungen
 A)
 
-* Konstrutoren werden Basis vor Derived ausgeführt
+* Konstruktoren werden Basis vor Derived ausgeführt
 * Copy führt nur Copy Konstruktor aus (Hier keine Ausgabe)
 * Referenz keine Ausgabe
 

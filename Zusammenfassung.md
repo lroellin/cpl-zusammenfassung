@@ -1728,6 +1728,26 @@ Bauen die Container so um, dass sie einem Heap entsprechen
 * ``push_heap``: log(N) Vergleiche
 * ``sort_heap``: N*log(N) Vergleiche
 
+```C++
+  int myints[] = {10,20,30,5,15};
+  std::vector<int> v(myints,myints+5);
+
+  std::make_heap (v.begin(),v.end());
+  std::cout << "initial max heap   : " << v.front() << '\n';
+
+  // pop_heap und pop_back!
+  std::pop_heap (v.begin(),v.end());
+  v.pop_back();
+  std::cout << "max heap after pop : " << v.front() << '\n';
+
+  // push_back und push_heap!
+  v.push_back(99); 
+  std::push_heap (v.begin(),v.end());
+  std::cout << "max heap after push: " << v.front() << '\n';
+
+  std::sort_heap (v.begin(),v.end());
+```
+
 ## Fallen
 
 * Die Iteratoren müssen natürlich zum selben Range gehören, sonst brennt die HSR ab.

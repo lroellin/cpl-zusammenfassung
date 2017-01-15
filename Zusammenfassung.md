@@ -657,6 +657,24 @@ struct Person : public std::enable_shared_from_this<Person> {
 };
 ```
 
+**``weak_ptr``**
+```C++
+#include <memory>
+
+int main() {
+	std::weak_ptr<int> weak;
+	auto sp = std::make_shared<int>(42);
+	weak = sp;
+
+	if(auto spt == weak.lock()) { //creates a shared_pointer 
+		std::cout << *sp;
+	} else{
+		std::cout << "weak expired";
+	}
+}
+
+```
+
 ## Beispiel: Eltern und Kinder
 ``shared_ptr`` Zyklen: ``weak_ptr/shared_from_this``
 

@@ -665,8 +665,8 @@ int main() {
 	auto sp = std::make_shared<int>(42);
 	weak = sp;
 
-	if(auto spt == weak.lock()) { //creates a shared_pointer 
-		std::cout << *sp;
+	if(auto sptmp == weak.lock()) { //creates a shared_pointer 
+		std::cout << *sptmp;
 	} else{
 		std::cout << "weak expired";
 	}

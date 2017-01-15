@@ -571,7 +571,11 @@ int main() {
 #include <stdexcept> // exception
 #include <string> // std::string
 // IO
-#include <iosfwd> // Vorwärtsdeklaration von istream und ostream (nur typedefs ohne Methoden usw.), nur in Headers verwenden
+
+// Vorwärtsdeklaration von istream und ostream (nur typedefs ohne Methoden usw.)
+// nur im Header
+#include <iosfwd> 
+
 #include <istream> // istream Definition und Implementation
 #include <ostream> // ostream Definition und Implementation
 #include <iostream> // istream, ostream und cin, cout

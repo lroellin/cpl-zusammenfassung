@@ -14,7 +14,6 @@
     * Enum
         * Scoped
         * unscoped
-* Beispiel für Anonymous Namespace?
 * Call by value / call by reference
 * Files lesen / schreiben
 * Dekonstruktor ist nicht virtual

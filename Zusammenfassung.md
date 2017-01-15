@@ -921,9 +921,9 @@ Achtung, das Ende ist **vor** ``end``.
 Um read-only zu garantieren sollte ``cbegin()/cend()`` verwendet werden. Wenn man von "hinten" beginnen möchte, gibt's ``rbegin()/rend()``.
 
 ```ASCII-Art
-begin()/rend()                       end()/rbegin()
-       |                                  |
-       v                                  v
+   rend() begin()                    rbegin() end()
+    |      |                           |       |
+    v      v                           v       v
        +------+------+------+------+------+
        |      |      |      |      |      |
        +------+------+------+------+------+

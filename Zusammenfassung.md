@@ -1,5 +1,5 @@
 # C++ Spick
-##TODO
+<!--##TODO
 * Demo verstehen (V12, S. 11)
 * V12, S.21
 * Templates-Erweiterungen (V12)
@@ -18,7 +18,7 @@
 * Call by value / call by reference
 * Files lesen / schreiben
 * Dekonstruktor ist nicht virtual
-* Testat indexable einfügen
+* Testat indexable einfügen-->
 
 # Inhaltsverzeichnis
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->

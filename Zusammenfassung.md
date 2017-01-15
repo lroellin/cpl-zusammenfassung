@@ -578,7 +578,7 @@ int main() {
 #include <iostream> // istream, ostream und cin, cout
 #include <sstream> // string stream
 // Pointers
-#include <memory>> // pointers
+#include <memory> // pointers
 ```
 
 # Kommandozeilenargumente übergeben

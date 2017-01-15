@@ -921,7 +921,7 @@ Achtung, das Ende ist **vor** ``end``.
 Um read-only zu garantieren sollte ``cbegin()/cend()`` verwendet werden. Wenn man von "hinten" beginnen möchte, gibt's ``rbegin()/rend()``.
 
 ```ASCII-Art
-   rend() begin()                    rbegin() end()
+  rend() begin()                    rbegin() end()
     |      |                           |       |
     v      v                           v       v
        +------+------+------+------+------+
@@ -1011,7 +1011,7 @@ Grund für verschiedene Kategorien: Verschiedene Algorithmen brauchen spezielle 
 
 * Das aktuelle Element kann mehrmals ausgelesen werden
 * Kann Iteratoren vergleichen
-* Ein Zugriff der Art `*it++` führt dazu, dass alle bisherigen Kopien von `it` obsoletiert werden (siehe auch
+* Ein Zugriff der Art `*it++` führt dazu, dass alle bisherigen Kopien von `it` obsoletiert werden
 * single-pass
 
 **Forward Iterator**
@@ -3031,9 +3031,9 @@ animal died
 ### Erklärungen
 A)
 
-* Konstrutoren werden Basis vor Derived ausgeführt
+* Konstruktoren werden Basis vor Derived ausgeführt
 * Copy führt nur Copy Konstruktor aus (Hier keine Ausgabe)
-*Referenz keine Ausgabe
+* Referenz keine Ausgabe
 
 B)
 

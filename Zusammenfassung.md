@@ -858,7 +858,7 @@ Beispiel: robustes Einlesen eines int, mit istringstream als Zwischenstream
 int inputAge(std::istream& in) {
   while(in) {
     std::string line{};
-    getline(in, line);
+    std::getline(in, line);
     std::istringstream is{line};
     int age{-1};
     if(is >> age) {
@@ -866,6 +866,15 @@ int inputAge(std::istream& in) {
     }
   }
   return -1;
+}
+```
+
+## Beispiel: getline() mehrere Zeilen
+
+```C++
+std::string line{};
+while (std::getline(std::cin, line)) {
+  // process
 }
 ```
 

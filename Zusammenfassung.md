@@ -3564,6 +3564,15 @@ public:
     const_reference back() const {
         return at(-1);
     }
+	
+	operator std::multiset<T, COMPARE>() {
+    	return asMultiset();
+    }
+
+    std::multiset<T, COMPARE> asMultiset() {
+    	return std::multiset<T, COMPARE>{this->begin(), this->end()};
+    }
+
 private:
     using iterator=typename Base::iterator;
     size_type const getIndex(int index) const {

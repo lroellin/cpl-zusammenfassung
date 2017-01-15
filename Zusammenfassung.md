@@ -1011,7 +1011,7 @@ Grund für verschiedene Kategorien: Verschiedene Algorithmen brauchen spezielle 
 
 * Das aktuelle Element kann mehrmals ausgelesen werden
 * Kann Iteratoren vergleichen
-* Ein Zugriff der Art `*it++` führt dazu, dass alle bisherigen Kopien von `it` obsoletiert werden (siehe auch
+* Ein Zugriff der Art `*it++` führt dazu, dass alle bisherigen Kopien von `it` obsoletiert werden
 * single-pass
 
 **Forward Iterator**
